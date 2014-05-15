@@ -1,7 +1,6 @@
 package com.kihira.corruption;
 
 import com.kihira.corruption.common.EventHandler;
-import com.kihira.corruption.common.FMLEventHandler;
 import com.kihira.corruption.common.TickHandler;
 import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
@@ -38,6 +37,8 @@ public class Corruption {
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
 
+    public static final String CATEGORY_RANDOM_CORRUPTION = "random corruption";
+
     public static boolean disableCorrOnDragonDeath;
     public static boolean disableCorrOnWitherDeath;
 
@@ -47,7 +48,6 @@ public class Corruption {
         registerCorruptionEffects();
 
         FMLCommonHandler.instance().bus().register(new TickHandler());
-        FMLCommonHandler.instance().bus().register(new FMLEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
         eventChannel.register(new PacketEventHandler());
@@ -59,11 +59,11 @@ public class Corruption {
 
         config.load();
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "Enable Block Teleport Corruption Effect", true);
+        prop = config.get(CATEGORY_RANDOM_CORRUPTION, "Enable Block Teleport Corruption Effect", true);
         isEnabledBlockTeleportCorr = prop.getBoolean(true);
-        prop = config.get(Configuration.CATEGORY_GENERAL, "Enable Stone Skin Corruption Effect", true);
+        prop = config.get(CATEGORY_RANDOM_CORRUPTION, "Enable Stone Skin Corruption Effect", true);
         isEnabledStoneSkinCorr = prop.getBoolean(true);
-        prop = config.get(Configuration.CATEGORY_GENERAL, "Enable Water Allergy Corruption Effect", true);
+        prop = config.get(CATEGORY_RANDOM_CORRUPTION, "Enable Water Allergy Corruption Effect", true);
         isEnabledWaterAllergyCorr = prop.getBoolean(true);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "Disable corruption on dragon death", true);

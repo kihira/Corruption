@@ -11,8 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketEventHandler {
@@ -39,9 +38,9 @@ public class PacketEventHandler {
             EntityPlayer player = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(ByteBufUtils.readUTF8String(payload));
             if (player != null) {
                 int newCorr = payload.readInt();
-                Corruption.proxy.corruptPlayerSkin((EntityClientPlayerMP) player, CorruptionDataHelper.getCorruptionForPlayer(player), newCorr);
+                Corruption.proxy.corruptPlayerSkin((AbstractClientPlayer) player, CorruptionDataHelper.getCorruptionForPlayer(player), newCorr);
                 CorruptionDataHelper.setCorruptionForPlayer(player, newCorr);
-                Corruption.logger.info(I18n.format("Updated %s corruption to %d", player.getCommandSenderName(), newCorr));
+                //Corruption.logger.info(I18n.format("Updated %s corruption to %d", player.getCommandSenderName(), newCorr));
             }
         }
     }
