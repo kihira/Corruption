@@ -1,6 +1,7 @@
 package com.kihira.corruption;
 
 import com.kihira.corruption.common.EventHandler;
+import com.kihira.corruption.common.FMLEventHandler;
 import com.kihira.corruption.common.TickHandler;
 import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
@@ -43,6 +44,7 @@ public class Corruption {
         registerCorruptionEffects();
 
         FMLCommonHandler.instance().bus().register(new TickHandler());
+        FMLCommonHandler.instance().bus().register(new FMLEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
         eventChannel.register(new PacketEventHandler());
