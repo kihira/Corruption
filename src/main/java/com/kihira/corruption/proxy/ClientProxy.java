@@ -42,7 +42,18 @@ public class ClientProxy extends CommonProxy {
                 Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
                 int x = rand.nextInt(bufferedImage.getWidth());
                 int y = rand.nextInt(bufferedImage.getHeight());
-                bufferedImage.setRGB(x, y, new Color(bufferedImage.getRGB(x, y)).darker().getRGB());
+                Color color;
+                //Eyes
+                if (y == 12 && (x == 9 || x == 10 || x == 13 || x == 14)) {
+                    color = new Color(204, 0, 250);
+                }
+                else if (y == 12 && (x == 41 || x == 42 || x == 45 || x == 46)) {
+                    color = new Color(204, 0, 250);
+                }
+                else {
+                    color = new Color(bufferedImage.getRGB(x, y)).darker();
+                }
+                bufferedImage.setRGB(x, y, color.getRGB());
             }
         }
         TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
