@@ -4,6 +4,7 @@ import com.kihira.corruption.common.EventHandler;
 import com.kihira.corruption.common.TickHandler;
 import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
+import com.kihira.corruption.common.corruption.StoneSkinCorruption;
 import com.kihira.corruption.common.corruption.WaterAllergyCorruption;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import com.kihira.corruption.proxy.CommonProxy;
@@ -35,6 +36,7 @@ public class Corruption {
 
         CorruptionRegistry.registerCorruptionEffect(BlockTeleportCorruption.class);
         CorruptionRegistry.registerCorruptionEffect(WaterAllergyCorruption.class);
+        CorruptionRegistry.registerCorruptionEffect(StoneSkinCorruption.class);
 
         eventChannel.register(new PacketEventHandler());
     }
