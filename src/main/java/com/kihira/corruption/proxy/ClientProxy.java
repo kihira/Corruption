@@ -17,8 +17,6 @@ public class ClientProxy extends CommonProxy {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
-        Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() + newCorr);
-        entityPlayer.getTextureSkin();
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
         BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage"); //TODO need to fix this for obf?
 
@@ -39,8 +37,9 @@ public class ClientProxy extends CommonProxy {
             }
         }
 
-        for (int i = oldCorr; i <= newCorr; i++) {
-            if (bufferedImage != null) {
+        if (bufferedImage != null) {
+            for (int i = oldCorr; i <= newCorr; i++) {
+                Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
                 int x = rand.nextInt(bufferedImage.getWidth());
                 int y = rand.nextInt(bufferedImage.getHeight());
                 bufferedImage.setRGB(x, y, new Color(bufferedImage.getRGB(x, y)).darker().getRGB());
@@ -52,8 +51,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     //TODO fix
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
-        Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() + newCorr);
-        entityPlayer.getTextureSkin();
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
         BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage"); //TODO need to fix this for obf?
 
@@ -61,9 +58,9 @@ public class ClientProxy extends CommonProxy {
         File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
         try {
             BufferedImage oldSkin = ImageIO.read(file);
-
-            for (int i = newCorr; i <= oldCorr; i++) {
-                if (bufferedImage != null) {
+            if (bufferedImage != null) {
+                for (int i = newCorr; i <= oldCorr; i++) {
+                    Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
                     int x = rand.nextInt(bufferedImage.getWidth());
                     int y = rand.nextInt(bufferedImage.getHeight());
                     bufferedImage.setRGB(x, y, oldSkin.getRGB(x, y));
