@@ -4,6 +4,7 @@ import com.kihira.corruption.common.EventHandler;
 import com.kihira.corruption.common.ServerTickHandler;
 import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
+import com.kihira.corruption.common.corruption.WaterAllergyCorruption;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -22,6 +23,8 @@ public class Corruption {
     public void preInit(FMLPreInitializationEvent e) {
         FMLCommonHandler.instance().bus().register(new ServerTickHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+
         CorruptionRegistry.registerCorruptionEffect(BlockTeleportCorruption.class);
+        CorruptionRegistry.registerCorruptionEffect(WaterAllergyCorruption.class);
     }
 }

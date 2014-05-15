@@ -17,6 +17,7 @@ public class EventHandler {
     public void onLivingDeath(LivingDeathEvent e) {
         if (e.entityLiving instanceof EntityDragon && !e.entityLiving.worldObj.isRemote) {
             Corruption.isCorruptionActiveGlobal = false;
+            CorruptionDataHelper.currentCorruption.clear();
             FMLCommonHandler.instance().getMinecraftServerInstance().addChatMessage(new ChatComponentText("The dragon has been killed! This text needs to be rewritten to be fancier!"));
         }
     }

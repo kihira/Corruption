@@ -22,7 +22,7 @@ public class CorruptionRegistry {
         Class<? extends AbstractCorruption> clazz;
         if (corruptionList.size() == 0) return null;
         else if (corruptionList.size() == 1) clazz = corruptionList.get(0);
-        else clazz = corruptionList.get(rand.nextInt(corruptionList.size() - 1));
+        else clazz = corruptionList.get(rand.nextInt(corruptionList.size()));
 
         try {
             return clazz.getConstructor(EntityPlayer.class).newInstance(entityPlayer);
