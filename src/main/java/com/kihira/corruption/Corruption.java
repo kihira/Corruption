@@ -1,5 +1,6 @@
 package com.kihira.corruption;
 
+import com.kihira.corruption.common.CommandCorruption;
 import com.kihira.corruption.common.EventHandler;
 import com.kihira.corruption.common.TickHandler;
 import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
@@ -12,6 +13,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.common.MinecraftForge;
@@ -51,6 +53,11 @@ public class Corruption {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
         eventChannel.register(new PacketEventHandler());
+    }
+
+    @Mod.EventHandler
+    public void serverStart(FMLServerStartingEvent e) {
+        e.registerServerCommand(new CommandCorruption());
     }
 
     private void loadGeneralConfig(File file) {
