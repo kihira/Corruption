@@ -40,7 +40,6 @@ public class PacketEventHandler {
                 int newCorr = payload.readInt();
                 Corruption.proxy.corruptPlayerSkin((AbstractClientPlayer) player, CorruptionDataHelper.getCorruptionForPlayer(player), newCorr);
                 CorruptionDataHelper.setCorruptionForPlayer(player, newCorr);
-                //Corruption.logger.info(I18n.format("Updated %s corruption to %d", player.getCommandSenderName(), newCorr));
             }
         }
     }
