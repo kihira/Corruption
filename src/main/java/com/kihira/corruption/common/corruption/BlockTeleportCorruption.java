@@ -1,5 +1,6 @@
 package com.kihira.corruption.common.corruption;
 
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class BlockTeleportCorruption extends AbstractCorruption {
@@ -9,17 +10,8 @@ public class BlockTeleportCorruption extends AbstractCorruption {
     }
 
     @Override
-    public void init() {
-
-    }
+    public void onUpdate(Side side) {}
 
     @Override
-    public void onUpdate() {
-        
-    }
-
-    @Override
-    public void finish() {
-
-    }
+    public void finish() {}
 }

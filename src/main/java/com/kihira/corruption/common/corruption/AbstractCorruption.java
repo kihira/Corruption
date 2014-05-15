@@ -1,5 +1,6 @@
 package com.kihira.corruption.common.corruption;
 
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 
 public abstract class AbstractCorruption {
@@ -10,9 +11,7 @@ public abstract class AbstractCorruption {
         this.thePlayer = entityPlayer;
     }
 
-    public abstract void init();
-
-    public abstract void onUpdate();
+    public abstract void onUpdate(Side side);
 
     public abstract void finish();
 }
