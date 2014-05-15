@@ -7,6 +7,8 @@ import net.minecraft.util.DamageSource;
 
 public class WaterAllergyCorruption extends AbstractCorruption {
 
+    private short activeCount = 0;
+
     public WaterAllergyCorruption(EntityPlayer entityPlayer) {
         super(entityPlayer);
 
@@ -16,10 +18,14 @@ public class WaterAllergyCorruption extends AbstractCorruption {
     @Override
     public void onUpdate(Side side) {
         if (side == Side.SERVER) {
+            if (this.activeCount > 200) {
+                CorruptionRegistry.currentCorruption.remove(this.thePlayer, this);
+            }
             if (this.thePlayer.isInWater() && this.thePlayer.worldObj.getTotalWorldTime() % 10 == 0) {
                 this.thePlayer.attackEntityFrom(DamageSource.drown, 1);
             }
         }
+        this.activeCount++;
     }
 
     @Override

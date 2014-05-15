@@ -7,6 +7,8 @@ import net.minecraft.potion.PotionEffect;
 
 public class StoneSkinCorruption extends AbstractCorruption {
 
+    private short activeCount = 0;
+
     public StoneSkinCorruption(EntityPlayer entityPlayer) {
         super(entityPlayer);
     }
@@ -14,12 +16,16 @@ public class StoneSkinCorruption extends AbstractCorruption {
     @Override
     public void onUpdate(Side side) {
         if (side == Side.SERVER) {
+            if (this.activeCount > 200) {
+                CorruptionRegistry.currentCorruption.remove(this.thePlayer, this);
+            }
             if (this.thePlayer.worldObj.getTotalWorldTime() % 10 == 0) {
                 this.thePlayer.addPotionEffect(new PotionEffect(Potion.digSlowdown.id, 20, 4));
                 this.thePlayer.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 20, 3));
                 this.thePlayer.addPotionEffect(new PotionEffect(Potion.resistance.id, 20, 2));
             }
         }
+        this.activeCount++;
     }
 
     @Override
