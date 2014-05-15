@@ -1,7 +1,6 @@
 package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
-import com.kihira.corruption.common.corruption.AbstractCorruption;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
@@ -9,11 +8,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.HashMap;
-
 public class CorruptionDataHelper {
-
-    public static final HashMap<EntityPlayer, AbstractCorruption> currentCorruption = new HashMap<EntityPlayer, AbstractCorruption>();
 
     private static NBTTagCompound getCorruptionDataForPlayer(EntityPlayer entityPlayer) {
         NBTTagCompound persistedTag = entityPlayer.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
