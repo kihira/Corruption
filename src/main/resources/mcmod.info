@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "corruption",
+  "name": "Corruption",
+  "description": "Can you remove the corruption before it consumes you?",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "url": "https://github.com/kihira/modjam4",
+  "updateUrl": "https://github.com/kihira/modjam4",
+  "authorList": ["Kihira"],
+  "credits": "Vazkii for the original idea",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
