@@ -31,7 +31,7 @@ public class Corruption {
     public static boolean isCorruptionActiveGlobal = true;
 
     public static boolean isEnabledBlockTeleportCorr;
-    public static boolean isEnabledStoneskinCorr;
+    public static boolean isEnabledStoneSkinCorr;
     public static boolean isEnabledWaterAllergyCorr;
 
     public static final Logger logger = LogManager.getLogger("Corruption");
@@ -57,7 +57,7 @@ public class Corruption {
         prop = config.get(Configuration.CATEGORY_GENERAL, "Enable Block Teleport Corruption Effect", true);
         isEnabledBlockTeleportCorr = prop.getBoolean(true);
         prop = config.get(Configuration.CATEGORY_GENERAL, "Enable Stone Skin Corruption Effect", true);
-        isEnabledStoneskinCorr = prop.getBoolean(true);
+        isEnabledStoneSkinCorr = prop.getBoolean(true);
         prop = config.get(Configuration.CATEGORY_GENERAL, "Enable Water Allergy Corruption Effect", true);
         isEnabledWaterAllergyCorr = prop.getBoolean(true);
 
@@ -65,8 +65,8 @@ public class Corruption {
     }
 
     private void registerCorruptionEffects() {
-        CorruptionRegistry.registerCorruptionEffect(BlockTeleportCorruption.class);
-        CorruptionRegistry.registerCorruptionEffect(WaterAllergyCorruption.class);
-        CorruptionRegistry.registerCorruptionEffect(StoneSkinCorruption.class);
+        if (isEnabledBlockTeleportCorr) CorruptionRegistry.registerCorruptionEffect(BlockTeleportCorruption.class);
+        if (isEnabledWaterAllergyCorr) CorruptionRegistry.registerCorruptionEffect(WaterAllergyCorruption.class);
+        if (isEnabledStoneSkinCorr) CorruptionRegistry.registerCorruptionEffect(StoneSkinCorruption.class);
     }
 }
