@@ -1,5 +1,6 @@
 package com.kihira.corruption.common.corruption;
 
+import com.kihira.corruption.Corruption;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
@@ -17,6 +18,7 @@ public class StoneSkinCorruption extends AbstractCorruption {
     public void onUpdate(Side side) {
         if (side == Side.SERVER) {
             if (this.activeCount > 200) {
+                Corruption.logger.info("Removing " + this.getClass());
                 CorruptionRegistry.currentCorruption.remove(this.thePlayer, this);
             }
             if (this.thePlayer.worldObj.getTotalWorldTime() % 10 == 0) {

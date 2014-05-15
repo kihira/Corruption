@@ -9,7 +9,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.I18n;
 
-import java.util.Collection;
+import java.util.Set;
 
 public class TickHandler {
 
@@ -34,7 +34,7 @@ public class TickHandler {
             }
             //Common
             if (CorruptionRegistry.currentCorruption.containsKey(e.player)) {
-                Collection<AbstractCorruption> corruptions = CorruptionRegistry.currentCorruption.get(e.player);
+                Set<AbstractCorruption> corruptions = CorruptionRegistry.currentCorruption.get(e.player);
                 for (AbstractCorruption corruption : corruptions) {
                     if (corruption != null) corruption.onUpdate(FMLCommonHandler.instance().getEffectiveSide());
                 }

@@ -1,7 +1,6 @@
 package com.kihira.corruption.common.corruption;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.Random;
 public class CorruptionRegistry {
 
     public static final List<Class<? extends AbstractCorruption>> randomCorruptionList = new ArrayList<Class<? extends AbstractCorruption>>();
-    public static final Multimap<EntityPlayer, AbstractCorruption> currentCorruption = HashMultimap.create();
+    public static final HashMultimap<EntityPlayer, AbstractCorruption> currentCorruption = HashMultimap.create();
     private static final Random rand = new Random();
 
     /**
