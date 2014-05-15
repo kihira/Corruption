@@ -38,6 +38,9 @@ public class Corruption {
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
 
+    public static boolean disableCorrOnDragonDeath;
+    public static boolean disableCorrOnWitherDeath;
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         loadGeneralConfig(e.getSuggestedConfigurationFile());
@@ -62,6 +65,13 @@ public class Corruption {
         isEnabledStoneSkinCorr = prop.getBoolean(true);
         prop = config.get(Configuration.CATEGORY_GENERAL, "Enable Water Allergy Corruption Effect", true);
         isEnabledWaterAllergyCorr = prop.getBoolean(true);
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Disable corruption on dragon death", true);
+        prop.comment = "When the dragon is killed, corruption is disabled for ALL players no matter when they play";
+        disableCorrOnDragonDeath = prop.getBoolean(true);
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Disable corruption on wither death", false);
+        prop.comment = "If a player kills a wither, corruption is disabled for THAT PLAYER ONLY";
+        disableCorrOnWitherDeath = prop.getBoolean(false);
 
         if (config.hasChanged()) config.save();
     }
