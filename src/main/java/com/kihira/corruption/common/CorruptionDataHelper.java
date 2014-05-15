@@ -2,6 +2,10 @@ package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.AbstractCorruption;
+import com.kihira.corruption.common.network.PacketEventHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -26,9 +30,14 @@ public class CorruptionDataHelper {
         setCorruptionForPlayer(entityPlayer, getCorruptionForPlayer(entityPlayer) + corruptionIncrease);
     }
 
-    public static void setCorruptionForPlayer(EntityPlayer entityPlayer, int corruptionLevel) {
+    public static void setCorruptionForPlayer(EntityPlayer entityPlayer, int newCorruption) {
         NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
-        corruptionData.setInteger("corruptionLevel", corruptionLevel);
+        corruptionData.setInteger("corruptionLevel", newCorruption);
+
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+            FMLProxyPacket packet = PacketEventHandler.getCorruptionUpdatePacket(entityPlayer.getCommandSenderName(), newCorruption);
+            Corruption.eventChannel.sendToDimension(packet, entityPlayer.worldObj.provider.dimensionId);
+        }
     }
 
     public static int getCorruptionForPlayer(EntityPlayer entityPlayer) {
