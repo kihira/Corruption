@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class CorruptionRegistry {
 
-    public static final List<Class<? extends AbstractCorruption>> corruptionList = new ArrayList<Class<? extends AbstractCorruption>>();
+    public static final List<Class<? extends AbstractCorruption>> randomCorruptionList = new ArrayList<Class<? extends AbstractCorruption>>();
     public static final Multimap<EntityPlayer, AbstractCorruption> currentCorruption = HashMultimap.create();
     private static final Random rand = new Random();
 
@@ -21,8 +21,8 @@ public class CorruptionRegistry {
      * @param corruptionClass
      */
     public static void registerRandomCorruptionEffect(Class<? extends AbstractCorruption> corruptionClass) {
-        if (!corruptionList.contains(corruptionClass)) {
-            corruptionList.add(corruptionClass);
+        if (!randomCorruptionList.contains(corruptionClass)) {
+            randomCorruptionList.add(corruptionClass);
         }
         else throw new IllegalArgumentException("The corruption effect " + corruptionClass + " has been registered!");
     }
@@ -35,9 +35,9 @@ public class CorruptionRegistry {
 
     public static AbstractCorruption getRandomCorruptionEffect(EntityPlayer entityPlayer) {
         Class<? extends AbstractCorruption> clazz;
-        if (corruptionList.size() == 0) return null;
-        else if (corruptionList.size() == 1) clazz = corruptionList.get(0);
-        else clazz = corruptionList.get(rand.nextInt(corruptionList.size()));
+        if (randomCorruptionList.size() == 0) return null;
+        else if (randomCorruptionList.size() == 1) clazz = randomCorruptionList.get(0);
+        else clazz = randomCorruptionList.get(rand.nextInt(randomCorruptionList.size()));
 
         try {
             return clazz.getConstructor(EntityPlayer.class).newInstance(entityPlayer);

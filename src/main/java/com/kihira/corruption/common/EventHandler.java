@@ -1,7 +1,9 @@
 package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
+import com.kihira.corruption.common.corruption.AbstractCorruption;
 import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
+import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.boss.EntityDragon;
@@ -10,6 +12,8 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
+import java.util.Collection;
+
 public class EventHandler {
 
     @SubscribeEvent
@@ -17,19 +21,22 @@ public class EventHandler {
     public void onLivingDeath(LivingDeathEvent e) {
         if (e.entityLiving instanceof EntityDragon && !e.entityLiving.worldObj.isRemote) {
             Corruption.isCorruptionActiveGlobal = false;
-            CorruptionDataHelper.currentCorruption.clear();
+            CorruptionRegistry.currentCorruption.clear();
             FMLCommonHandler.instance().getMinecraftServerInstance().addChatMessage(new ChatComponentText("The dragon has been killed! This text needs to be rewritten to be fancier!"));
         }
     }
 
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent e) {
-        if (CorruptionDataHelper.currentCorruption.containsKey(e.getPlayer())) {
+        if (CorruptionRegistry.currentCorruption.containsKey(e.getPlayer())) {
             //BlockTeleportCorruption
-            if (CorruptionDataHelper.currentCorruption.get(e.getPlayer()).getClass() == BlockTeleportCorruption.class && !e.block.hasTileEntity(e.blockMetadata)) {
-                e.world.setBlock(MathHelper.floor_double(e.getPlayer().posX), MathHelper.floor_double(e.getPlayer().posY), MathHelper.floor_double(e.getPlayer().posZ), e.block, e.blockMetadata, 2);
-                e.setCanceled(true);
-                e.world.setBlockToAir(e.x, e.y, e.z);
+            Collection<AbstractCorruption> corruptions = CorruptionRegistry.currentCorruption.get(e.getPlayer());
+            for (AbstractCorruption corruption : corruptions) {
+                if (corruption.getClass() == BlockTeleportCorruption.class && !e.block.hasTileEntity(e.blockMetadata)) {
+                    e.world.setBlock(MathHelper.floor_double(e.getPlayer().posX), MathHelper.floor_double(e.getPlayer().posY), MathHelper.floor_double(e.getPlayer().posZ), e.block, e.blockMetadata, 2);
+                    e.setCanceled(true);
+                    e.world.setBlockToAir(e.x, e.y, e.z);
+                }
             }
         }
     }

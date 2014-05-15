@@ -23,9 +23,12 @@ public class TickHandler {
                     if (e.player.worldObj.getTotalWorldTime() % 200 == 0) {
                         CorruptionDataHelper.increaseCorruptionForPlayer(e.player, 1);
 
-                        AbstractCorruption corruption = CorruptionRegistry.getRandomCorruptionEffect(e.player);
-                        Corruption.logger.info(I18n.format("Applying %s to %s", corruption.toString(), e.player.toString()));
-                        CorruptionRegistry.currentCorruption.put(e.player, corruption);
+                        //12 hours
+                        if (e.player.worldObj.rand.nextInt(4320) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
+                            AbstractCorruption corruption = CorruptionRegistry.getRandomCorruptionEffect(e.player);
+                            Corruption.logger.info(I18n.format("Applying %s to %s", corruption.toString(), e.player.toString()));
+                            CorruptionRegistry.currentCorruption.put(e.player, corruption);
+                        }
                     }
                 }
             }

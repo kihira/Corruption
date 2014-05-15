@@ -65,8 +65,8 @@ public class Corruption {
     }
 
     private void registerCorruptionEffects() {
-        if (isEnabledBlockTeleportCorr) CorruptionRegistry.registerCorruptionEffect(BlockTeleportCorruption.class);
-        if (isEnabledWaterAllergyCorr) CorruptionRegistry.registerCorruptionEffect(WaterAllergyCorruption.class);
-        if (isEnabledStoneSkinCorr) CorruptionRegistry.registerCorruptionEffect(StoneSkinCorruption.class);
+        if (isEnabledBlockTeleportCorr) CorruptionRegistry.registerRandomCorruptionEffect(BlockTeleportCorruption.class);
+        if (isEnabledWaterAllergyCorr) CorruptionRegistry.registerRandomCorruptionEffect(WaterAllergyCorruption.class);
+        if (isEnabledStoneSkinCorr) CorruptionRegistry.registerRandomCorruptionEffect(StoneSkinCorruption.class);
     }
 }
