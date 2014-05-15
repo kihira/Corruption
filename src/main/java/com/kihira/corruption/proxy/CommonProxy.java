@@ -7,4 +7,6 @@ public class CommonProxy {
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {}
 
     public void uncorruptPlayerSkin(AbstractClientPlayer entityPlayer) {}
+
+    public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {}
 }

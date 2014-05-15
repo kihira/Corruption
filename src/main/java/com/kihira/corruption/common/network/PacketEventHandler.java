@@ -38,11 +38,17 @@ public class PacketEventHandler {
             EntityPlayer player = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(ByteBufUtils.readUTF8String(payload));
             if (player != null) {
                 int newCorr = payload.readInt();
+                int oldCorr = CorruptionDataHelper.getCorruptionForPlayer(player);
+
+                if (newCorr < oldCorr) {
+                    Corruption.proxy.uncorruptPlayerSkinPartially((AbstractClientPlayer) player, oldCorr, newCorr);
+                }
+
                 if (newCorr == 0) {
                     Corruption.proxy.uncorruptPlayerSkin((AbstractClientPlayer) player);
                 }
                 else {
-                    Corruption.proxy.corruptPlayerSkin((AbstractClientPlayer) player, CorruptionDataHelper.getCorruptionForPlayer(player), newCorr);
+                    Corruption.proxy.corruptPlayerSkin((AbstractClientPlayer) player, oldCorr, newCorr);
                 }
                 CorruptionDataHelper.setCorruptionForPlayer(player, newCorr);
             }

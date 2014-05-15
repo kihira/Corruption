@@ -28,7 +28,11 @@ public class ClientProxy extends CommonProxy {
             file.mkdir();
             File skinFile = new File(file, entityPlayer.getCommandSenderName() + ".png");
             try {
-                skinFile.createNewFile();
+                if (skinFile.exists()) {
+                    //If corr is 0 and we already have a skin for this player, load this just incase
+                    bufferedImage = ImageIO.read(skinFile);
+                }
+                else skinFile.createNewFile();
                 ImageIO.write(bufferedImage, "PNG", skinFile);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -43,6 +47,32 @@ public class ClientProxy extends CommonProxy {
             }
         }
         TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
+    }
+
+    @Override
+    //TODO fix
+    public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
+        Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() + newCorr);
+        entityPlayer.getTextureSkin();
+        ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
+        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage"); //TODO need to fix this for obf?
+
+        //Load old skin
+        File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
+        try {
+            BufferedImage oldSkin = ImageIO.read(file);
+
+            for (int i = newCorr; i <= oldCorr; i++) {
+                if (bufferedImage != null) {
+                    int x = rand.nextInt(bufferedImage.getWidth());
+                    int y = rand.nextInt(bufferedImage.getHeight());
+                    bufferedImage.setRGB(x, y, oldSkin.getRGB(x, y));
+                }
+            }
+            TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

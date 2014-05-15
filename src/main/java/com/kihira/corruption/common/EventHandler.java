@@ -6,7 +6,6 @@ import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,7 +13,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.WorldEvent;
 
 import java.util.Collection;
 
@@ -59,14 +57,6 @@ public class EventHandler {
                     e.world.setBlockToAir(e.x, e.y, e.z);
                 }
             }
-        }
-    }
-
-    @SubscribeEvent
-    public void onWorldUnload(WorldEvent.Unload e) {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            System.out.println("Client!");
-            //TODO reset player skins
         }
     }
 }
