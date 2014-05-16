@@ -9,11 +9,14 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Set;
 
 public class TickHandler {
+
+    private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
 
     @SubscribeEvent
     @SuppressWarnings("unchecked")
@@ -45,13 +48,14 @@ public class TickHandler {
             }
             //Client
             if (e.player.worldObj.isRemote) {
-                List<EntityFootstep> footsteps = e.player.worldObj.getEntitiesWithinAABB(EntityFootstep.class, e.player.boundingBox.expand(2, 2, 2));
-
                 //TODO scale up chance with corruption
-                if (footsteps.size() == 0 && e.player.ticksExisted % 40 == 0) {
-                    EntityFootstep footstep = new EntityFootstep(e.player);
-                    e.player.worldObj.spawnEntityInWorld(footstep);
-                    Corruption.logger.info(I18n.format("Spawned footstep at %s, %s, %s", e.player.posX, e.player.posY, e.player.posZ));
+                if ((this.footsteps.containsKey(e.player) && this.footsteps.get(e.player).getDistanceToEntity(e.player) > 1.4) || !this.footsteps.containsKey(e.player)) {
+                    if (e.player.ticksExisted % 5 == 0) {
+                        EntityFootstep footstep = new EntityFootstep(e.player);
+                        e.player.worldObj.spawnEntityInWorld(footstep);
+                        this.footsteps.put(e.player, footstep);
+                        Corruption.logger.info(I18n.format("Spawned footstep at %s, %s, %s for %s", e.player.posX, e.player.posY, e.player.posZ, e.player));
+                    }
                 }
             }
         }

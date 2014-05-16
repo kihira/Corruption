@@ -3,6 +3,7 @@ package com.kihira.corruption.client.render;
 import com.kihira.corruption.client.EntityFootstep;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -25,20 +26,18 @@ public class EntityFootstepRenderer extends Render {
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glTranslated(x, y + 0.1F, z - 0.5F);
+        //GL11.glScalef(footstep.scale, 1F, footstep.scale);
+        GL11.glTranslated(x, y - (footstep.thePlayer == Minecraft.getMinecraft().thePlayer ? footstep.thePlayer.height: 0.19) + 0.2, z - 0.5F);
         GL11.glRotatef(90F, 1F, 0F, 0F);
         Tessellator tessellator = Tessellator.instance;
-        float f2 = 0.5F;
-        float f3 = 0.0F;
         if (footstep.fadeOutTimer != 40) GL11.glColor4f(0F, 0F, 0F, footstep.fadeOutTimer / 40F);
-        float f6 = 0F;
         tessellator.startDrawingQuads();
 
         this.bindTexture(this.footstepTexture);
-        tessellator.addVertexWithUV((double) (f2 - f3), (double) (0.0F), (double) f6, 1, 1);
-        tessellator.addVertexWithUV((double) (-f2 - f3), (double) (0.0F), (double) f6, 0, 1);
-        tessellator.addVertexWithUV((double) (-f2 - f3), (double) (1F), (double) f6, 0, 0);
-        tessellator.addVertexWithUV((double) (f2 - f3), (double) (1F), (double) f6, 1, 0);
+        tessellator.addVertexWithUV(0.5D, 0D, 0D, 1, 1);
+        tessellator.addVertexWithUV(-0.5D, 0D, 0D, 0, 1);
+        tessellator.addVertexWithUV(-0.5D, 1D, 0D, 0, 0);
+        tessellator.addVertexWithUV(0.5D, 1D, 0D, 1, 0);
 
         tessellator.draw();
         GL11.glDisable(GL11.GL_BLEND);
