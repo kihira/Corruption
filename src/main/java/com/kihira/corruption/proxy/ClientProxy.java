@@ -34,11 +34,11 @@ public class ClientProxy extends CommonProxy {
             file.mkdir();
             File skinFile = new File(file, entityPlayer.getCommandSenderName() + ".png");
             try {
-                if (skinFile.exists()) {
+/*                if (skinFile.exists()) {
                     //If corr is 0 and we already have a skin for this player, load this just incase
                     bufferedImage = ImageIO.read(skinFile);
-                }
-                else skinFile.createNewFile();
+                }*/
+                skinFile.createNewFile();
                 ImageIO.write(bufferedImage, "PNG", skinFile);
             } catch (IOException e) {
                 e.printStackTrace();
