@@ -24,8 +24,9 @@ public class EntityFootstepRenderer extends Render {
         EntityFootstep footstep = (EntityFootstep) entity;
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glPushMatrix();
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
-        //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         //GL11.glScalef(footstep.scale, 1F, footstep.scale);
         GL11.glTranslated(x, y - (footstep.thePlayer == Minecraft.getMinecraft().thePlayer ? footstep.thePlayer.height: 0.19) + 0.2, z - 0.5F);
         GL11.glRotatef(90F, 1F, 0F, 0F);
@@ -41,6 +42,7 @@ public class EntityFootstepRenderer extends Render {
 
         tessellator.draw();
         GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glPopMatrix();
         GL11.glEnable(GL11.GL_LIGHTING);
     }

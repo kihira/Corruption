@@ -10,7 +10,6 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.MathHelper;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -52,13 +51,23 @@ public class EventHandler {
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent e) {
         if (CorruptionRegistry.currentCorruption.containsKey(e.getPlayer())) {
-            //BlockTeleportCorruption
             Collection<AbstractCorruption> corruptions = CorruptionRegistry.currentCorruption.get(e.getPlayer());
             for (AbstractCorruption corruption : corruptions) {
+                //BlockTeleportCorruption
                 if (corruption.getClass() == BlockTeleportCorruption.class && !e.block.hasTileEntity(e.blockMetadata)) {
-                    e.world.setBlock(MathHelper.floor_double(e.getPlayer().posX), MathHelper.floor_double(e.getPlayer().posY), MathHelper.floor_double(e.getPlayer().posZ), e.block, e.blockMetadata, 2);
-                    e.setCanceled(true);
-                    e.world.setBlockToAir(e.x, e.y, e.z);
+                    //Look a few times for a valid block location
+                    int x, y, z;
+                    for (int i = 0; i < 5; i++) {
+                        x = e.world.rand.nextInt(2 * 8) - 8;
+                        y = e.world.rand.nextInt(2 * 3) - 3;
+                        z = e.world.rand.nextInt(2 * 8) - 8;
+                        if (e.world.isAirBlock(x, y, z)) {
+                            e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
+                            e.setCanceled(true);
+                            e.world.setBlockToAir(e.x, e.y, e.z);
+                            break;
+                        }
+                    }
                 }
             }
         }
