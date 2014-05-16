@@ -53,6 +53,8 @@ public class Corruption {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
         eventChannel.register(new PacketEventHandler());
+
+        proxy.registerRenderers();
     }
 
     @Mod.EventHandler
