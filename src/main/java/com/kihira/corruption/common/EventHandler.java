@@ -27,7 +27,7 @@ public class EventHandler {
                 CorruptionRegistry.currentCorruption.clear();
                 FMLCommonHandler.instance().getMinecraftServerInstance().addChatMessage(new ChatComponentText("The dragon has been killed! This text needs to be rewritten to be fancier!"));
             }
-            if (e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
+            else if (e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) e.source.getEntity();
                 //Check if they can be corrupted (false if they've already killed it before)
                 if (CorruptionDataHelper.canBeCorrupted(player)) {
@@ -41,6 +41,10 @@ public class EventHandler {
                     CorruptionDataHelper.setCorruptionForPlayer(player, 0);
                     player.addChatComponentMessage(new ChatComponentText("As the wither screams out its last breath, you feel a weight lifted from your entire body and soul"));
                 }
+            }
+            else if (e.entityLiving instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) e.entityLiving;
+                CorruptionDataHelper.decreaseCorruptionForPlayer(player, Corruption.corrRemovedOnDeath);
             }
         }
     }

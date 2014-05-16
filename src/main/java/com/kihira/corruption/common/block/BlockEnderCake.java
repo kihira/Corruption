@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
+//TODO make this better
 public class BlockEnderCake extends BlockCake {
 
     public BlockEnderCake() {

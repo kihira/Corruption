@@ -25,6 +25,10 @@ public class CorruptionDataHelper {
         setCorruptionForPlayer(entityPlayer, getCorruptionForPlayer(entityPlayer) + corruptionIncrease);
     }
 
+    public static void decreaseCorruptionForPlayer(EntityPlayer entityPlayer, int corruptionDecrease) {
+        setCorruptionForPlayer(entityPlayer, Math.max(0, getCorruptionForPlayer(entityPlayer) - corruptionDecrease));
+    }
+
     public static void setCorruptionForPlayer(EntityPlayer entityPlayer, int newCorruption) {
         NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
         corruptionData.setInteger("corruptionLevel", newCorruption);
