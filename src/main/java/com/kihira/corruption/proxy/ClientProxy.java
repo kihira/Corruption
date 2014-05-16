@@ -7,6 +7,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -33,7 +34,6 @@ public class ClientProxy extends CommonProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityFootstep.class, new EntityFootstepRenderer());
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
@@ -41,19 +41,7 @@ public class ClientProxy extends CommonProxy {
 
         //Backup old skin
         if (oldCorr == 0) {
-            File file = new File("skinbackup");
-            file.mkdir();
-            File skinFile = new File(file, entityPlayer.getCommandSenderName() + ".png");
-            try {
-/*                if (skinFile.exists()) {
-                    //If corr is 0 and we already have a skin for this player, load this just incase
-                    bufferedImage = ImageIO.read(skinFile);
-                }*/
-                skinFile.createNewFile();
-                ImageIO.write(bufferedImage, "PNG", skinFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            this.backupPlayerSkin(entityPlayer);
         }
 
         if (bufferedImage != null) {
@@ -63,10 +51,7 @@ public class ClientProxy extends CommonProxy {
                 int y = rand.nextInt(bufferedImage.getHeight());
                 Color color;
                 //Eyes
-                if (y == 12 && (x == 9 || x == 10 || x == 13 || x == 14)) {
-                    color = new Color(204, 0, 250);
-                }
-                else if (y == 12 && (x == 41 || x == 42 || x == 45 || x == 46)) {
+                if (y == 12 && (x == 9 || x == 10 || x == 13 || x == 14 || x == 41 || x == 42 || x == 45 || x == 46)) {
                     color = new Color(204, 0, 250);
                 }
                 else {
@@ -83,38 +68,49 @@ public class ClientProxy extends CommonProxy {
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
         BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage"); //TODO need to fix this for obf?
+        BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
 
-        //Load old skin
-        File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
-        try {
-            BufferedImage oldSkin = ImageIO.read(file);
-            if (bufferedImage != null) {
-                for (int i = newCorr; i <= oldCorr; i++) {
-                    Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
-                    int x = rand.nextInt(bufferedImage.getWidth());
-                    int y = rand.nextInt(bufferedImage.getHeight());
-                    bufferedImage.setRGB(x, y, oldSkin.getRGB(x, y));
-                }
+        if (bufferedImage != null) {
+            for (int i = newCorr; i <= oldCorr; i++) {
+                Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
+                int x = rand.nextInt(bufferedImage.getWidth());
+                int y = rand.nextInt(bufferedImage.getHeight());
+                bufferedImage.setRGB(x, y, oldSkin.getRGB(x, y));
             }
-            TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
     }
 
     @Override
     public void uncorruptPlayerSkin(AbstractClientPlayer entityPlayer) {
-        entityPlayer.getTextureSkin();
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
+        BufferedImage bufferedImage = this.getOriginalPlayerSkin(entityPlayer);
 
         //Load old skin
-        File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
-        try {
-            BufferedImage bufferedImage = ImageIO.read(file);
+        if (bufferedImage != null) {
             imageData.setBufferedImage(bufferedImage);
             TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {
+        ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
+        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d"); //TODO need to fix this for obf?
+        Random rand = new Random();
+
+        if (bufferedImage != null) {
+            try {
+                BufferedImage stoneSkin = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(this.stoneSkinTexture).getInputStream());
+                for (int i = 0; i < amount; i++) {
+                    int x = rand.nextInt(bufferedImage.getWidth());
+                    int y = rand.nextInt(bufferedImage.getHeight());
+                    bufferedImage.setRGB(x, y, stoneSkin.getRGB(x, y));
+                }
+                TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -126,5 +122,36 @@ public class ClientProxy extends CommonProxy {
             this.footsteps.put(player, footstep);
             Corruption.logger.debug(I18n.format("Spawned footstep at %s, %s, %s for %s", player.posX, player.posY, player.posZ, player));
         }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void backupPlayerSkin(AbstractClientPlayer entityPlayer) {
+        ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
+        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage");
+
+        File file = new File("skinbackup");
+        file.mkdir();
+        File skinFile = new File(file, entityPlayer.getCommandSenderName() + ".png");
+        try {
+/*                if (skinFile.exists()) {
+                    //If corr is 0 and we already have a skin for this player, load this just incase
+                    bufferedImage = ImageIO.read(skinFile);
+                }*/
+            skinFile.createNewFile();
+            ImageIO.write(bufferedImage, "PNG", skinFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private BufferedImage getOriginalPlayerSkin(AbstractClientPlayer entityPlayer) {
+        File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
+        BufferedImage bufferedImage = null;
+        try {
+            bufferedImage = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bufferedImage;
     }
 }

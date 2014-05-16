@@ -14,4 +14,6 @@ public class CommonProxy {
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {}
 
     public void spawnFootprint(EntityPlayer player) {}
+
+    public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {}
 }

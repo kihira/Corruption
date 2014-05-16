@@ -1,6 +1,5 @@
 package com.kihira.corruption.common;
 
-import com.kihira.corruption.common.corruption.AfraidOfTheDarkCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.command.CommandBase;
@@ -45,7 +44,7 @@ public class CommandCorruption extends CommandBase {
             if (args.length >= 2 && args[0].equals("effect")) {
                 if (args[1].equals("afraidofthedark")) {
                     EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
-                    CorruptionRegistry.currentCorruption.put(player, new AfraidOfTheDarkCorruption(player));
+                    CorruptionRegistry.addCorruptionEffect(player, "afraidOfTheDark");
                     notifyAdmins(commandSender, "Effect applied!");
                 }
             }

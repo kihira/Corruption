@@ -2,7 +2,6 @@ package com.kihira.corruption.common;
 
 import com.google.common.collect.HashMultimap;
 import com.kihira.corruption.Corruption;
-import com.kihira.corruption.common.corruption.AbstractCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -27,20 +26,22 @@ public class TickHandler {
 
                         //12 hours
                         if (e.player.worldObj.rand.nextInt(4320) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
-                            AbstractCorruption corruption = CorruptionRegistry.getRandomCorruptionEffect(e.player);
-                            Corruption.logger.info(I18n.format("Applying %s to %s", corruption.toString(), e.player.toString()));
-                            CorruptionRegistry.currentCorruption.put(e.player, corruption);
+                            String corrName = CorruptionRegistry.getRandomCorruptionEffect(e.player);
+                            Corruption.logger.info(I18n.format("Applying %s to %s", corrName, e.player.toString()));
+                            CorruptionRegistry.addCorruptionEffect(e.player, corrName);
                         }
                     }
                 }
             }
             //Common
-            if (CorruptionRegistry.currentCorruption.containsKey(e.player)) {
+            if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
                 //TODO keep an eye out for CME's here
                 //Make a copy to prevent CME's
-                Set<AbstractCorruption> corruptions = HashMultimap.create(CorruptionRegistry.currentCorruption).get(e.player);
-                for (AbstractCorruption corruption : corruptions) {
-                    if (corruption != null) corruption.onUpdate(FMLCommonHandler.instance().getEffectiveSide());
+                Set<String> corruptionNames = HashMultimap.create(CorruptionRegistry.currentCorruption).get(e.player.getCommandSenderName());
+                for (String corrName : corruptionNames) {
+                    if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
+                        CorruptionRegistry.corruptionHashMap.get(corrName).onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());
+                    }
                 }
             }
             //Client

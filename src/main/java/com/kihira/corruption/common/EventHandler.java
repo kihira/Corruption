@@ -1,8 +1,6 @@
 package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
-import com.kihira.corruption.common.corruption.AbstractCorruption;
-import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -31,8 +29,8 @@ public class EventHandler {
                 //Check if they can be corrupted (false if they've already killed it before)
                 if (CorruptionDataHelper.canBeCorrupted(player)) {
                     if (CorruptionRegistry.currentCorruption.containsKey(player)) {
-                        for (AbstractCorruption corruption : CorruptionRegistry.currentCorruption.get(player)) {
-                            corruption.finish();
+                        for (String corrName : CorruptionRegistry.currentCorruption.get(player.getCommandSenderName())) {
+                            CorruptionRegistry.corruptionHashMap.get(corrName).finish(player, FMLCommonHandler.instance().getEffectiveSide());
                         }
                         CorruptionRegistry.currentCorruption.removeAll(player);
                     }
@@ -50,23 +48,21 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent e) {
-        if (CorruptionRegistry.currentCorruption.containsKey(e.getPlayer())) {
-            Collection<AbstractCorruption> corruptions = CorruptionRegistry.currentCorruption.get(e.getPlayer());
-            for (AbstractCorruption corruption : corruptions) {
-                //BlockTeleportCorruption
-                if (corruption.getClass() == BlockTeleportCorruption.class && !e.block.hasTileEntity(e.blockMetadata)) {
-                    //Look a few times for a valid block location
-                    int x, y, z;
-                    for (int i = 0; i < 5; i++) {
-                        x = e.world.rand.nextInt(2 * 8) - 8;
-                        y = e.world.rand.nextInt(2 * 3) - 3;
-                        z = e.world.rand.nextInt(2 * 8) - 8;
-                        if (e.world.isAirBlock(x, y, z)) {
-                            e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
-                            e.setCanceled(true);
-                            e.world.setBlockToAir(e.x, e.y, e.z);
-                            break;
-                        }
+        if (CorruptionRegistry.currentCorruption.containsKey(e.getPlayer().getCommandSenderName())) {
+            Collection<String> corruptions = CorruptionRegistry.currentCorruption.get(e.getPlayer().getCommandSenderName());
+            //BlockTeleportCorruption
+            if (corruptions.contains("blockTeleport") && !e.block.hasTileEntity(e.blockMetadata)) {
+                //Look a few times for a valid block location
+                int x, y, z;
+                for (int i = 0; i < 5; i++) {
+                    x = e.world.rand.nextInt(2 * 8) - 8;
+                    y = e.world.rand.nextInt(2 * 3) - 3;
+                    z = e.world.rand.nextInt(2 * 8) - 8;
+                    if (e.world.isAirBlock(x, y, z)) {
+                        e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
+                        e.setCanceled(true);
+                        e.world.setBlockToAir(e.x, e.y, e.z);
+                        break;
                     }
                 }
             }

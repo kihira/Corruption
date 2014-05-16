@@ -2,6 +2,7 @@ package com.kihira.corruption.common.network;
 
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.CorruptionDataHelper;
+import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
@@ -17,7 +18,8 @@ import net.minecraft.entity.player.EntityPlayer;
 public class PacketEventHandler {
 
     private enum Packet {
-        CORRUPTION(0);
+        CORRUPTION(0),
+        CORRUPTIONEFFECT(1);
 
         private final int id;
 
@@ -32,9 +34,11 @@ public class PacketEventHandler {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
+    @SuppressWarnings("unchecked")
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent e) {
         ByteBuf payload = e.packet.payload();
-        if (payload.readInt() == Packet.CORRUPTION.getID()) {
+        int packetID = payload.readInt();
+        if (packetID == Packet.CORRUPTION.getID()) {
             EntityPlayer player = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(ByteBufUtils.readUTF8String(payload));
             if (player != null) {
                 int newCorr = payload.readInt();
@@ -52,6 +56,14 @@ public class PacketEventHandler {
                 }
                 CorruptionDataHelper.setCorruptionForPlayer(player, newCorr);
             }
+        }
+        else if (packetID == Packet.CORRUPTIONEFFECT.getID()) {
+            String playerName = ByteBufUtils.readUTF8String(payload);
+            String corrName = ByteBufUtils.readUTF8String(payload);
+            boolean shouldAdd = payload.readBoolean();
+
+            if (shouldAdd) CorruptionRegistry.addCorruptionEffect(playerName, corrName);
+            else CorruptionRegistry.currentCorruption.remove(playerName, corrName);
         }
     }
 
@@ -74,4 +86,14 @@ public class PacketEventHandler {
         return new FMLProxyPacket(byteBuf, "corruption");
     }
 
+    public static FMLProxyPacket getCorruptionEffectPacket(String playerName, String corrEffect, boolean shouldAdd) {
+        ByteBuf byteBuf = Unpooled.buffer();
+
+        byteBuf.writeInt(Packet.CORRUPTIONEFFECT.getID());
+        ByteBufUtils.writeUTF8String(byteBuf, playerName);
+        ByteBufUtils.writeUTF8String(byteBuf, corrEffect);
+        byteBuf.writeBoolean(shouldAdd);
+
+        return new FMLProxyPacket(byteBuf, "corruption");
+    }
 }
