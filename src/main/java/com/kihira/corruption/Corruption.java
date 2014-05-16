@@ -3,6 +3,7 @@ package com.kihira.corruption;
 import com.kihira.corruption.common.CommandCorruption;
 import com.kihira.corruption.common.EventHandler;
 import com.kihira.corruption.common.TickHandler;
+import com.kihira.corruption.common.block.BlockEnderCake;
 import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import com.kihira.corruption.common.corruption.StoneSkinCorruption;
@@ -16,6 +17,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -36,6 +38,8 @@ public class Corruption {
     public static boolean isEnabledStoneSkinCorr;
     public static boolean isEnabledWaterAllergyCorr;
 
+    public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
+
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
 
@@ -48,6 +52,7 @@ public class Corruption {
     public void preInit(FMLPreInitializationEvent e) {
         loadGeneralConfig(e.getSuggestedConfigurationFile());
         registerCorruptionEffects();
+        registerBlocks();
 
         FMLCommonHandler.instance().bus().register(new TickHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
@@ -89,5 +94,9 @@ public class Corruption {
         if (isEnabledBlockTeleportCorr) CorruptionRegistry.registerRandomCorruptionEffect(BlockTeleportCorruption.class);
         if (isEnabledWaterAllergyCorr) CorruptionRegistry.registerRandomCorruptionEffect(WaterAllergyCorruption.class);
         if (isEnabledStoneSkinCorr) CorruptionRegistry.registerRandomCorruptionEffect(StoneSkinCorruption.class);
+    }
+
+    private void registerBlocks() {
+        GameRegistry.registerBlock(blockEnderCake, "blockEnderCake");
     }
 }
