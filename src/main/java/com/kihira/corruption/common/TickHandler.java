@@ -1,5 +1,6 @@
 package com.kihira.corruption.common;
 
+import com.google.common.collect.HashMultimap;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.client.EntityFootstep;
 import com.kihira.corruption.common.corruption.AbstractCorruption;
@@ -41,7 +42,8 @@ public class TickHandler {
             //Common
             if (CorruptionRegistry.currentCorruption.containsKey(e.player)) {
                 //TODO keep an eye out for CME's here
-                Set<AbstractCorruption> corruptions = CorruptionRegistry.currentCorruption.get(e.player);
+                //Make a copy to prevent CME's
+                Set<AbstractCorruption> corruptions = HashMultimap.create(CorruptionRegistry.currentCorruption).get(e.player);
                 for (AbstractCorruption corruption : corruptions) {
                     if (corruption != null) corruption.onUpdate(FMLCommonHandler.instance().getEffectiveSide());
                 }

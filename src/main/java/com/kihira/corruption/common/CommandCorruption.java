@@ -1,5 +1,7 @@
 package com.kihira.corruption.common;
 
+import com.kihira.corruption.common.corruption.AfraidOfTheDarkCorruption;
+import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -20,8 +22,8 @@ public class CommandCorruption extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender commandSender, String[] args) {
-        if (args != null && args.length > 3) {
-            if (args[0].equals("set")) {
+        if (args != null ) {
+            if (args.length > 3 && args[0].equals("set")) {
                 if (args[1].equals("corruption")) {
                     int corr;
                     EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(args[3]);
@@ -38,6 +40,13 @@ public class CommandCorruption extends CommandBase {
 
                     CorruptionDataHelper.setCorruptionForPlayer(player, corr);
                     notifyAdmins(commandSender, "%s has set corruption for %s to %s", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
+                }
+            }
+            if (args.length >= 2 && args[0].equals("effect")) {
+                if (args[1].equals("afraidofthedark")) {
+                    EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
+                    CorruptionRegistry.currentCorruption.put(player, new AfraidOfTheDarkCorruption(player));
+                    notifyAdmins(commandSender, "Effect applied!");
                 }
             }
         }
