@@ -2,7 +2,6 @@ package com.kihira.corruption.common;
 
 import com.google.common.collect.HashMultimap;
 import com.kihira.corruption.Corruption;
-import com.kihira.corruption.client.EntityFootstep;
 import com.kihira.corruption.common.corruption.AbstractCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -10,14 +9,10 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.HashMap;
 import java.util.Set;
 
 public class TickHandler {
-
-    private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
 
     @SubscribeEvent
     @SuppressWarnings("unchecked")
@@ -51,13 +46,8 @@ public class TickHandler {
             //Client
             if (e.player.worldObj.isRemote) {
                 //TODO scale up chance with corruption
-                if ((this.footsteps.containsKey(e.player) && this.footsteps.get(e.player).getDistanceToEntity(e.player) > 1.4) || !this.footsteps.containsKey(e.player)) {
-                    if (e.player.ticksExisted % 5 == 0) {
-                        EntityFootstep footstep = new EntityFootstep(e.player);
-                        e.player.worldObj.spawnEntityInWorld(footstep);
-                        this.footsteps.put(e.player, footstep);
-                        Corruption.logger.info(I18n.format("Spawned footstep at %s, %s, %s for %s", e.player.posX, e.player.posY, e.player.posZ, e.player));
-                    }
+                if (e.player.ticksExisted % 5 == 0) {
+                    Corruption.proxy.spawnFootprint(e.player);
                 }
             }
         }

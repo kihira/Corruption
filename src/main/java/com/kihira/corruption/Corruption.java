@@ -29,7 +29,7 @@ import java.io.File;
 @Mod(name = "Corruption", modid = "corruption")
 public class Corruption {
 
-    @SidedProxy(clientSide = "com.kihira.corruption.proxy.ClientProxy", serverSide = "com.kihira.corruption.proxy.ClientProxy")
+    @SidedProxy(clientSide = "com.kihira.corruption.proxy.ClientProxy", serverSide = "com.kihira.corruption.proxy.CommonProxy")
     public static CommonProxy proxy;
 
     public static boolean isCorruptionActiveGlobal = true;

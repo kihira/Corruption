@@ -1,21 +1,32 @@
 package com.kihira.corruption.proxy;
 
+import com.kihira.corruption.Corruption;
 import com.kihira.corruption.client.EntityFootstep;
 import com.kihira.corruption.client.render.EntityFootstepRenderer;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Random;
 
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
+
+    private final ResourceLocation stoneSkinTexture = new ResourceLocation("corruption", "stoneskin.png");
+    private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
 
     @Override
     public void registerRenderers() {
@@ -104,6 +115,16 @@ public class ClientProxy extends CommonProxy {
             TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void spawnFootprint(EntityPlayer player) {
+        if ((this.footsteps.containsKey(player) && this.footsteps.get(player).getDistanceToEntity(player) > 1.4) || !this.footsteps.containsKey(player)) {
+            EntityFootstep footstep = new EntityFootstep(player);
+            player.worldObj.spawnEntityInWorld(footstep);
+            this.footsteps.put(player, footstep);
+            Corruption.logger.debug(I18n.format("Spawned footstep at %s, %s, %s for %s", player.posX, player.posY, player.posZ, player));
         }
     }
 }
