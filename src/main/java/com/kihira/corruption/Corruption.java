@@ -4,10 +4,7 @@ import com.kihira.corruption.common.CommandCorruption;
 import com.kihira.corruption.common.EventHandler;
 import com.kihira.corruption.common.TickHandler;
 import com.kihira.corruption.common.block.BlockEnderCake;
-import com.kihira.corruption.common.corruption.BlockTeleportCorruption;
-import com.kihira.corruption.common.corruption.CorruptionRegistry;
-import com.kihira.corruption.common.corruption.StoneSkinCorruption;
-import com.kihira.corruption.common.corruption.WaterAllergyCorruption;
+import com.kihira.corruption.common.corruption.*;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import com.kihira.corruption.proxy.CommonProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -99,6 +96,7 @@ public class Corruption {
         new BlockTeleportCorruption();
         new WaterAllergyCorruption();
         new StoneSkinCorruption();
+        new ColourBlindCorruption();
 
         if (isEnabledBlockTeleportCorr) CorruptionRegistry.registerRandomCorruptionEffect("blockTeleport");
         if (isEnabledWaterAllergyCorr) CorruptionRegistry.registerRandomCorruptionEffect("waterAllergy");

@@ -12,9 +12,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -30,7 +33,9 @@ import java.util.Random;
 public class ClientProxy extends CommonProxy {
 
     private final ResourceLocation stoneSkinTexture = new ResourceLocation("corruption", "stoneskin.png");
+    private final ResourceLocation shader = new ResourceLocation("corruption", "grayscale.json");
     private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
+
 
     @Override
     public void registerRenderers() {
@@ -141,6 +146,34 @@ public class ClientProxy extends CommonProxy {
                 this.footsteps.put(player, footstep);
                 Corruption.logger.debug(I18n.format("Spawned footstep at %s, %s, %s for %s", player.posX, player.posY, player.posZ, player));
             }
+        }
+    }
+
+    @Override
+    public void enableGrayscaleShader() {
+        if (OpenGlHelper.shadersSupported) {
+            EntityRenderer entityRenderer = Minecraft.getMinecraft().entityRenderer;
+            if (entityRenderer.theShaderGroup != null) {
+                entityRenderer.theShaderGroup.deleteShaderGroup();
+            }
+
+            try {
+                entityRenderer.theShaderGroup = new ShaderGroup(Minecraft.getMinecraft().getResourceManager(), Minecraft.getMinecraft().getFramebuffer(), this.shader);
+                entityRenderer.theShaderGroup.createBindFramebuffers(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+            } catch (IOException ioexception) {
+                Corruption.logger.warn("Failed to load shader: ", ioexception);
+            }
+        }
+    }
+
+    @Override
+    public void disableGrayscaleShader() {
+        if (OpenGlHelper.shadersSupported) {
+            EntityRenderer entityRenderer = Minecraft.getMinecraft().entityRenderer;
+            if (entityRenderer.getShaderGroup() != null) {
+                entityRenderer.getShaderGroup().deleteShaderGroup();
+            }
+            entityRenderer.theShaderGroup = null;
         }
     }
 

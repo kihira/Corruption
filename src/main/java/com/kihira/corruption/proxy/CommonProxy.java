@@ -18,4 +18,8 @@ public class CommonProxy {
     public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {}
 
     public void unstonifyPlayerSkin(String playerName) {}
+
+    public void enableGrayscaleShader() {}
+
+    public void disableGrayscaleShader() {}
 }

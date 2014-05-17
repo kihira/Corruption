@@ -38,9 +38,9 @@ public class CorruptionRegistry {
     }
 
     public static void addCorruptionEffect(String playerName, String corrName) {
-        if (corrName != null && !currentCorruption.containsEntry(playerName, corrName)) {
+        if (corrName != null) {
             currentCorruption.put(playerName, corrName);
-            Corruption.logger.info("Applying %s to %s", corrName, playerName);
+            Corruption.logger.info("Applying " + corrName + " from " + playerName);
             corruptionHashMap.get(corrName).init(playerName, FMLCommonHandler.instance().getEffectiveSide());
 
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {

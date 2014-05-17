@@ -74,8 +74,8 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload e) {
-        //Restores original players skins
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            //Restores original players skins
             File skinBackupFolder = new File("skinbackup");
             if (skinBackupFolder.exists()) {
                 File[] skinFiles = skinBackupFolder.listFiles();
@@ -88,6 +88,8 @@ public class EventHandler {
                 }
                 skinBackupFolder.delete();
             }
+
+            Corruption.proxy.disableGrayscaleShader();
         }
         //Purge corruption list
         CorruptionRegistry.currentCorruption.clear();

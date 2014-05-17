@@ -47,6 +47,11 @@ public class CommandCorruption extends CommandBase {
                     CorruptionRegistry.addCorruptionEffect(player, "afraidOfTheDark");
                     notifyAdmins(commandSender, "Effect applied!");
                 }
+                if (args[1].equals("colourBlind")) {
+                    EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
+                    CorruptionRegistry.addCorruptionEffect(player, "colourBlind");
+                    notifyAdmins(commandSender, "Effect applied!");
+                }
             }
         }
         else throw new CommandException("Not enough args!");
