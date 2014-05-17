@@ -63,8 +63,7 @@ public class TickHandler {
             }
             //Client
             if (e.player.worldObj.isRemote) {
-                //TODO scale up chance with corruption
-                if (e.player.ticksExisted % 2 == 0) {
+                if (e.player.worldObj.rand.nextInt(4000) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
                     Corruption.proxy.spawnFootprint(e.player);
                 }
             }

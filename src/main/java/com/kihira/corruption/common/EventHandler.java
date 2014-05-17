@@ -94,5 +94,4 @@ public class EventHandler {
         //Purge corruption list
         CorruptionRegistry.currentCorruption.clear();
     }
-
 }
