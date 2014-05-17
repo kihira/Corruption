@@ -66,12 +66,12 @@ public class PageData {
     }
 
     public static void registerPageData() {
-        pageMap.put("contents", new PageData("contents").setPageContents(0, "page.welcome.0", "page.welcome.0.title"));
-        pageMap.put("colourBlind", new PageData("colourblind").setPageContents(0, "page.colourblind.0", "page.colourblind.0.title").setTabName("page.colourblind.0.tab"));
-        pageMap.put("afraidOfTheDark", new PageData("afraidOfTheDark").setPageContents(0, "page.afraidOfTheDark.0", "page.afraidOfTheDark.0.title").setTabName("page.afraidOfTheDark.0.tab"));
+        pageMap.put("contents", new PageData("contents").setPageContents(0, "page.welcome.0", "page.welcome.0.title").setSubTitle("page.welcome.0.subtitle"));
+        pageMap.put("colourBlind", new PageData("colourblind").setPageContents(0, "page.colourblind.0", "page.colourblind.0.title").setTabName("page.colourblind.0.tab").setSubTitle("page.colourblind.0.subtitle"));
+        pageMap.put("afraidOfTheDark", new PageData("afraidOfTheDark").setPageContents(0, "page.afraidOfTheDark.0", "page.afraidOfTheDark.0.title").setTabName("page.afraidOfTheDark.0.tab").setSubTitle("page.afraidOfTheDark.0.subtitle"));
         pageMap.put("blockTeleport", new PageData("blockTeleport").setPageContents(0, "page.blockTeleport.0", "page.blockTeleport.0.title").setTabName("page.blockTeleport.0.tab").setSubTitle("page.blockTeleport.0.subtitle"));
-        pageMap.put("bloodLoss", new PageData("bloodLoss").setPageContents(0, "page.bloodLoss.0", "page.bloodLoss.0.title").setTabName("page.bloodLoss.0.tab"));
-        pageMap.put("stoneSkin", new PageData("stoneSkin").setPageContents(0, "page.stoneSkin.0", "page.stoneSkin.0.title").setTabName("page.stoneSkin.0.tab"));
-        pageMap.put("waterAllergy", new PageData("waterAllergy").setPageContents(0, "page.waterAllergy.0", "page.waterAllergy.0.title").setTabName("page.waterAllergy.0.tab"));
+        pageMap.put("bloodLoss", new PageData("bloodLoss").setPageContents(0, "page.bloodLoss.0", "page.bloodLoss.0.title").setTabName("page.bloodLoss.0.tab").setSubTitle("page.bloodLoss.0.subtitle"));
+        pageMap.put("stoneSkin", new PageData("stoneSkin").setPageContents(0, "page.stoneSkin.0", "page.stoneSkin.0.title").setTabName("page.stoneSkin.0.tab").setSubTitle("page.stoneSkin.0.subtitle"));
+        pageMap.put("waterAllergy", new PageData("waterAllergy").setPageContents(0, "page.waterAllergy.0", "page.waterAllergy.0.title").setTabName("page.waterAllergy.0.tab").setSubTitle("page.waterAllergy.0.subtitle"));
     }
 }

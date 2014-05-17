@@ -97,7 +97,7 @@ public class GuiDiary extends GuiScreen {
             this.pageData.put("stoneSkin", PageData.pageMap.get("stoneSkin"));
             this.pageData.put("waterAllergy", PageData.pageMap.get("waterAllergy"));
         }
-        this.loadPageData("contents");
+        if (this.currentPageData == null) this.loadPageData("contents");
     }
 
     private void loadPageData(String pageName) {
@@ -138,7 +138,11 @@ public class GuiDiary extends GuiScreen {
 
             title = I18n.format(this.currentPageData.getSubTitle());
             i1 = this.fontRendererObj.getStringWidth(title);
+            GL11.glPushMatrix();
+            GL11.glTranslatef(this.width * 0.25F, 40 * 0.5F, 0F);
+            GL11.glScalef(0.5F, 0.5F, 0F);
             this.fontRendererObj.drawString(EnumChatFormatting.ITALIC + title, k + 36 + (114 - i1) / 2, 40, 0);
+            GL11.glPopMatrix();
 
             s = I18n.format("book.pageIndicator", this.currPage + 1, this.currentPageData.getTotalPages());
             s1 = "";
@@ -149,7 +153,7 @@ public class GuiDiary extends GuiScreen {
 
             l = this.fontRendererObj.getStringWidth(s);
             this.fontRendererObj.drawString(s, k - l + this.diaryWidth - 44, 16, 0);
-            this.fontRendererObj.drawSplitString(I18n.format(s1), k + 36, 52, 116, 0);
+            this.fontRendererObj.drawSplitString(I18n.format(s1), k + 36, 48, 116, 0);
         }
 
         super.drawScreen(par1, par2, par3);
