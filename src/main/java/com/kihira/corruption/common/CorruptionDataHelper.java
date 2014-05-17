@@ -10,6 +10,16 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class CorruptionDataHelper {
 
+    public static NBTTagCompound getDiaryDataForPlayer(EntityPlayer entityPlayer) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        NBTTagCompound diaryData = corruptionData.getCompoundTag("Diary");
+
+        //Create and save tags if needs be
+        if (!corruptionData.hasKey("Diary")) corruptionData.setTag("Diary", diaryData);
+
+        return diaryData;
+    }
+
     private static NBTTagCompound getCorruptionDataForPlayer(EntityPlayer entityPlayer) {
         NBTTagCompound persistedTag = entityPlayer.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
         NBTTagCompound corruptionData = persistedTag.getCompoundTag("Corruption");

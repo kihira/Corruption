@@ -1,10 +1,13 @@
 package com.kihira.corruption;
 
+import com.kihira.corruption.client.diary.PageDataContents;
 import com.kihira.corruption.common.CommandCorruption;
 import com.kihira.corruption.common.EventHandler;
 import com.kihira.corruption.common.FMLEventHandler;
+import com.kihira.corruption.common.GuiHandler;
 import com.kihira.corruption.common.block.BlockEnderCake;
 import com.kihira.corruption.common.corruption.*;
+import com.kihira.corruption.common.item.ItemDiary;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import com.kihira.corruption.proxy.CommonProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -29,6 +32,9 @@ public class Corruption {
     @SidedProxy(clientSide = "com.kihira.corruption.proxy.ClientProxy", serverSide = "com.kihira.corruption.proxy.CommonProxy")
     public static CommonProxy proxy;
 
+    @Mod.Instance
+    public static Corruption instance;
+
     public static boolean isCorruptionActiveGlobal = true;
 
     public static boolean isEnabledBlockTeleportCorr;
@@ -39,6 +45,7 @@ public class Corruption {
     public static boolean isEnabledBloodLossCorr;
 
     public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
+    public static final ItemDiary itemDiary = new ItemDiary();
 
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
@@ -56,12 +63,17 @@ public class Corruption {
         registerCorruptionEffects();
         registerBlocks();
 
+        GameRegistry.registerItem(itemDiary, "itemDiary");
+
         FMLCommonHandler.instance().bus().register(new FMLEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         eventChannel.register(new PacketEventHandler());
 
         proxy.registerRenderers();
+
+        new PageDataContents();
     }
 
     @Mod.EventHandler
