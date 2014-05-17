@@ -118,6 +118,8 @@ public class Corruption {
         if (isEnabledAfraidOfTheDarkCorr) {
             new AfraidOfTheDarkCorruption();
         }
+
+        new BloodLossCorruption();
     }
 
     private void registerBlocks() {

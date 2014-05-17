@@ -22,4 +22,6 @@ public class CommonProxy {
     public void enableGrayscaleShader() {}
 
     public void disableGrayscaleShader() {}
+
+    public void spawnBloodParticle(EntityPlayer player) {}
 }

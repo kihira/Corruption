@@ -51,7 +51,12 @@ public class CommandCorruption extends CommandBase {
             else if (args.length >= 1 && args[0].equals("disable")) {
                 EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 CorruptionDataHelper.setCanBeCorrupted(player, false);
-                notifyAdmins(commandSender, "Corrupted disabled!");
+                notifyAdmins(commandSender, "Corruption disabled!");
+            }
+            else if (args.length >= 1 && args[0].equals("enable")) {
+                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
+                CorruptionDataHelper.setCanBeCorrupted(player, true);
+                notifyAdmins(commandSender, "Corruption enabled!");
             }
             else if (args.length >= 1 && args[0].equals("get")) {
                 EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
