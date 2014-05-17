@@ -13,6 +13,8 @@ import java.util.Set;
 
 public class TickHandler {
 
+    private final int CORRUPTION_MAX = 17280;
+
     @SubscribeEvent
     @SuppressWarnings("unchecked")
     public void onPlayerTick(TickEvent.PlayerTickEvent e) {
@@ -27,7 +29,7 @@ public class TickHandler {
                         CorruptionDataHelper.increaseCorruptionForPlayer(e.player, 1);
 
                         //24 hours
-                        if (e.player.worldObj.rand.nextInt(17280) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
+                        if (e.player.worldObj.rand.nextInt(CORRUPTION_MAX) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
                             String corrName = CorruptionRegistry.getRandomCorruptionEffect(e.player);
                             CorruptionRegistry.addCorruptionEffect(e.player, corrName);
                         }
@@ -49,6 +51,12 @@ public class TickHandler {
                             }
                         }
                     }
+                    //AfraidOfTheDark
+                    if (e.player.worldObj.getTotalWorldTime() % 200 == 0 && e.player.worldObj.getBlockLightValue((int) e.player.posX, (int) e.player.posY, (int) e.player.posZ) <= 8) {
+                        if (CorruptionDataHelper.getCorruptionForPlayer(e.player) > 3000 && e.player.worldObj.rand.nextInt(CORRUPTION_MAX) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
+                            CorruptionRegistry.addCorruptionEffect(e.player, "afraidOfTheDark");
+                        }
+                    }
 
                 }
                 //Removing corruption
@@ -67,7 +75,7 @@ public class TickHandler {
             }
             //Client
             if (e.player.worldObj.isRemote) {
-                if (!CorruptionDataHelper.canBeCorrupted(e.player) && e.player.worldObj.rand.nextInt(600) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
+                if (CorruptionDataHelper.canBeCorrupted(e.player) && e.player.worldObj.rand.nextInt(600) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
                     Corruption.proxy.spawnFootprint(e.player);
                 }
             }
