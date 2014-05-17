@@ -17,9 +17,11 @@ public abstract class AbstractCorruption {
         else throw new IllegalArgumentException(I18n.format("A corruption effect with the name %s has already been registered!", corruptionName));
     }
 
-    public abstract void init(EntityPlayer player, Side side);
+    public abstract void init(String player, Side side);
 
     public abstract void onUpdate(EntityPlayer player, Side side);
 
-    public abstract void finish(EntityPlayer player, Side side);
+    public abstract void finish(String player, Side side);
+
+    public abstract boolean shouldContinue(EntityPlayer player, Side side);
 }

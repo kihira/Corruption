@@ -1,6 +1,5 @@
 package com.kihira.corruption.common;
 
-import com.google.common.collect.HashMultimap;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -9,6 +8,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.I18n;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class TickHandler {
@@ -35,9 +36,23 @@ public class TickHandler {
             }
             //Common
             if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
-                //TODO keep an eye out for CME's here
-                //Make a copy to prevent CME's
-                Set<String> corruptionNames = HashMultimap.create(CorruptionRegistry.currentCorruption).get(e.player.getCommandSenderName());
+                Set<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
+                List<String> toRemove = new ArrayList<String>();
+                for (String corrName : corruptionNames) {
+                    if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
+                        if (!CorruptionRegistry.corruptionHashMap.get(corrName).shouldContinue(e.player, FMLCommonHandler.instance().getEffectiveSide())) {
+                            toRemove.add(corrName);
+                        }
+                    }
+                }
+                //To prevent CME's
+                if (!toRemove.isEmpty()) {
+                    for (String corrName : toRemove) {
+                        CorruptionRegistry.removeCorruptionEffectFromPlayer(e.player.getCommandSenderName(), corrName);
+                    }
+                }
+                //Re populate the set to remove any that may have been removed
+                corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
                 for (String corrName : corruptionNames) {
                     if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
                         CorruptionRegistry.corruptionHashMap.get(corrName).onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());

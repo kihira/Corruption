@@ -2,6 +2,7 @@ package com.kihira.corruption.common.corruption;
 
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 
@@ -12,8 +13,8 @@ public class WaterAllergyCorruption extends AbstractCorruption {
     }
 
     @Override
-    public void init(EntityPlayer player, Side side) {
-        player.addChatComponentMessage(new ChatComponentText("You feel your skin begin to burn slightly, perhaps from the water in the air?"));
+    public void init(String player, Side side) {
+        if (side == Side.SERVER) MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(player).addChatComponentMessage(new ChatComponentText("You feel your skin begin to burn slightly, perhaps from the water in the air?"));
     }
 
     @Override
@@ -30,7 +31,12 @@ public class WaterAllergyCorruption extends AbstractCorruption {
     }
 
     @Override
-    public void finish(EntityPlayer player, Side side) {
+    public void finish(String player, Side side) {
 
+    }
+
+    @Override
+    public boolean shouldContinue(EntityPlayer player, Side side) {
+        return true;
     }
 }

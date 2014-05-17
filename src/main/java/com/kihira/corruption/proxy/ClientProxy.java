@@ -3,12 +3,14 @@ package com.kihira.corruption.proxy;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.client.EntityFootstep;
 import com.kihira.corruption.client.render.EntityFootstepRenderer;
+import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.I18n;
@@ -41,7 +43,7 @@ public class ClientProxy extends CommonProxy {
 
         //Backup old skin
         if (oldCorr == 0) {
-            this.backupPlayerSkin(entityPlayer);
+            this.backupPlayerSkin(entityPlayer); //TODO better way to detect when a backup is needed
         }
 
         if (bufferedImage != null) {
@@ -82,9 +84,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void uncorruptPlayerSkin(AbstractClientPlayer entityPlayer) {
-        ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = this.getOriginalPlayerSkin(entityPlayer);
+    public void uncorruptPlayerSkin(String playerName) {
+        AbstractClientPlayer player = (AbstractClientPlayer) Minecraft.getMinecraft().theWorld.getPlayerEntityByName(playerName);
+        if (player == null) {
+            player = new EntityOtherPlayerMP(Minecraft.getMinecraft().theWorld, new GameProfile(playerName, playerName));
+        }
+        ThreadDownloadImageData imageData = player.getTextureSkin();
+        BufferedImage bufferedImage = this.getOriginalPlayerSkin(player);
 
         //Load old skin
         if (bufferedImage != null) {
@@ -116,11 +122,13 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void spawnFootprint(EntityPlayer player) {
-        if ((this.footsteps.containsKey(player) && this.footsteps.get(player).getDistanceToEntity(player) > 1.4) || !this.footsteps.containsKey(player)) {
-            EntityFootstep footstep = new EntityFootstep(player);
-            player.worldObj.spawnEntityInWorld(footstep);
-            this.footsteps.put(player, footstep);
-            Corruption.logger.debug(I18n.format("Spawned footstep at %s, %s, %s for %s", player.posX, player.posY, player.posZ, player));
+        if (player.fallDistance == 0 && !player.worldObj.isAirBlock((int) player.posX, (int) player.boundingBox.minY - 1, (int) player.posZ)) {
+            if ((this.footsteps.containsKey(player) && this.footsteps.get(player).getDistanceToEntity(player) > 1.4) || !this.footsteps.containsKey(player)) {
+                EntityFootstep footstep = new EntityFootstep(player);
+                player.worldObj.spawnEntityInWorld(footstep);
+                this.footsteps.put(player, footstep);
+                Corruption.logger.debug(I18n.format("Spawned footstep at %s, %s, %s for %s", player.posX, player.posY, player.posZ, player));
+            }
         }
     }
 

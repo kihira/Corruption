@@ -30,7 +30,7 @@ public class EventHandler {
                 if (CorruptionDataHelper.canBeCorrupted(player)) {
                     if (CorruptionRegistry.currentCorruption.containsKey(player)) {
                         for (String corrName : CorruptionRegistry.currentCorruption.get(player.getCommandSenderName())) {
-                            CorruptionRegistry.corruptionHashMap.get(corrName).finish(player, FMLCommonHandler.instance().getEffectiveSide());
+                            CorruptionRegistry.corruptionHashMap.get(corrName).finish(player.getCommandSenderName(), FMLCommonHandler.instance().getEffectiveSide());
                         }
                         CorruptionRegistry.currentCorruption.removeAll(player);
                     }

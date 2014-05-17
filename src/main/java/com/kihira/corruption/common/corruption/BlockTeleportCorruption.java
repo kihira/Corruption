@@ -9,7 +9,7 @@ public class BlockTeleportCorruption extends AbstractCorruption {
     }
 
     @Override
-    public void init(EntityPlayer player, Side side) {
+    public void init(String player, Side side) {
 
     }
 
@@ -19,7 +19,12 @@ public class BlockTeleportCorruption extends AbstractCorruption {
     }
 
     @Override
-    public void finish(EntityPlayer player, Side side) {
+    public void finish(String player, Side side) {
 
+    }
+
+    @Override
+    public boolean shouldContinue(EntityPlayer player, Side side) {
+        return true;
     }
 }

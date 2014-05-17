@@ -3,7 +3,10 @@ package com.kihira.corruption.common.corruption;
 import com.google.common.collect.HashMultimap;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.network.PacketEventHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.ArrayList;
@@ -38,20 +41,25 @@ public class CorruptionRegistry {
     public static void addCorruptionEffect(String playerName, String corrName) {
         if (corrName != null && !currentCorruption.containsEntry(playerName, corrName)) {
             currentCorruption.put(playerName, corrName);
-            //corruptionHashMap.get(corrName).init(player, FMLCommonHandler.instance().getEffectiveSide()); TODO
+            corruptionHashMap.get(corrName).init(playerName, FMLCommonHandler.instance().getEffectiveSide());
 
-            FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(playerName, corrName, true);
-            Corruption.eventChannel.sendToAll(packet);
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(playerName, corrName, true);
+                Corruption.eventChannel.sendToAll(packet);
+            }
         }
     }
 
     public static void removeCorruptionEffectFromPlayer(String playerName, String corrName) {
         if (corrName != null && currentCorruption.containsEntry(playerName, corrName)) {
             currentCorruption.remove(playerName, corrName);
-            //corruptionHashMap.get(corrName).finish(player, FMLCommonHandler.instance().getEffectiveSide()); TODO
+            Corruption.logger.info(I18n.format("Removing %s from %s", corrName, playerName));
+            corruptionHashMap.get(corrName).finish(playerName, FMLCommonHandler.instance().getEffectiveSide());
 
-            FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(playerName, corrName, false);
-            Corruption.eventChannel.sendToAll(packet);
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+                FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(playerName, corrName, false);
+                Corruption.eventChannel.sendToAll(packet);
+            }
         }
     }
 
