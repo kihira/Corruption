@@ -1,5 +1,6 @@
 package com.kihira.corruption.common;
 
+import com.google.common.collect.HashMultimap;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -24,6 +25,12 @@ public class EventHandler {
         if (!e.entityLiving.worldObj.isRemote) {
             if (e.entityLiving instanceof EntityDragon) {
                 Corruption.isCorruptionActiveGlobal = false;
+                HashMultimap<String, String> copy = HashMultimap.create(CorruptionRegistry.currentCorruption);
+                for (String playerName : copy.keySet()) {
+                    for (String corrName : CorruptionRegistry.currentCorruption.get(playerName)) {
+                        CorruptionRegistry.removeCorruptionEffectFromPlayer(playerName, corrName);
+                    }
+                }
                 CorruptionRegistry.currentCorruption.clear();
                 FMLCommonHandler.instance().getMinecraftServerInstance().addChatMessage(new ChatComponentText("The dragon has been killed! This text needs to be rewritten to be fancier!"));
             }
@@ -31,9 +38,10 @@ public class EventHandler {
                 EntityPlayer player = (EntityPlayer) e.source.getEntity();
                 //Check if they can be corrupted (false if they've already killed it before)
                 if (CorruptionDataHelper.canBeCorrupted(player)) {
+                    HashMultimap<String, String> copy = HashMultimap.create(CorruptionRegistry.currentCorruption);
                     if (CorruptionRegistry.currentCorruption.containsKey(player)) {
-                        for (String corrName : CorruptionRegistry.currentCorruption.get(player.getCommandSenderName())) {
-                            CorruptionRegistry.corruptionHashMap.get(corrName).finish(player.getCommandSenderName(), FMLCommonHandler.instance().getEffectiveSide());
+                        for (String corrName : copy.get(player.getCommandSenderName())) {
+                            CorruptionRegistry.removeCorruptionEffectFromPlayer(player.getCommandSenderName(), corrName);
                         }
                         CorruptionRegistry.currentCorruption.removeAll(player);
                     }
