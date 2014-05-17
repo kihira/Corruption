@@ -36,6 +36,7 @@ public class Corruption {
     public static boolean isEnabledWaterAllergyCorr;
     public static boolean isEnabledColourBlindCorr;
     public static boolean isEnabledAfraidOfTheDarkCorr;
+    public static boolean isEnabledBloodLossCorr;
 
     public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
 
@@ -83,6 +84,8 @@ public class Corruption {
         isEnabledColourBlindCorr = prop.getBoolean(true);
         prop = config.get(CATEGORY_CORRUPTION, "Enable Afraid of the Dark Corruption Effect", true);
         isEnabledAfraidOfTheDarkCorr = prop.getBoolean(true);
+        prop = config.get(CATEGORY_CORRUPTION, "Enable Blood Loss Corruption Effect", true);
+        isEnabledBloodLossCorr = prop.getBoolean(true);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "Disable corruption on dragon death", true);
         prop.comment = "When the dragon is killed, corruption is disabled for ALL players no matter when they play";
@@ -101,7 +104,6 @@ public class Corruption {
 
         if (isEnabledBlockTeleportCorr) {
             new BlockTeleportCorruption();
-            CorruptionRegistry.registerRandomCorruptionEffect("blockTeleport");
         }
         if (isEnabledWaterAllergyCorr) {
             new WaterAllergyCorruption();
@@ -118,8 +120,9 @@ public class Corruption {
         if (isEnabledAfraidOfTheDarkCorr) {
             new AfraidOfTheDarkCorruption();
         }
-
-        new BloodLossCorruption();
+        if (isEnabledBloodLossCorr) {
+            new BloodLossCorruption();
+        }
     }
 
     private void registerBlocks() {

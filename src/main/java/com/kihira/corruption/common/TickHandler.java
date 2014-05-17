@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class TickHandler {
 
-    private final int CORRUPTION_MAX = 17280;
+    public static final int CORRUPTION_MAX = 17280;
 
     @SubscribeEvent
     @SuppressWarnings("unchecked")
@@ -25,7 +25,7 @@ public class TickHandler {
                 if (Corruption.isCorruptionActiveGlobal && CorruptionDataHelper.canBeCorrupted(e.player)) {
                     //5 second
                     //TODO: reduce this time for modjam only?
-                    if (e.player.worldObj.getTotalWorldTime() % 100 == 0) {
+                    if (e.player.worldObj.getTotalWorldTime() % 10 == 0) {
                         CorruptionDataHelper.increaseCorruptionForPlayer(e.player, 1);
 
                         //24 hours
@@ -75,7 +75,7 @@ public class TickHandler {
             }
             //Client
             if (e.player.worldObj.isRemote) {
-                if (CorruptionDataHelper.canBeCorrupted(e.player) && e.player.worldObj.rand.nextInt(1200) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
+                if (CorruptionDataHelper.canBeCorrupted(e.player) && e.player.worldObj.rand.nextInt(1800) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
                     Corruption.proxy.spawnFootprint(e.player);
                 }
             }
