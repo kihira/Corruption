@@ -4,14 +4,16 @@ import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class TickHandler {
+public class FMLEventHandler {
 
     public static final int CORRUPTION_MAX = 17280;
 
@@ -23,9 +25,7 @@ public class TickHandler {
             //Server
             if (e.side == Side.SERVER) {
                 if (Corruption.isCorruptionActiveGlobal && CorruptionDataHelper.canBeCorrupted(e.player)) {
-                    //5 second
-                    //TODO: reduce this time for modjam only?
-                    if (e.player.worldObj.getTotalWorldTime() % 10 == 0) {
+                    if (e.player.worldObj.getTotalWorldTime() % Corruption.corrSpeed == 0) {
                         CorruptionDataHelper.increaseCorruptionForPlayer(e.player, 1);
 
                         //24 hours
@@ -80,5 +80,10 @@ public class TickHandler {
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent e) {
+        if (Corruption.corrSpeed == 10) e.player.addChatComponentMessage(new ChatComponentText("[Corruption] Please note that this server is running at ModJam speed (20x faster then normal!) so you can see the full effects of the mod. You can change this in your config"));
     }
 }

@@ -2,7 +2,7 @@ package com.kihira.corruption;
 
 import com.kihira.corruption.common.CommandCorruption;
 import com.kihira.corruption.common.EventHandler;
-import com.kihira.corruption.common.TickHandler;
+import com.kihira.corruption.common.FMLEventHandler;
 import com.kihira.corruption.common.block.BlockEnderCake;
 import com.kihira.corruption.common.corruption.*;
 import com.kihira.corruption.common.network.PacketEventHandler;
@@ -48,6 +48,7 @@ public class Corruption {
     public static boolean disableCorrOnDragonDeath;
     public static boolean disableCorrOnWitherDeath;
     public static int corrRemovedOnDeath;
+    public static int corrSpeed;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
@@ -55,7 +56,7 @@ public class Corruption {
         registerCorruptionEffects();
         registerBlocks();
 
-        FMLCommonHandler.instance().bus().register(new TickHandler());
+        FMLCommonHandler.instance().bus().register(new FMLEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
         eventChannel.register(new PacketEventHandler());
@@ -96,6 +97,9 @@ public class Corruption {
         prop = config.get(Configuration.CATEGORY_GENERAL, "Corruptioned removed on death", 0);
         prop.comment = "If a player dies, this amount of corruption will be removed (set to 0 to disable)";
         corrRemovedOnDeath = prop.getInt();
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption Speed", 10);
+        prop.comment = "How often in ticks to apply corruption. ModJam speed is 10, normal speed is 200";
+        corrSpeed = prop.getInt();
 
         if (config.hasChanged()) config.save();
     }
