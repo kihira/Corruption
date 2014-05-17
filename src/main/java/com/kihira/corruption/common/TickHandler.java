@@ -21,11 +21,13 @@ public class TickHandler {
             //Server
             if (e.side == Side.SERVER) {
                 if (Corruption.isCorruptionActiveGlobal && CorruptionDataHelper.canBeCorrupted(e.player)) {
-                    if (e.player.worldObj.getTotalWorldTime() % 200 == 0) {
+                    //5 second
+                    //TODO: reduce this time for modjam only?
+                    if (e.player.worldObj.getTotalWorldTime() % 100 == 0) {
                         CorruptionDataHelper.increaseCorruptionForPlayer(e.player, 1);
 
-                        //12 hours
-                        if (e.player.worldObj.rand.nextInt(4320) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
+                        //24 hours
+                        if (e.player.worldObj.rand.nextInt(17280) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
                             String corrName = CorruptionRegistry.getRandomCorruptionEffect(e.player);
                             CorruptionRegistry.addCorruptionEffect(e.player, corrName);
                         }
