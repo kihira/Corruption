@@ -3,6 +3,7 @@ package com.kihira.corruption.client.gui;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.kihira.corruption.client.diary.PageData;
+import com.kihira.corruption.client.gui.button.GuiButtonPage;
 import com.kihira.corruption.client.gui.button.GuiButtonTab;
 import com.kihira.corruption.common.CorruptionDataHelper;
 import cpw.mods.fml.relauncher.Side;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ public class GuiDiary extends GuiScreen {
     private final int diaryWidth;
     private final int diaryHeight;
     private GuiButtonTab buttonContents;
+    private GuiButtonPage buttonNextPage;
+    private GuiButtonPage buttonPreviousPage;
     private List<GuiButtonTab> buttonPageTabs = new ArrayList<GuiButtonTab>();
     private HashMap<String, PageData> pageData = new HashMap<String, PageData>();
     private BiMap<Integer, String> buttonPageMapping = HashBiMap.create();
@@ -50,11 +54,14 @@ public class GuiDiary extends GuiScreen {
 
         //Contents Tab Button
         this.buttonList.add(this.buttonContents = new GuiButtonTab(50, this.width / 2 + 69, 14, "Contents"));
+        //Page Buttons
+        this.buttonList.add(this.buttonNextPage = new GuiButtonPage(51, this.width / 2 + 120, 154, true));
+        this.buttonList.add(this.buttonPreviousPage = new GuiButtonPage(52, this.width / 2 + 38, 154, false));
         //Corruption Pages
         int yOffset = 15;
         int id = 0;
         for (Map.Entry<String, PageData> page : this.pageData.entrySet()) {
-            if (!page.getKey().equals("contents")) {
+            if (!page.getKey().equals("contents") && page.getValue() != null) {
                 this.buttonPageMapping.put(id, page.getKey());
                 this.buttonPageTabs.add(id, new GuiButtonTab(id, this.width / 2 + 69, 14 + yOffset, page.getValue().getTabName()));
                 this.buttonList.add(this.buttonPageTabs.get(id));
@@ -62,6 +69,13 @@ public class GuiDiary extends GuiScreen {
                 yOffset += 15;
             }
         }
+
+        this.updateButtons();
+    }
+
+    private void updateButtons() {
+        this.buttonNextPage.visible = this.currPage < this.currentPageData.getTotalPages() - 1;
+        this.buttonPreviousPage.visible = this.currPage > 0;
     }
 
     private void loadDiaryData() {
@@ -78,6 +92,11 @@ public class GuiDiary extends GuiScreen {
         else {
             this.pageData.put("contents", PageData.pageMap.get("contents"));
             this.pageData.put("colourBlind", PageData.pageMap.get("colourBlind"));
+            this.pageData.put("afraidOfTheDark", PageData.pageMap.get("afraidOfTheDark"));
+            this.pageData.put("blockTeleport", PageData.pageMap.get("blockTeleport"));
+            this.pageData.put("bloodLoss", PageData.pageMap.get("bloodLoss"));
+            this.pageData.put("stoneSkin", PageData.pageMap.get("stoneSkin"));
+            this.pageData.put("waterAllergy", PageData.pageMap.get("waterAllergy"));
         }
         this.loadPageData("contents");
     }
@@ -99,6 +118,7 @@ public class GuiDiary extends GuiScreen {
                 this.loadPageData(this.buttonPageMapping.get(button.id));
             }
         }
+        this.updateButtons();
     }
 
     @Override
@@ -112,7 +132,7 @@ public class GuiDiary extends GuiScreen {
         int l;
 
         if (this.currentPageData != null) {
-            String title = this.currentPageData.getTitle();
+            String title = StatCollector.translateToLocal(this.currentPageData.getTitle(this.currPage));
 
             int i1 = this.fontRendererObj.getStringWidth(title);
             this.fontRendererObj.drawString(EnumChatFormatting.BOLD + title, k + 36 + (104 - i1) / 2, 28, 0);
@@ -126,7 +146,7 @@ public class GuiDiary extends GuiScreen {
 
             l = this.fontRendererObj.getStringWidth(s);
             this.fontRendererObj.drawString(s, k - l + this.diaryWidth - 44, 16, 0);
-            this.fontRendererObj.drawSplitString(s1, k + 36, 40, 116, 0);
+            this.fontRendererObj.drawSplitString(StatCollector.translateToLocal(s1), k + 36, 40, 116, 0);
         }
 
         super.drawScreen(par1, par2, par3);
