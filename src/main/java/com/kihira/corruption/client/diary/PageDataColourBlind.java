@@ -1,13 +1,13 @@
 package com.kihira.corruption.client.diary;
 
-public class PageDataContents extends PageData {
+public class PageDataColourBlind extends PageData {
 
-    public PageDataContents() {
-        super("contents");
+    public PageDataColourBlind() {
+        super("colourBlind");
     }
 
     public String getPage(int pageNumber) {
-        return "Welcome to your guide to Corruption";
+        return "Dooooooom";
     }
 
     public int getTotalPages() {
@@ -15,10 +15,10 @@ public class PageDataContents extends PageData {
     }
 
     public String getTitle() {
-        return "Contents";
+        return "Colour Blind";
     }
 
     public String getTabName() {
-        return "Contents";
+        return "Colour Blind";
     }
 }

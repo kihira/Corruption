@@ -22,6 +22,10 @@ public class PageData {
     }
 
     public String getTitle() {
-        return "Pie!";
+        return this.pageName;
+    }
+
+    public String getTabName() {
+        return this.pageName;
     }
 }

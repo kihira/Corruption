@@ -1,5 +1,6 @@
 package com.kihira.corruption;
 
+import com.kihira.corruption.client.diary.PageDataColourBlind;
 import com.kihira.corruption.client.diary.PageDataContents;
 import com.kihira.corruption.common.CommandCorruption;
 import com.kihira.corruption.common.EventHandler;
@@ -74,6 +75,7 @@ public class Corruption {
         proxy.registerRenderers();
 
         new PageDataContents();
+        new PageDataColourBlind();
     }
 
     @Mod.EventHandler
