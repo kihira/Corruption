@@ -6,7 +6,6 @@ import com.kihira.corruption.common.network.PacketEventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ public class CorruptionRegistry {
     public static void addCorruptionEffect(String playerName, String corrName) {
         if (corrName != null && !currentCorruption.containsEntry(playerName, corrName)) {
             currentCorruption.put(playerName, corrName);
+            Corruption.logger.info("Applying %s to %s", corrName, playerName);
             corruptionHashMap.get(corrName).init(playerName, FMLCommonHandler.instance().getEffectiveSide());
 
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
@@ -51,15 +51,14 @@ public class CorruptionRegistry {
     }
 
     public static void removeCorruptionEffectFromPlayer(String playerName, String corrName) {
-        if (corrName != null && currentCorruption.containsEntry(playerName, corrName)) {
-            currentCorruption.remove(playerName, corrName);
-            Corruption.logger.info(I18n.format("Removing %s from %s", corrName, playerName));
-            corruptionHashMap.get(corrName).finish(playerName, FMLCommonHandler.instance().getEffectiveSide());
-
+        if (corrName != null) {
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
                 FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(playerName, corrName, false);
                 Corruption.eventChannel.sendToAll(packet);
             }
+            currentCorruption.remove(playerName, corrName);
+            Corruption.logger.info("Removing " + corrName + " from " + playerName);
+            corruptionHashMap.get(corrName).finish(playerName, FMLCommonHandler.instance().getEffectiveSide());
         }
     }
 

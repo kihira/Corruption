@@ -4,13 +4,16 @@ import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 
+import java.io.File;
 import java.util.Collection;
 
 public class EventHandler {
@@ -68,4 +71,26 @@ public class EventHandler {
             }
         }
     }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload e) {
+        //Restores original players skins
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            File skinBackupFolder = new File("skinbackup");
+            if (skinBackupFolder.exists()) {
+                File[] skinFiles = skinBackupFolder.listFiles();
+                if (skinFiles != null) {
+                    for (File skinFile : skinFiles) {
+                        String playerName = skinFile.getName().substring(0, skinFile.getName().length() - 4);
+                        Corruption.proxy.uncorruptPlayerSkin(playerName);
+                        skinFile.delete();
+                    }
+                }
+                skinBackupFolder.delete();
+            }
+        }
+        //Purge corruption list
+        CorruptionRegistry.currentCorruption.clear();
+    }
+
 }

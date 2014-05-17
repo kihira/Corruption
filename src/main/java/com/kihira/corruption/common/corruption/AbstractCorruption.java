@@ -1,7 +1,7 @@
 package com.kihira.corruption.common.corruption;
 
+import com.kihira.corruption.Corruption;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 
 public abstract class AbstractCorruption {
@@ -14,7 +14,7 @@ public abstract class AbstractCorruption {
         if (!CorruptionRegistry.corruptionHashMap.containsKey(corruptionName)) {
             CorruptionRegistry.corruptionHashMap.put(corruptionName, this);
         }
-        else throw new IllegalArgumentException(I18n.format("A corruption effect with the name %s has already been registered!", corruptionName));
+        else Corruption.logger.error(new IllegalArgumentException("A corruption effect with the name " + corruptionName + " has already been registered!"));
     }
 
     public abstract void init(String player, Side side);

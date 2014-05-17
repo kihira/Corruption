@@ -63,7 +63,7 @@ public class PacketEventHandler {
             boolean shouldAdd = payload.readBoolean();
 
             if (shouldAdd) CorruptionRegistry.addCorruptionEffect(playerName, corrName);
-            else CorruptionRegistry.currentCorruption.remove(playerName, corrName);
+            else CorruptionRegistry.removeCorruptionEffectFromPlayer(playerName, corrName);
         }
     }
 

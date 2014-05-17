@@ -6,7 +6,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.client.resources.I18n;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,31 +27,32 @@ public class TickHandler {
                         //12 hours
                         if (e.player.worldObj.rand.nextInt(4320) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
                             String corrName = CorruptionRegistry.getRandomCorruptionEffect(e.player);
-                            Corruption.logger.info(I18n.format("Applying %s to %s", corrName, e.player.toString()));
                             CorruptionRegistry.addCorruptionEffect(e.player, corrName);
                         }
                     }
+                    if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
+                        Set<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
+                        List<String> toRemove = new ArrayList<String>();
+                        for (String corrName : corruptionNames) {
+                            if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
+                                if (!CorruptionRegistry.corruptionHashMap.get(corrName).shouldContinue(e.player, FMLCommonHandler.instance().getEffectiveSide())) {
+                                    toRemove.add(corrName);
+                                }
+                            }
+                        }
+                        //To prevent CME's
+                        if (!toRemove.isEmpty()) {
+                            for (String corrName : toRemove) {
+                                CorruptionRegistry.removeCorruptionEffectFromPlayer(e.player.getCommandSenderName(), corrName);
+                            }
+                        }
+                    }
+
                 }
             }
             //Common
             if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
                 Set<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
-                List<String> toRemove = new ArrayList<String>();
-                for (String corrName : corruptionNames) {
-                    if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
-                        if (!CorruptionRegistry.corruptionHashMap.get(corrName).shouldContinue(e.player, FMLCommonHandler.instance().getEffectiveSide())) {
-                            toRemove.add(corrName);
-                        }
-                    }
-                }
-                //To prevent CME's
-                if (!toRemove.isEmpty()) {
-                    for (String corrName : toRemove) {
-                        CorruptionRegistry.removeCorruptionEffectFromPlayer(e.player.getCommandSenderName(), corrName);
-                    }
-                }
-                //Re populate the set to remove any that may have been removed
-                corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
                 for (String corrName : corruptionNames) {
                     if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
                         CorruptionRegistry.corruptionHashMap.get(corrName).onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());

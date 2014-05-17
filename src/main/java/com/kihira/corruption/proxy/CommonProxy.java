@@ -16,4 +16,6 @@ public class CommonProxy {
     public void spawnFootprint(EntityPlayer player) {}
 
     public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {}
+
+    public void unstonifyPlayerSkin(String playerName) {}
 }

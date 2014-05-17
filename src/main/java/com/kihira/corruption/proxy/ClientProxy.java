@@ -3,6 +3,7 @@ package com.kihira.corruption.proxy;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.client.EntityFootstep;
 import com.kihira.corruption.client.render.EntityFootstepRenderer;
+import com.kihira.corruption.common.CorruptionDataHelper;
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -96,7 +97,18 @@ public class ClientProxy extends CommonProxy {
         if (bufferedImage != null) {
             imageData.setBufferedImage(bufferedImage);
             TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
+            System.out.println("Restored " + playerName + " skin");
         }
+    }
+
+    @Override
+    public void unstonifyPlayerSkin(String playerName) {
+        this.uncorruptPlayerSkin(playerName);
+        AbstractClientPlayer player = (AbstractClientPlayer) Minecraft.getMinecraft().theWorld.getPlayerEntityByName(playerName);
+        if (player == null) {
+            player = new EntityOtherPlayerMP(Minecraft.getMinecraft().theWorld, new GameProfile(playerName, playerName));
+        }
+        this.corruptPlayerSkin(player, 0, CorruptionDataHelper.getCorruptionForPlayer(player));
     }
 
     @Override

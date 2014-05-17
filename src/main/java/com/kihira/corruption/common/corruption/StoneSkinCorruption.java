@@ -11,7 +11,6 @@ import net.minecraft.potion.PotionEffect;
 
 public class StoneSkinCorruption extends AbstractCorruption {
 
-    //TODO Check performance hit
     private final Multiset<String> playerCount = ConcurrentHashMultiset.create();
 
     public StoneSkinCorruption() {
@@ -30,10 +29,14 @@ public class StoneSkinCorruption extends AbstractCorruption {
                 player.addPotionEffect(new PotionEffect(Potion.digSlowdown.id, 20, 4));
                 player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 20, 2));
                 player.addPotionEffect(new PotionEffect(Potion.resistance.id, 20, 3));
+
+                if (this.playerCount.count(player.getCommandSenderName()) < 100) {
+                    player.worldObj.playSoundAtEntity(player, "step.stone", 0.8F, 0.25F + player.getRNG().nextFloat());
+                }
             }
         }
         else if (side == Side.CLIENT) {
-            if (this.playerCount.count(player.getCommandSenderName()) < 350) Corruption.proxy.stonifyPlayerSkin((AbstractClientPlayer) player, this.playerCount.count(player.getCommandSenderName())); //TODO possible performance issue on slower machines
+            if (this.playerCount.count(player.getCommandSenderName()) < 100) Corruption.proxy.stonifyPlayerSkin((AbstractClientPlayer) player, this.playerCount.count(player.getCommandSenderName())); //TODO possible performance issue on slower machines
         }
 
         this.playerCount.add(player.getCommandSenderName());
@@ -43,12 +46,12 @@ public class StoneSkinCorruption extends AbstractCorruption {
     public void finish(String player, Side side) {
         if (side == Side.CLIENT) {
             this.playerCount.setCount(player, 0);
-            Corruption.proxy.uncorruptPlayerSkin(player);
+            Corruption.proxy.unstonifyPlayerSkin(player);
         }
     }
 
     @Override
     public boolean shouldContinue(EntityPlayer player, Side side) {
-        return this.playerCount.count(player.getCommandSenderName()) <= 200;
+        return this.playerCount.count(player.getCommandSenderName()) <= 400;
     }
 }
