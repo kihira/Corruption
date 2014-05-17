@@ -12,6 +12,9 @@ public class ItemDiary extends ItemBook {
     public ItemDiary() {
         super();
         this.setCreativeTab(CreativeTabs.tabMisc);
+        this.setTextureName("corruption:diary");
+        this.setUnlocalizedName("diary");
+        this.setMaxStackSize(8);
     }
 
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
