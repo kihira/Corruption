@@ -31,6 +31,7 @@ public class EntityFootstepRenderer extends Render {
         GL11.glTranslated(x, y - (footstep.thePlayer == Minecraft.getMinecraft().thePlayer ? footstep.thePlayer.height: 0.19) + 0.2, z - 0.5F);
         GL11.glRotatef(90F, 1F, 0F, 0F);
         Tessellator tessellator = Tessellator.instance;
+        if (footstep.ticksExisted < 5) GL11.glColor4f(0F, 0F, 0F, footstep.ticksExisted / 5F);
         if (footstep.fadeOutTimer != 40) GL11.glColor4f(0F, 0F, 0F, footstep.fadeOutTimer / 40F);
         tessellator.startDrawingQuads();
 

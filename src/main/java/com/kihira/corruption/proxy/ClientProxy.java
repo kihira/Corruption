@@ -158,7 +158,7 @@ public class ClientProxy extends CommonProxy {
                     bufferedImage = ImageIO.read(skinFile);
                 }*/
             skinFile.createNewFile();
-            ImageIO.write(bufferedImage, "PNG", skinFile);
+            if (bufferedImage != null) ImageIO.write(bufferedImage, "PNG", skinFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
