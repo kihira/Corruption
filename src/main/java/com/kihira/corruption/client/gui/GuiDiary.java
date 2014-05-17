@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -132,10 +131,14 @@ public class GuiDiary extends GuiScreen {
         int l;
 
         if (this.currentPageData != null) {
-            String title = StatCollector.translateToLocal(this.currentPageData.getTitle(this.currPage));
+            String title = I18n.format(this.currentPageData.getTitle(this.currPage));
 
             int i1 = this.fontRendererObj.getStringWidth(title);
             this.fontRendererObj.drawString(EnumChatFormatting.BOLD + title, k + 36 + (104 - i1) / 2, 28, 0);
+
+            title = I18n.format(this.currentPageData.getSubTitle());
+            i1 = this.fontRendererObj.getStringWidth(title);
+            this.fontRendererObj.drawString(EnumChatFormatting.ITALIC + title, k + 36 + (114 - i1) / 2, 40, 0);
 
             s = I18n.format("book.pageIndicator", this.currPage + 1, this.currentPageData.getTotalPages());
             s1 = "";
@@ -146,7 +149,7 @@ public class GuiDiary extends GuiScreen {
 
             l = this.fontRendererObj.getStringWidth(s);
             this.fontRendererObj.drawString(s, k - l + this.diaryWidth - 44, 16, 0);
-            this.fontRendererObj.drawSplitString(StatCollector.translateToLocal(s1), k + 36, 40, 116, 0);
+            this.fontRendererObj.drawSplitString(I18n.format(s1), k + 36, 52, 116, 0);
         }
 
         super.drawScreen(par1, par2, par3);
