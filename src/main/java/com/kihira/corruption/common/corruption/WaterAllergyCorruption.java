@@ -24,7 +24,7 @@ public class WaterAllergyCorruption extends AbstractCorruption {
                 Corruption.logger.info("Removing " + this.getClass());
                 CorruptionRegistry.currentCorruption.remove(this.thePlayer, this);
             }*/
-            if (player.isInWater() && player.worldObj.getTotalWorldTime() % 10 == 0) {
+            if (player.isInWater() || (player.worldObj.isRaining() && player.worldObj.canBlockSeeTheSky((int) player.posX, (int) player.posY, (int) player.posZ)) && player.worldObj.getTotalWorldTime() % 10 == 0) {
                 player.attackEntityFrom(DamageSource.drown, 1);
             }
         }

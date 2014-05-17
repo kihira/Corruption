@@ -34,6 +34,8 @@ public class Corruption {
     public static boolean isEnabledBlockTeleportCorr;
     public static boolean isEnabledStoneSkinCorr;
     public static boolean isEnabledWaterAllergyCorr;
+    public static boolean isEnabledColourBlindCorr;
+    public static boolean isEnabledAfraidOfTheDarkCorr;
 
     public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
 
@@ -93,14 +95,25 @@ public class Corruption {
 
     private void registerCorruptionEffects() {
 
-        new BlockTeleportCorruption();
-        new WaterAllergyCorruption();
-        new StoneSkinCorruption();
-        new ColourBlindCorruption();
-
-        if (isEnabledBlockTeleportCorr) CorruptionRegistry.registerRandomCorruptionEffect("blockTeleport");
-        if (isEnabledWaterAllergyCorr) CorruptionRegistry.registerRandomCorruptionEffect("waterAllergy");
-        if (isEnabledStoneSkinCorr) CorruptionRegistry.registerRandomCorruptionEffect("stoneSkin");
+        if (isEnabledBlockTeleportCorr) {
+            new BlockTeleportCorruption();
+            CorruptionRegistry.registerRandomCorruptionEffect("blockTeleport");
+        }
+        if (isEnabledWaterAllergyCorr) {
+            new WaterAllergyCorruption();
+            CorruptionRegistry.registerRandomCorruptionEffect("waterAllergy");
+        }
+        if (isEnabledStoneSkinCorr) {
+            new StoneSkinCorruption();
+            CorruptionRegistry.registerRandomCorruptionEffect("stoneSkin");
+        }
+        if (isEnabledColourBlindCorr) {
+            new ColourBlindCorruption();
+            CorruptionRegistry.registerRandomCorruptionEffect("colourBlind");
+        }
+        if (isEnabledAfraidOfTheDarkCorr) {
+            new AfraidOfTheDarkCorruption();
+        }
     }
 
     private void registerBlocks() {
