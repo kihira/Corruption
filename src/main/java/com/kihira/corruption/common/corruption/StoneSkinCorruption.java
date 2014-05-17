@@ -30,13 +30,13 @@ public class StoneSkinCorruption extends AbstractCorruption {
                 player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 20, 2));
                 player.addPotionEffect(new PotionEffect(Potion.resistance.id, 20, 3));
 
-                if (this.playerCount.count(player.getCommandSenderName()) < 150) {
+                if (this.playerCount.count(player.getCommandSenderName()) < 100) {
                     player.worldObj.playSoundAtEntity(player, "step.stone", 0.8F, 0.25F + player.getRNG().nextFloat());
                 }
             }
         }
         else if (side == Side.CLIENT) {
-            if (this.playerCount.count(player.getCommandSenderName()) < 150) Corruption.proxy.stonifyPlayerSkin((AbstractClientPlayer) player, this.playerCount.count(player.getCommandSenderName())); //TODO possible performance issue on slower machines
+            if (this.playerCount.count(player.getCommandSenderName()) < 100) Corruption.proxy.stonifyPlayerSkin((AbstractClientPlayer) player, this.playerCount.count(player.getCommandSenderName())); //TODO possible performance issue on slower machines
         }
 
         this.playerCount.add(player.getCommandSenderName());
