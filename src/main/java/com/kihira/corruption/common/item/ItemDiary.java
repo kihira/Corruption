@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 
 public class ItemDiary extends ItemBook {
 
+    //TODO have enchanting effect thingy if there is a new entry
     public ItemDiary() {
         super();
         this.setCreativeTab(CreativeTabs.tabMisc);

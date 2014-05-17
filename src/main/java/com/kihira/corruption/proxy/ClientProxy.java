@@ -2,7 +2,7 @@ package com.kihira.corruption.proxy;
 
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.client.EntityFootstep;
-import com.kihira.corruption.client.particle.EntityFxBlood;
+import com.kihira.corruption.client.particle.EntityFXBlood;
 import com.kihira.corruption.client.render.EntityFootstepRenderer;
 import com.kihira.corruption.common.CorruptionDataHelper;
 import com.mojang.authlib.GameProfile;
@@ -183,7 +183,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void spawnBloodParticle(EntityPlayer player) {
         for (float i = player.getHealth(); i >= 0; i--) {
-            EntityFxBlood blood = new EntityFxBlood(player);
+            EntityFXBlood blood = new EntityFXBlood(player);
             Minecraft.getMinecraft().effectRenderer.addEffect(blood);
         }
     }
