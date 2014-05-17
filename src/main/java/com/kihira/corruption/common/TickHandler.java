@@ -51,6 +51,10 @@ public class TickHandler {
                     }
 
                 }
+                //Removing corruption
+                if ((!Corruption.isCorruptionActiveGlobal || !CorruptionDataHelper.canBeCorrupted(e.player)) && CorruptionDataHelper.getCorruptionForPlayer(e.player) > 0 && e.player.worldObj.getTotalWorldTime() % 10 == 0) {
+                    CorruptionDataHelper.decreaseCorruptionForPlayer(e.player, 300);
+                }
             }
             //Common
             if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
@@ -63,7 +67,7 @@ public class TickHandler {
             }
             //Client
             if (e.player.worldObj.isRemote) {
-                if (e.player.worldObj.rand.nextInt(4000) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
+                if (!CorruptionDataHelper.canBeCorrupted(e.player) && e.player.worldObj.rand.nextInt(600) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
                     Corruption.proxy.spawnFootprint(e.player);
                 }
             }

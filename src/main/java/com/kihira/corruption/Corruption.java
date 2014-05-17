@@ -42,7 +42,7 @@ public class Corruption {
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
 
-    public static final String CATEGORY_RANDOM_CORRUPTION = "random corruption";
+    public static final String CATEGORY_CORRUPTION = "corruption";
 
     public static boolean disableCorrOnDragonDeath;
     public static boolean disableCorrOnWitherDeath;
@@ -73,12 +73,16 @@ public class Corruption {
 
         config.load();
 
-        prop = config.get(CATEGORY_RANDOM_CORRUPTION, "Enable Block Teleport Corruption Effect", true);
+        prop = config.get(CATEGORY_CORRUPTION, "Enable Block Teleport Corruption Effect", true);
         isEnabledBlockTeleportCorr = prop.getBoolean(true);
-        prop = config.get(CATEGORY_RANDOM_CORRUPTION, "Enable Stone Skin Corruption Effect", true);
+        prop = config.get(CATEGORY_CORRUPTION, "Enable Stone Skin Corruption Effect", true);
         isEnabledStoneSkinCorr = prop.getBoolean(true);
-        prop = config.get(CATEGORY_RANDOM_CORRUPTION, "Enable Water Allergy Corruption Effect", true);
+        prop = config.get(CATEGORY_CORRUPTION, "Enable Water Allergy Corruption Effect", true);
         isEnabledWaterAllergyCorr = prop.getBoolean(true);
+        prop = config.get(CATEGORY_CORRUPTION, "Enable Colour Blind Corruption Effect", true);
+        isEnabledColourBlindCorr = prop.getBoolean(true);
+        prop = config.get(CATEGORY_CORRUPTION, "Enable Afraid of the Dark Corruption Effect", true);
+        isEnabledAfraidOfTheDarkCorr = prop.getBoolean(true);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "Disable corruption on dragon death", true);
         prop.comment = "When the dragon is killed, corruption is disabled for ALL players no matter when they play";

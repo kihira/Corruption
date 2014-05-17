@@ -67,13 +67,15 @@ public class ClientProxy extends CommonProxy {
                 }
                 bufferedImage.setRGB(x, y, color.getRGB());
             }
+            TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
         }
-        TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
     }
 
     @Override
     //TODO fix
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
+        oldCorr = oldCorr / 30;
+        newCorr = newCorr / 30;
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
         BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage"); //TODO need to fix this for obf?
         BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);

@@ -41,7 +41,7 @@ public class CommandCorruption extends CommandBase {
                     notifyAdmins(commandSender, "%s has set corruption for %s to %s", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
                 }
             }
-            if (args.length >= 2 && args[0].equals("effect")) {
+            else if (args.length >= 2 && args[0].equals("effect")) {
                 if (args[1].equals("afraidofthedark")) {
                     EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
                     CorruptionRegistry.addCorruptionEffect(player, "afraidOfTheDark");
@@ -52,6 +52,15 @@ public class CommandCorruption extends CommandBase {
                     CorruptionRegistry.addCorruptionEffect(player, "colourBlind");
                     notifyAdmins(commandSender, "Effect applied!");
                 }
+            }
+            else if (args.length >= 1 && args[0].equals("disable")) {
+                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
+                CorruptionDataHelper.setCanBeCorrupted(player, false);
+                notifyAdmins(commandSender, "Corrupted disabled!");
+            }
+            else if (args.length >= 1 && args[0].equals("get")) {
+                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
+                notifyAdmins(commandSender, String.valueOf(CorruptionDataHelper.getCorruptionForPlayer(player)));
             }
         }
         else throw new CommandException("Not enough args!");
