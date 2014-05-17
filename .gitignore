@@ -15,4 +15,7 @@ hs_err_pid*
 *.iml
 *.ipr
 *.iws
-eclipse
+eclipse*
+build
+.gradle
+out
