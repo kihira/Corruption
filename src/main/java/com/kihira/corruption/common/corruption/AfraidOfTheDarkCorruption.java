@@ -52,4 +52,14 @@ public class AfraidOfTheDarkCorruption extends AbstractCorruption {
     public boolean shouldContinue(EntityPlayer player, Side side) {
         return !player.worldObj.isDaytime();
     }
+
+    @Override
+    public String getPageDataName() {
+        return "afraidOfTheDark";
+    }
+
+    @Override
+    public boolean canApply(EntityPlayer player) {
+        return true;
+    }
 }

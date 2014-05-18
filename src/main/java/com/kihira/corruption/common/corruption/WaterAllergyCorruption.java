@@ -39,4 +39,14 @@ public class WaterAllergyCorruption extends AbstractCorruption {
     public boolean shouldContinue(EntityPlayer player, Side side) {
         return true;
     }
+
+    @Override
+    public String getPageDataName() {
+        return "waterAllergy";
+    }
+
+    @Override
+    public boolean canApply(EntityPlayer player) {
+        return true;
+    }
 }

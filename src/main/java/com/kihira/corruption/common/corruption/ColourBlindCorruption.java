@@ -45,4 +45,14 @@ public class ColourBlindCorruption extends AbstractCorruption {
     public boolean shouldContinue(EntityPlayer player, Side side) {
         return this.playerCount.count(player.getCommandSenderName()) < 1000;
     }
+
+    @Override
+    public String getPageDataName() {
+        return "colourBlind";
+    }
+
+    @Override
+    public boolean canApply(EntityPlayer player) {
+        return true;
+    }
 }

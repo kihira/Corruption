@@ -6,7 +6,10 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 
 public class CorruptionDataHelper {
 
@@ -15,9 +18,50 @@ public class CorruptionDataHelper {
         NBTTagCompound diaryData = corruptionData.getCompoundTag("Diary");
 
         //Create and save tags if needs be
-        if (!corruptionData.hasKey("Diary")) corruptionData.setTag("Diary", diaryData);
+        if (!corruptionData.hasKey("Diary")) {
+            NBTTagList pageData = new NBTTagList();
+            pageData.appendTag(new NBTTagString("contents"));
+            diaryData.setTag("PageData", pageData);
+            corruptionData.setTag("Diary", diaryData);
+        }
 
         return diaryData;
+    }
+
+    public static boolean hasPageDataUnlocked(String pageDataName, EntityPlayer entityPlayer) {
+        NBTTagCompound diaryData = getDiaryDataForPlayer(entityPlayer);
+        NBTTagList pageData = diaryData.getTagList("PageData", 8);
+        if (pageData != null && pageData.tagCount() > 0) {
+            for (int i = 0; i < pageData.tagCount(); i++) {
+                String pageName = pageData.getStringTagAt(i);
+                if (pageName.equals(pageDataName)) return true;
+            }
+        }
+        return false;
+    }
+
+    public static void setPageData(NBTTagList pageData, EntityPlayer entityPlayer) {
+        NBTTagCompound diaryData = getDiaryDataForPlayer(entityPlayer);
+        if (pageData != null) {
+            diaryData.setTag("PageData", pageData);
+
+            if (Side.SERVER == FMLCommonHandler.instance().getEffectiveSide()) {
+                Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(entityPlayer), (EntityPlayerMP) entityPlayer);
+            }
+        }
+    }
+
+    public static void unlockPageData(String pageDataName, EntityPlayer entityPlayer) {
+        NBTTagCompound diaryData = getDiaryDataForPlayer(entityPlayer);
+        if (diaryData.hasKey("PageData")) {
+            NBTTagList pageData = diaryData.getTagList("PageData", 8);
+            pageData.appendTag(new NBTTagString(pageDataName));
+            diaryData.setTag("PageData", pageData);
+
+            if (Side.SERVER == FMLCommonHandler.instance().getEffectiveSide()) {
+                Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(entityPlayer), (EntityPlayerMP) entityPlayer);
+            }
+        }
     }
 
     private static NBTTagCompound getCorruptionDataForPlayer(EntityPlayer entityPlayer) {

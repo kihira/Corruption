@@ -32,4 +32,14 @@ public class BlockTeleportCorruption extends AbstractCorruption {
     public boolean shouldContinue(EntityPlayer player, Side side) {
         return (CorruptionDataHelper.getCorruptionForPlayer(player) < this.blocksBroken.count(player.getCommandSenderName()) * 400);
     }
+
+    @Override
+    public String getPageDataName() {
+        return "blockTeleport";
+    }
+
+    @Override
+    public boolean canApply(EntityPlayer player) {
+        return true;
+    }
 }

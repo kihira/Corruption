@@ -54,4 +54,14 @@ public class StoneSkinCorruption extends AbstractCorruption {
     public boolean shouldContinue(EntityPlayer player, Side side) {
         return this.playerCount.count(player.getCommandSenderName()) <= 400;
     }
+
+    @Override
+    public String getPageDataName() {
+        return "stoneSkin";
+    }
+
+    @Override
+    public boolean canApply(EntityPlayer player) {
+        return true;
+    }
 }

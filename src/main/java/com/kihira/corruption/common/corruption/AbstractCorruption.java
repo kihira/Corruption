@@ -24,4 +24,8 @@ public abstract class AbstractCorruption {
     public abstract void finish(String player, Side side);
 
     public abstract boolean shouldContinue(EntityPlayer player, Side side);
+
+    public abstract String getPageDataName();
+
+    public abstract boolean canApply(EntityPlayer player);
 }

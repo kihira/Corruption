@@ -2,16 +2,19 @@ package com.kihira.corruption.client.gui;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.kihira.corruption.Corruption;
 import com.kihira.corruption.client.diary.PageData;
 import com.kihira.corruption.client.gui.button.GuiButtonPage;
 import com.kihira.corruption.client.gui.button.GuiButtonTab;
 import com.kihira.corruption.common.CorruptionDataHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
@@ -27,8 +30,9 @@ import java.util.Map;
 public class GuiDiary extends GuiScreen {
 
     private final EntityPlayer player;
-    private final int diaryWidth;
-    private final int diaryHeight;
+    private final ItemStack theDiary;
+    private final int diaryWidth = 192;
+    private final int diaryHeight = 192;
     private GuiButtonTab buttonContents;
     private GuiButtonPage buttonNextPage;
     private GuiButtonPage buttonPreviousPage;
@@ -39,10 +43,13 @@ public class GuiDiary extends GuiScreen {
     private int currPage;
     public static final ResourceLocation bookGuiTextures = new ResourceLocation("corruption", "book.png");
 
-    public GuiDiary(EntityPlayer player) {
+    public GuiDiary(EntityPlayer player, ItemStack theDiary) {
         this.player = player;
-        this.diaryWidth = 192;
-        this.diaryHeight = 192;
+        this.theDiary = theDiary;
+
+        if (theDiary == null || theDiary.getItem() != Corruption.itemDiary) {
+            Minecraft.getMinecraft().displayGuiScreen(null);
+        }
     }
 
     @Override
@@ -78,24 +85,23 @@ public class GuiDiary extends GuiScreen {
     }
 
     private void loadDiaryData() {
-        NBTTagCompound tagCompound = CorruptionDataHelper.getDiaryDataForPlayer(this.player);
-        if (tagCompound.hasKey("PageData")) {
-            NBTTagList pageData = tagCompound.getTagList("PageData", 8);
-            if (pageData != null && pageData.tagCount() > 0) {
-                for (int i = 0; i < pageData.tagCount(); i++) {
-                    String pageName = pageData.getStringTagAt(i);
-                    this.pageData.put(pageName, PageData.pageMap.get(pageName));
-                }
-            }
+        if (this.theDiary.hasTagCompound() && this.theDiary.getTagCompound().getBoolean("CheatBook")) {
+            this.pageData = new HashMap<String, PageData>(PageData.pageMap);
         }
         else {
-            this.pageData.put("contents", PageData.pageMap.get("contents"));
-            this.pageData.put("colourBlind", PageData.pageMap.get("colourBlind"));
-            this.pageData.put("afraidOfTheDark", PageData.pageMap.get("afraidOfTheDark"));
-            this.pageData.put("blockTeleport", PageData.pageMap.get("blockTeleport"));
-            this.pageData.put("bloodLoss", PageData.pageMap.get("bloodLoss"));
-            this.pageData.put("stoneSkin", PageData.pageMap.get("stoneSkin"));
-            this.pageData.put("waterAllergy", PageData.pageMap.get("waterAllergy"));
+            NBTTagCompound tagCompound = CorruptionDataHelper.getDiaryDataForPlayer(this.player);
+            if (tagCompound.hasKey("PageData")) {
+                NBTTagList pageData = tagCompound.getTagList("PageData", 8);
+                if (pageData != null && pageData.tagCount() > 0) {
+                    for (int i = 0; i < pageData.tagCount(); i++) {
+                        String pageName = pageData.getStringTagAt(i);
+                        this.pageData.put(pageName, PageData.pageMap.get(pageName));
+                    }
+                }
+            }
+            else {
+                this.pageData.put("contents", PageData.pageMap.get("contents"));
+            }
         }
         if (this.currentPageData == null) this.loadPageData("contents");
     }
@@ -161,6 +167,6 @@ public class GuiDiary extends GuiScreen {
 
     @Override
     public boolean doesGuiPauseGame() {
-        return true;
+        return false;
     }
 }

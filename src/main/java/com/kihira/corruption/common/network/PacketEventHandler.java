@@ -14,12 +14,14 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class PacketEventHandler {
 
     private enum Packet {
         CORRUPTION(0),
-        CORRUPTIONEFFECT(1);
+        CORRUPTIONEFFECT(1),
+        DIARYENTRIES(2);
 
         private final int id;
 
@@ -65,14 +67,9 @@ public class PacketEventHandler {
             if (shouldAdd) CorruptionRegistry.addCorruptionEffect(playerName, corrName);
             else CorruptionRegistry.removeCorruptionEffectFromPlayer(playerName, corrName);
         }
-    }
-
-    @SubscribeEvent
-    @SideOnly(Side.SERVER)
-    public void onServerPacket(FMLNetworkEvent.ServerCustomPacketEvent e) {
-        ByteBuf payload = e.packet.payload();
-        if (payload.readInt() == Packet.CORRUPTION.getID()) {
-            Corruption.logger.warn("Received a corruption update server side, this isn't supposed to happen!");
+        else if (packetID == Packet.DIARYENTRIES.getID()) {
+            NBTTagCompound nbtTagCompound = ByteBufUtils.readTag(payload);
+            CorruptionDataHelper.setPageData(nbtTagCompound.getTagList("PageData", 8), Minecraft.getMinecraft().thePlayer);
         }
     }
 
@@ -93,6 +90,17 @@ public class PacketEventHandler {
         ByteBufUtils.writeUTF8String(byteBuf, playerName);
         ByteBufUtils.writeUTF8String(byteBuf, corrEffect);
         byteBuf.writeBoolean(shouldAdd);
+
+        return new FMLProxyPacket(byteBuf, "corruption");
+    }
+
+    public static FMLProxyPacket getDiaryDataPacket(EntityPlayer entityPlayer) {
+        ByteBuf byteBuf = Unpooled.buffer();
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setTag("PageData", CorruptionDataHelper.getDiaryDataForPlayer(entityPlayer).getTagList("PageData", 8));
+
+        byteBuf.writeInt(Packet.DIARYENTRIES.getID());
+        ByteBufUtils.writeTag(byteBuf, tagCompound);
 
         return new FMLProxyPacket(byteBuf, "corruption");
     }

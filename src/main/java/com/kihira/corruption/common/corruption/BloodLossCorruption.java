@@ -34,4 +34,14 @@ public class BloodLossCorruption extends AbstractCorruption {
     public boolean shouldContinue(EntityPlayer player, Side side) {
         return player.getHealth() <= 6;
     }
+
+    @Override
+    public String getPageDataName() {
+        return "bloodLoss";
+    }
+
+    @Override
+    public boolean canApply(EntityPlayer player) {
+        return true;
+    }
 }

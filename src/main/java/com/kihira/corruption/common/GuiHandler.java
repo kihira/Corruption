@@ -16,7 +16,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case (0):
-                return new GuiDiary(player);
+                return new GuiDiary(player, player.getCurrentEquippedItem());
             default:
                 return null;
         }

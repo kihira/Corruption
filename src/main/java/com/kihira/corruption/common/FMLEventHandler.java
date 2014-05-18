@@ -2,11 +2,13 @@ package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
+import com.kihira.corruption.common.network.PacketEventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
@@ -85,5 +87,8 @@ public class FMLEventHandler {
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent e) {
         if (Corruption.corrSpeed == 10) e.player.addChatComponentMessage(new ChatComponentText("[Corruption] Please note that this server is running at ModJam speed (20x faster then normal!) so you can see the full effects of the mod. You can change this in your config"));
+
+        Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(e.player), (EntityPlayerMP) e.player);
     }
+
 }
