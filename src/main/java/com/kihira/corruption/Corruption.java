@@ -128,7 +128,7 @@ public class Corruption {
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "Disable Corruption", false);
         prop.comment = "DO NOT CHANGE THIS >=(";
-        isCorruptionActiveGlobal = prop.getBoolean(false);
+        isCorruptionActiveGlobal = !prop.getBoolean(false);
 
         if (config.hasChanged()) config.save();
     }
