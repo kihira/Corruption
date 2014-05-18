@@ -45,6 +45,7 @@ public class Corruption {
     public static boolean isEnabledColourBlindCorr;
     public static boolean isEnabledAfraidOfTheDarkCorr;
     public static boolean isEnabledBloodLossCorr;
+    public static boolean isEnabledGluttonyCorr;
 
     public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
     public static final ItemDiary itemDiary = new ItemDiary();
@@ -65,15 +66,14 @@ public class Corruption {
         registerCorruptionEffects();
         registerBlocks();
         registerItems();
+        registerRecipes();
 
         FMLCommonHandler.instance().bus().register(new FMLEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         eventChannel.register(new PacketEventHandler());
-
         proxy.registerRenderers();
-
         PageData.registerPageData();
     }
 
@@ -100,6 +100,8 @@ public class Corruption {
         isEnabledAfraidOfTheDarkCorr = prop.getBoolean(true);
         prop = config.get(CATEGORY_CORRUPTION, "Enable Blood Loss Corruption Effect", true);
         isEnabledBloodLossCorr = prop.getBoolean(true);
+        prop = config.get(CATEGORY_CORRUPTION, "Enable Gluttony Corruption Effect", true);
+        isEnabledGluttonyCorr = prop.getBoolean(true);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "Disable corruption on dragon death", true);
         prop.comment = "When the dragon is killed, corruption is disabled for ALL players no matter when they play";
@@ -110,8 +112,8 @@ public class Corruption {
         prop = config.get(Configuration.CATEGORY_GENERAL, "Corruptioned removed on death", 0);
         prop.comment = "If a player dies, this amount of corruption will be removed (set to 0 to disable)";
         corrRemovedOnDeath = prop.getInt();
-        prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption Speed", 10);
-        prop.comment = "How often in ticks to apply corruption. ModJam speed is 10, normal speed is 200";
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption Speed", 20);
+        prop.comment = "How often in ticks to apply corruption. ModJam speed is 20, normal speed is 200";
         corrSpeed = prop.getInt();
 
         if (config.hasChanged()) config.save();
@@ -130,6 +132,10 @@ public class Corruption {
         if (isEnabledColourBlindCorr) {
             new ColourBlindCorruption();
             CorruptionRegistry.registerRandomCorruptionEffect("colourBlind");
+        }
+        if (isEnabledGluttonyCorr) {
+            new GluttonyCorruption();
+            CorruptionRegistry.registerRandomCorruptionEffect("gluttony");
         }
         if (isEnabledAfraidOfTheDarkCorr) {
             new AfraidOfTheDarkCorruption();

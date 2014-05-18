@@ -14,10 +14,12 @@ import net.minecraft.util.ChatComponentText;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 public class FMLEventHandler {
 
     public static final int CORRUPTION_MAX = 17280;
+    private final Random random = new Random();
 
     @SubscribeEvent
     @SuppressWarnings("unchecked")
@@ -31,7 +33,8 @@ public class FMLEventHandler {
                         CorruptionDataHelper.increaseCorruptionForPlayer(e.player, 1);
 
                         //24 hours
-                        if (e.player.worldObj.rand.nextInt(CORRUPTION_MAX * (CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player).size() + 1)) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
+                        System.out.println(CORRUPTION_MAX * (CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player).size() + 1) + " " + CorruptionDataHelper.getCorruptionForPlayer(e.player));
+                        if (random.nextInt(CORRUPTION_MAX * (CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player).size() + 1)) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
                             String corrName = CorruptionRegistry.getRandomCorruptionEffect(e.player);
                             if (!CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.player, corrName)) {
                                 CorruptionDataHelper.addCorruptionEffectForPlayer(e.player, corrName);
@@ -90,7 +93,7 @@ public class FMLEventHandler {
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent e) {
-        if (Corruption.corrSpeed == 10) e.player.addChatComponentMessage(new ChatComponentText("[Corruption] Please note that this server is running at ModJam speed (20x faster then normal!) so you can see the full effects of the mod. You can change this in your config"));
+        if (Corruption.corrSpeed == 10) e.player.addChatComponentMessage(new ChatComponentText("[Corruption] Please note that this server is running at ModJam speed (10x faster then normal!) so you can see the full effects of the mod. You can change this in your config"));
 
         Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(e.player), (EntityPlayerMP) e.player);
     }

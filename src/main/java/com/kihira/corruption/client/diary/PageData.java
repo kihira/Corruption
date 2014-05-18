@@ -74,5 +74,7 @@ public class PageData {
         pageMap.put("stoneSkin", new PageData("stoneSkin").setPageContents(0, "page.stoneSkin.0", "page.stoneSkin.0.title").setTabName("page.stoneSkin.0.tab").setSubTitle("page.stoneSkin.0.subtitle"));
         pageMap.put("waterAllergy", new PageData("waterAllergy").setPageContents(0, "page.waterAllergy.0", "page.waterAllergy.0.title").setTabName("page.waterAllergy.0.tab").setSubTitle("page.waterAllergy.0.subtitle"));
         pageMap.put("enderCake", new PageData("enderCake").setPageContents(0, "page.enderCake.0", "page.enderCake.0.title").setTabName("page.enderCake.0.tab").setSubTitle("page.enderCake.0.subtitle"));
+        pageMap.put("gluttony", new PageData("gluttony").setPageContents(0, "page.gluttony.0", "page.gluttony.0.title").setTabName("page.gluttony.0.tab").setSubTitle("page.gluttony.0.subtitle"));
+
     }
 }
