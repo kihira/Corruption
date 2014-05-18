@@ -18,8 +18,11 @@ import java.util.Random;
 
 public class BlockEnderCake extends BlockCake {
 
+    @SideOnly(Side.CLIENT)
     private IIcon innerIcon;
+    @SideOnly(Side.CLIENT)
     private IIcon topIcon;
+    @SideOnly(Side.CLIENT)
     private IIcon bottomIcon;
 
     public BlockEnderCake() {
@@ -37,6 +40,7 @@ public class BlockEnderCake extends BlockCake {
         this.doNoms(world, player, x, y, z);
     }
 
+    @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_) {
         this.doNoms(world, entityPlayer, x, y, z);
         return true;
@@ -87,6 +91,7 @@ public class BlockEnderCake extends BlockCake {
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public Item getItem(World world, int x, int y, int z) {
         return Item.getItemFromBlock(Corruption.blockEnderCake);
     }

@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 
-//TODO Remember this is a conditional corruption effect
 public class AfraidOfTheDarkCorruption extends AbstractCorruption {
 
     public AfraidOfTheDarkCorruption() {
@@ -40,7 +39,6 @@ public class AfraidOfTheDarkCorruption extends AbstractCorruption {
                 player.worldObj.playSoundAtEntity(player, sound, player.getRNG().nextFloat(), (player.worldObj.rand.nextFloat() - player.worldObj.rand.nextFloat()) * 0.2F + 1.0F);
             }
         }
-        //TODO add in one where the player might hear footsteps over time
     }
 
     @Override

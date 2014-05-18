@@ -73,6 +73,6 @@ public class PageData {
         pageMap.put("bloodLoss", new PageData("bloodLoss").setPageContents(0, "page.bloodLoss.0", "page.bloodLoss.0.title").setTabName("page.bloodLoss.0.tab").setSubTitle("page.bloodLoss.0.subtitle"));
         pageMap.put("stoneSkin", new PageData("stoneSkin").setPageContents(0, "page.stoneSkin.0", "page.stoneSkin.0.title").setTabName("page.stoneSkin.0.tab").setSubTitle("page.stoneSkin.0.subtitle"));
         pageMap.put("waterAllergy", new PageData("waterAllergy").setPageContents(0, "page.waterAllergy.0", "page.waterAllergy.0.title").setTabName("page.waterAllergy.0.tab").setSubTitle("page.waterAllergy.0.subtitle"));
-        pageMap.put("enderCake", new PageData("enderCake").setPageContents(0, "page.enderCake.0", "page.enderCake.0").setTabName("page.enderCake.0.tab").setSubTitle("page.enderCake.0.subtitle"));
+        pageMap.put("enderCake", new PageData("enderCake").setPageContents(0, "page.enderCake.0", "page.enderCake.0.title").setTabName("page.enderCake.0.tab").setSubTitle("page.enderCake.0.subtitle"));
     }
 }
