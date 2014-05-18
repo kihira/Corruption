@@ -38,6 +38,11 @@ public class EntityFootstep extends Entity {
     }
 
     @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
+    }
+
+    @Override
     public void setDead() {
         super.setDead();
     }
