@@ -91,6 +91,7 @@ public class CorruptionDataHelper {
             NBTTagList pageData = new NBTTagList();
             pageData.appendTag(new NBTTagString("contents"));
             pageData.appendTag(new NBTTagString("enderCake"));
+            pageData.appendTag(new NBTTagString("fleshArmor"));
             diaryData.setTag("PageData", pageData);
             corruptionData.setTag("Diary", diaryData);
         }

@@ -75,6 +75,6 @@ public class PageData {
         pageMap.put("waterAllergy", new PageData("waterAllergy").setPageContents(0, "page.waterAllergy.0", "page.waterAllergy.0.title").setTabName("page.waterAllergy.0.tab").setSubTitle("page.waterAllergy.0.subtitle"));
         pageMap.put("enderCake", new PageData("enderCake").setPageContents(0, "page.enderCake.0", "page.enderCake.0.title").setTabName("page.enderCake.0.tab").setSubTitle("page.enderCake.0.subtitle"));
         pageMap.put("gluttony", new PageData("gluttony").setPageContents(0, "page.gluttony.0", "page.gluttony.0.title").setTabName("page.gluttony.0.tab").setSubTitle("page.gluttony.0.subtitle"));
-
+        pageMap.put("fleshArmor", new PageData("fleshArmor").setPageContents(0, "page.fleshArmor.0", "page.fleshArmor.0.title").setTabName("page.fleshArmor.0.tab").setSubTitle("page.fleshArmor.0.subtitle"));
     }
 }

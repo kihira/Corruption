@@ -33,7 +33,6 @@ public class FMLEventHandler {
                         CorruptionDataHelper.increaseCorruptionForPlayer(e.player, 1);
 
                         //24 hours
-                        System.out.println(CORRUPTION_MAX * (CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player).size() + 1) + " " + CorruptionDataHelper.getCorruptionForPlayer(e.player));
                         if (random.nextInt(CORRUPTION_MAX * (CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player).size() + 1)) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
                             String corrName = CorruptionRegistry.getRandomCorruptionEffect(e.player);
                             if (!CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.player, corrName)) {

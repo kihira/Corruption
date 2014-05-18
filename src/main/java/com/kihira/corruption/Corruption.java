@@ -8,6 +8,7 @@ import com.kihira.corruption.common.GuiHandler;
 import com.kihira.corruption.common.block.BlockEnderCake;
 import com.kihira.corruption.common.corruption.*;
 import com.kihira.corruption.common.item.ItemDiary;
+import com.kihira.corruption.common.item.ItemFleshArmor;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import com.kihira.corruption.proxy.CommonProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -19,6 +20,7 @@ import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -49,6 +51,10 @@ public class Corruption {
 
     public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
     public static final ItemDiary itemDiary = new ItemDiary();
+    public static final Item itemFleshArmourHelmet = new ItemFleshArmor(0).setUnlocalizedName("fleshHelmet").setTextureName("corruption:flesh_Helmet");
+    public static final Item itemFleshArmourChest = new ItemFleshArmor(1).setUnlocalizedName("fleshChest").setTextureName("corruption:flesh_Chestplate");
+    public static final Item itemFleshArmourLegs = new ItemFleshArmor(2).setUnlocalizedName("fleshLegs").setTextureName("corruption:flesh_Leggings");
+    public static final Item itemFleshArmourBoots = new ItemFleshArmor(3).setUnlocalizedName("fleshBoots").setTextureName("corruption:flesh_Boots");
 
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
@@ -154,9 +160,17 @@ public class Corruption {
 
     private void registerItems() {
         GameRegistry.registerItem(itemDiary, "itemDiary");
+        GameRegistry.registerItem(itemFleshArmourHelmet, "itemFleshArmourHelmet");
+        GameRegistry.registerItem(itemFleshArmourChest, "itemFleshArmourChest");
+        GameRegistry.registerItem(itemFleshArmourLegs, "itemFleshArmourLegs");
+        GameRegistry.registerItem(itemFleshArmourBoots, "itemFleshArmourBoots");
     }
 
     private void registerRecipes() {
         GameRegistry.addRecipe(new ItemStack(blockEnderCake, 1), "EPE", "BEB", "CCC", 'A', Items.milk_bucket, 'B', Items.sugar, 'C', Items.wheat, 'E', Items.egg, 'P', Items.ender_pearl);
+        GameRegistry.addRecipe(new ItemStack(itemFleshArmourHelmet, 1), "FFF", "FLF", "   ", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
+        GameRegistry.addRecipe(new ItemStack(itemFleshArmourChest, 1), "FFF", "FLF", "FFF", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
+        GameRegistry.addRecipe(new ItemStack(itemFleshArmourLegs, 1), "FFF", "FLF", "F F", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
+        GameRegistry.addRecipe(new ItemStack(itemFleshArmourBoots, 1), "   ", "F F", "FLF", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
     }
 }
