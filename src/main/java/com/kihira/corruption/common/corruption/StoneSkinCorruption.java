@@ -58,7 +58,7 @@ public class StoneSkinCorruption extends AbstractCorruption {
 
     @Override
     public String getPageDataName() {
-        return null;
+        return "stoneSkin";
     }
 
     @Override

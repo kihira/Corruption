@@ -22,23 +22,21 @@ public class CommandCorruption extends CommandBase {
     @Override
     public void processCommand(ICommandSender commandSender, String[] args) {
         if (args != null ) {
-            if (args.length >= 3 && args[0].equals("set")) {
-                if (args[1].equals("corruption")) {
-                    int corr;
-                    EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(args.length >= 4 ? args[3] : commandSender.getCommandSenderName());
-                    if (player != null) {
-                        if (args[2].startsWith("+")) {
-                            corr = Integer.valueOf(args[2].substring(1)) + CorruptionDataHelper.getCorruptionForPlayer(player);
-                        }
-                        else if (args[2].startsWith("-")) {
-                            corr = Integer.valueOf(args[2].substring(1)) - CorruptionDataHelper.getCorruptionForPlayer(player);
-                        }
-                        else {
-                            corr = Integer.valueOf(args[2]);
-                        }
-                        CorruptionDataHelper.setCorruptionForPlayer(player, corr);
-                        notifyAdmins(commandSender, "%s has set corruption for %s to %s", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
+            if (args.length >= 2 && args[0].equals("set")) {
+                int corr;
+                EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(args.length >= 3 ? args[2] : commandSender.getCommandSenderName());
+                if (player != null) {
+                    if (args[1].startsWith("+")) {
+                        corr = Integer.valueOf(args[1].substring(1)) + CorruptionDataHelper.getCorruptionForPlayer(player);
                     }
+                    else if (args[1].startsWith("-")) {
+                        corr = Integer.valueOf(args[1].substring(1)) - CorruptionDataHelper.getCorruptionForPlayer(player);
+                    }
+                    else {
+                        corr = Integer.valueOf(args[1]);
+                    }
+                    CorruptionDataHelper.setCorruptionForPlayer(player, corr);
+                    notifyAdmins(commandSender, "%s has set corruption for %s to %s", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
                 }
             }
             else if (args.length >= 2 && args[0].equals("effect")) {
