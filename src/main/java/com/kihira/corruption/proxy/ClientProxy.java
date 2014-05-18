@@ -46,7 +46,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage"); //TODO need to fix this for obf?
+        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
 
         //Backup old skin
         if (oldCorr == 0) {
@@ -78,7 +78,7 @@ public class ClientProxy extends CommonProxy {
         oldCorr = oldCorr / 30;
         newCorr = newCorr / 30;
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage"); //TODO need to fix this for obf?
+        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
         BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
 
         if (bufferedImage != null) {
@@ -122,7 +122,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d"); //TODO need to fix this for obf?
+        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
         Random rand = new Random();
 
         if (bufferedImage != null) {
@@ -191,7 +191,7 @@ public class ClientProxy extends CommonProxy {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void backupPlayerSkin(AbstractClientPlayer entityPlayer) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage");
+        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
 
         File file = new File("skinbackup");
         file.mkdir();
