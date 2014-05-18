@@ -90,6 +90,7 @@ public class CorruptionDataHelper {
         if (!corruptionData.hasKey("Diary")) {
             NBTTagList pageData = new NBTTagList();
             pageData.appendTag(new NBTTagString("contents"));
+            pageData.appendTag(new NBTTagString("enderCake"));
             diaryData.setTag("PageData", pageData);
             corruptionData.setTag("Diary", diaryData);
         }

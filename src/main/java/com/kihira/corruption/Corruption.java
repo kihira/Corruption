@@ -18,6 +18,8 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -62,8 +64,7 @@ public class Corruption {
         loadGeneralConfig(e.getSuggestedConfigurationFile());
         registerCorruptionEffects();
         registerBlocks();
-
-        GameRegistry.registerItem(itemDiary, "itemDiary");
+        registerItems();
 
         FMLCommonHandler.instance().bus().register(new FMLEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
@@ -143,5 +144,13 @@ public class Corruption {
 
     private void registerBlocks() {
         GameRegistry.registerBlock(blockEnderCake, "blockEnderCake");
+    }
+
+    private void registerItems() {
+        GameRegistry.registerItem(itemDiary, "itemDiary");
+    }
+
+    private void registerRecipes() {
+        GameRegistry.addRecipe(new ItemStack(blockEnderCake, 1), "EPE", "BEB", "CCC", 'A', Items.milk_bucket, 'B', Items.sugar, 'C', Items.wheat, 'E', Items.egg, 'P', Items.ender_pearl);
     }
 }
