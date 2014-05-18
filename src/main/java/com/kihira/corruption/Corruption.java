@@ -187,5 +187,6 @@ public class Corruption {
         GameRegistry.addRecipe(new ItemStack(itemFleshArmourChest, 1), "FFF", "FLF", "FFF", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
         GameRegistry.addRecipe(new ItemStack(itemFleshArmourLegs, 1), "FFF", "FLF", "F F", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
         GameRegistry.addRecipe(new ItemStack(itemFleshArmourBoots, 1), "   ", "F F", "FLF", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
+        GameRegistry.addRecipe(new ItemStack(itemDiary, 1), "BL ", "P  ", "   ", 'B', Items.book, 'L', Items.leather, 'P', Items.paper);
     }
 }
