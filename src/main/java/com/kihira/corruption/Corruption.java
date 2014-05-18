@@ -54,10 +54,10 @@ public class Corruption {
 
     public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
     public static final ItemDiary itemDiary = new ItemDiary();
-    public static final Item itemFleshArmourHelmet = new ItemFleshArmor(0).setUnlocalizedName("fleshHelmet").setTextureName("corruption:flesh_Helmet");
-    public static final Item itemFleshArmourChest = new ItemFleshArmor(1).setUnlocalizedName("fleshChest").setTextureName("corruption:flesh_Chestplate");
-    public static final Item itemFleshArmourLegs = new ItemFleshArmor(2).setUnlocalizedName("fleshLegs").setTextureName("corruption:flesh_Leggings");
-    public static final Item itemFleshArmourBoots = new ItemFleshArmor(3).setUnlocalizedName("fleshBoots").setTextureName("corruption:flesh_Boots");
+    public static final Item itemFleshArmourHelmet = new ItemFleshArmor(0).setUnlocalizedName("fleshHelmet").setTextureName("corruption:flesh_helmet");
+    public static final Item itemFleshArmourChest = new ItemFleshArmor(1).setUnlocalizedName("fleshChest").setTextureName("corruption:flesh_chestplate");
+    public static final Item itemFleshArmourLegs = new ItemFleshArmor(2).setUnlocalizedName("fleshLegs").setTextureName("corruption:flesh_leggings");
+    public static final Item itemFleshArmourBoots = new ItemFleshArmor(3).setUnlocalizedName("fleshBoots").setTextureName("corruption:flesh_boots");
 
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
