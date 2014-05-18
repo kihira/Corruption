@@ -8,7 +8,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockCake;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
@@ -27,7 +26,7 @@ public class BlockEnderCake extends BlockCake {
 
     public BlockEnderCake() {
         super();
-        this.setCreativeTab(CreativeTabs.tabFood);
+        this.setCreativeTab(Corruption.creativeTab);
         this.setHardness(0.5F);
         this.setStepSound(soundTypeCloth);
         this.setBlockName("endercake");

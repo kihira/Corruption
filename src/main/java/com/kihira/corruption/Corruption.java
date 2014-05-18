@@ -1,5 +1,6 @@
 package com.kihira.corruption;
 
+import com.kihira.corruption.client.CreativeTabCorruption;
 import com.kihira.corruption.client.diary.PageData;
 import com.kihira.corruption.common.CommandCorruption;
 import com.kihira.corruption.common.EventHandler;
@@ -48,6 +49,8 @@ public class Corruption {
     public static boolean isEnabledAfraidOfTheDarkCorr;
     public static boolean isEnabledBloodLossCorr;
     public static boolean isEnabledGluttonyCorr;
+
+    public static final CreativeTabCorruption creativeTab = new CreativeTabCorruption();
 
     public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
     public static final ItemDiary itemDiary = new ItemDiary();

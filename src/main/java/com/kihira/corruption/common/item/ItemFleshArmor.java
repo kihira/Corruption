@@ -1,5 +1,6 @@
 package com.kihira.corruption.common.item;
 
+import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.CorruptionDataHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -15,6 +16,7 @@ public class ItemFleshArmor extends ItemArmor {
 
     public ItemFleshArmor(int armorType) {
         super(ArmorMaterial.CLOTH, 4, armorType);
+        this.setCreativeTab(Corruption.creativeTab);
     }
 
     @Override

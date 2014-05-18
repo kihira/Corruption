@@ -20,7 +20,7 @@ public class ItemDiary extends ItemBook {
     //TODO have enchanting effect thingy if there is a new entry
     public ItemDiary() {
         super();
-        this.setCreativeTab(CreativeTabs.tabMisc);
+        this.setCreativeTab(Corruption.creativeTab);
         this.setTextureName("corruption:diary");
         this.setUnlocalizedName("diary");
         this.setMaxStackSize(8);
