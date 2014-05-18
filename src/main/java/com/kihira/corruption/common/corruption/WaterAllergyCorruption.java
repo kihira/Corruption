@@ -33,7 +33,7 @@ public class WaterAllergyCorruption extends AbstractCorruption {
 
     @Override
     public void finish(String player, Side side) {
-        this.playerCount.remove(player, this.playerCount.count(player));
+        this.playerCount.setCount(player, 0);
     }
 
     @Override

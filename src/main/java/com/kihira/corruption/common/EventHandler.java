@@ -1,6 +1,5 @@
 package com.kihira.corruption.common;
 
-import com.google.common.collect.HashMultimap;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -17,7 +16,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import java.io.File;
-import java.util.Collection;
 
 public class EventHandler {
 
@@ -27,26 +25,17 @@ public class EventHandler {
         if (!e.entityLiving.worldObj.isRemote) {
             if (e.entityLiving instanceof EntityDragon) {
                 Corruption.isCorruptionActiveGlobal = false;
-                HashMultimap<String, String> copy = HashMultimap.create(CorruptionRegistry.currentCorruption);
-                for (String playerName : copy.keySet()) {
-                    for (String corrName : CorruptionRegistry.currentCorruption.get(playerName)) {
-                        CorruptionRegistry.removeCorruptionEffectFromPlayer(playerName, corrName);
-                    }
+                for (Object obj : FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList) {
+                    EntityPlayer player = (EntityPlayer) obj;
+                    CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
                 }
-                CorruptionRegistry.currentCorruption.clear();
                 FMLCommonHandler.instance().getMinecraftServerInstance().addChatMessage(new ChatComponentText("The dragon has been killed! This text needs to be rewritten to be fancier!"));
             }
             else if (e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) e.source.getEntity();
                 //Check if they can be corrupted (false if they've already killed it before)
                 if (CorruptionDataHelper.canBeCorrupted(player)) {
-                    HashMultimap<String, String> copy = HashMultimap.create(CorruptionRegistry.currentCorruption);
-                    if (CorruptionRegistry.currentCorruption.containsKey(player)) {
-                        for (String corrName : copy.get(player.getCommandSenderName())) {
-                            CorruptionRegistry.removeCorruptionEffectFromPlayer(player.getCommandSenderName(), corrName);
-                        }
-                        CorruptionRegistry.currentCorruption.removeAll(player);
-                    }
+                    CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
                     CorruptionDataHelper.setCanBeCorrupted(player, false);
                     CorruptionDataHelper.setCorruptionForPlayer(player, 0);
                     player.addChatComponentMessage(new ChatComponentText("As the wither screams out its last breath, you feel a weight lifted from your entire body and soul"));
@@ -61,27 +50,24 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent e) {
-        if (CorruptionRegistry.currentCorruption.containsKey(e.getPlayer().getCommandSenderName())) {
-            Collection<String> corruptions = CorruptionRegistry.currentCorruption.get(e.getPlayer().getCommandSenderName());
-            //BlockTeleportCorruption
-            if (corruptions.contains("blockTeleport") && !e.block.hasTileEntity(e.blockMetadata)) {
-                //Look a few times for a valid block location
-                int x, y, z;
-                for (int i = 0; i < 5; i++) {
-                    x = e.world.rand.nextInt(2 * 8) - 8;
-                    y = e.world.rand.nextInt(2 * 3) - 3;
-                    z = e.world.rand.nextInt(2 * 8) - 8;
-                    if (e.world.isAirBlock(x, y, z)) {
-                        e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
-                        e.setCanceled(true);
-                        e.world.setBlockToAir(e.x, e.y, e.z);
-                        break;
-                    }
+        //BlockTeleportCorruption
+        if (CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.getPlayer(), "blockTeleport") && !e.block.hasTileEntity(e.blockMetadata)) {
+            //Look a few times for a valid block location
+            int x, y, z;
+            for (int i = 0; i < 5; i++) {
+                x = e.world.rand.nextInt(2 * 8) - 8;
+                y = e.world.rand.nextInt(2 * 3) - 3;
+                z = e.world.rand.nextInt(2 * 8) - 8;
+                if (e.world.isAirBlock(x, y, z)) {
+                    e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
+                    e.setCanceled(true);
+                    e.world.setBlockToAir(e.x, e.y, e.z);
+                    break;
                 }
             }
-            else if (CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer()) > 6000 && e.getPlayer().worldObj.rand.nextInt(FMLEventHandler.CORRUPTION_MAX + 6000) < CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer())) {
-                CorruptionRegistry.addCorruptionEffect(e.getPlayer(), "blockTeleport");
-            }
+        }
+        else if (CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer()) > 6000 && e.getPlayer().worldObj.rand.nextInt(FMLEventHandler.CORRUPTION_MAX + 6000) < CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer())) {
+            CorruptionDataHelper.addCorruptionEffectForPlayer(e.getPlayer(), "blockTeleport");
         }
     }
 
@@ -89,12 +75,13 @@ public class EventHandler {
     public void onDamage(LivingHurtEvent e) {
         if (e.entityLiving instanceof EntityPlayer && (e.entityLiving.getHealth() - e.ammount <= 6)) {
             EntityPlayer player = (EntityPlayer) e.entityLiving;
-            if (CorruptionDataHelper.canBeCorrupted(player) && CorruptionDataHelper.getCorruptionForPlayer(player) > 2000 && !CorruptionRegistry.currentCorruption.containsEntry(player, "bloodLoss")) {
-                CorruptionRegistry.addCorruptionEffect(player, "bloodLoss");
+            if (CorruptionDataHelper.canBeCorrupted(player) && CorruptionDataHelper.getCorruptionForPlayer(player) > 2000 && !CorruptionDataHelper.hasCorruptionEffectsForPlayer(player, "bloodLoss")) {
+                CorruptionDataHelper.addCorruptionEffectForPlayer(player, "bloodLoss");
             }
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload e) {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
@@ -111,10 +98,9 @@ public class EventHandler {
                 }
                 skinBackupFolder.delete();
             }
-
             Corruption.proxy.disableGrayscaleShader();
+            //Purge corruption list
+            CorruptionRegistry.currentCorruptionClient.clear();
         }
-        //Purge corruption list
-        CorruptionRegistry.currentCorruption.clear();
     }
 }

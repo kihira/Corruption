@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -141,12 +140,11 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void spawnFootprint(EntityPlayer player) {
-        if (player.fallDistance == 0 && !player.worldObj.isAirBlock((int) player.posX, (int) player.boundingBox.minY - 1, (int) player.posZ)) {
+        if (player.fallDistance == 0 && !player.isInWater() && !player.worldObj.isAirBlock((int) player.posX, (int) player.boundingBox.minY - 1, (int) player.posZ)) {
             if ((this.footsteps.containsKey(player) && this.footsteps.get(player).getDistanceToEntity(player) > 1.4) || !this.footsteps.containsKey(player)) {
                 EntityFootstep footstep = new EntityFootstep(player);
                 player.worldObj.spawnEntityInWorld(footstep);
                 this.footsteps.put(player, footstep);
-                Corruption.logger.debug(I18n.format("Spawned footstep at %s, %s, %s for %s", player.posX, player.posY, player.posZ, player));
             }
         }
     }

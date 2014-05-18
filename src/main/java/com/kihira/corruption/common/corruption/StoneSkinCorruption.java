@@ -44,8 +44,9 @@ public class StoneSkinCorruption extends AbstractCorruption {
 
     @Override
     public void finish(String player, Side side) {
+        this.playerCount.setCount(player, 0);
+
         if (side == Side.CLIENT) {
-            this.playerCount.setCount(player, 0);
             Corruption.proxy.unstonifyPlayerSkin(player);
         }
     }
@@ -57,11 +58,11 @@ public class StoneSkinCorruption extends AbstractCorruption {
 
     @Override
     public String getPageDataName() {
-        return "stoneSkin";
+        return null;
     }
 
     @Override
     public boolean canApply(EntityPlayer player) {
-        return true;
+        return false;
     }
 }

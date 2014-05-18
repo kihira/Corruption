@@ -118,9 +118,6 @@ public class Corruption {
 
     private void registerCorruptionEffects() {
 
-        if (isEnabledBlockTeleportCorr) {
-            new BlockTeleportCorruption();
-        }
         if (isEnabledWaterAllergyCorr) {
             new WaterAllergyCorruption();
             CorruptionRegistry.registerRandomCorruptionEffect("waterAllergy");
@@ -135,6 +132,9 @@ public class Corruption {
         }
         if (isEnabledAfraidOfTheDarkCorr) {
             new AfraidOfTheDarkCorruption();
+        }
+        if (isEnabledBlockTeleportCorr) {
+            new BlockTeleportCorruption();
         }
         if (isEnabledBloodLossCorr) {
             new BloodLossCorruption();

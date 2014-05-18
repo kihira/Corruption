@@ -4,11 +4,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.kihira.corruption.Corruption;
-import com.kihira.corruption.common.CorruptionDataHelper;
-import com.kihira.corruption.common.network.PacketEventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ public class CorruptionRegistry {
 
     public static final List<String> randomCorruptionList = new ArrayList<String>();
     public static final HashMap<String, AbstractCorruption> corruptionHashMap = new HashMap<String, AbstractCorruption>();
-    public static final Multimap<String, String> currentCorruption = Multimaps.synchronizedMultimap(HashMultimap.<String, String>create()); //Player Name, Corruption Name
+    public static final Multimap<String, String> currentCorruptionClient = Multimaps.synchronizedMultimap(HashMultimap.<String, String>create()); //Player Name, Corruption Name
     private static final Random rand = new Random();
 
     /**
@@ -36,38 +34,21 @@ public class CorruptionRegistry {
         else throw new IllegalArgumentException("The corruption effect " + corrName + " has been registered!");
     }
 
-    //This should only be called on server
-    public static void addCorruptionEffect(EntityPlayer player, String corrName) {
-        addCorruptionEffect(player.getCommandSenderName(), corrName);
-
-        //Check if we need to unlock data about corruption
-        if (!CorruptionDataHelper.hasPageDataUnlocked(corruptionHashMap.get(corrName).getPageDataName(), player)) {
-            CorruptionDataHelper.unlockPageData(corruptionHashMap.get(corrName).getPageDataName(), player);
-        }
-
-        FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(player.getCommandSenderName(), corrName, true);
-        Corruption.eventChannel.sendToAll(packet);
-    }
-
     //Only directly called on clients (other then from this class)
+    @SideOnly(Side.CLIENT)
     public static void addCorruptionEffect(String playerName, String corrName) {
         if (corrName != null) {
-            currentCorruption.put(playerName, corrName);
+            currentCorruptionClient.put(playerName, corrName);
             Corruption.logger.info("Applying " + corrName + " from " + playerName);
             corruptionHashMap.get(corrName).init(playerName, FMLCommonHandler.instance().getEffectiveSide());
         }
     }
 
-    public static void removeCorruptionEffectFromPlayer(String playerName, String corrName) {
-        if (corrName != null) {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-                FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(playerName, corrName, false);
-                Corruption.eventChannel.sendToAll(packet);
-            }
-            currentCorruption.remove(playerName, corrName);
-            Corruption.logger.info("Removing " + corrName + " from " + playerName);
-            corruptionHashMap.get(corrName).finish(playerName, FMLCommonHandler.instance().getEffectiveSide());
-        }
+    @SideOnly(Side.CLIENT)
+    public static void removeCorruptionEffect(String playerName, String corrName) {
+        currentCorruptionClient.remove(playerName, corrName);
+        Corruption.logger.info("Removing " + corrName + " from " + playerName);
+        corruptionHashMap.get(corrName).finish(playerName, FMLCommonHandler.instance().getEffectiveSide());
     }
 
     public static String getRandomCorruptionEffect(EntityPlayer entityPlayer) {

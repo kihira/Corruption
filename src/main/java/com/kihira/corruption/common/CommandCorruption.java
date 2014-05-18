@@ -44,7 +44,7 @@ public class CommandCorruption extends CommandBase {
             else if (args.length >= 2 && args[0].equals("effect")) {
                 if (CorruptionRegistry.corruptionHashMap.containsKey(args[1])) {
                     EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
-                    CorruptionRegistry.addCorruptionEffect(player, args[1]);
+                    CorruptionDataHelper.addCorruptionEffectForPlayer(player, args[1]);
                     notifyAdmins(commandSender, "Effect applied!");
                 }
             }
@@ -65,7 +65,7 @@ public class CommandCorruption extends CommandBase {
             else if (args.length >= 2 && args[0].equals("clear")) {
                 EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
 
-                CorruptionRegistry.removeCorruptionEffectFromPlayer(player.getCommandSenderName(), args[2]);
+                CorruptionDataHelper.removeCorruptionEffectForPlayer(player, args[2]);
                 notifyAdmins(commandSender, "Cleared corruption!");
             }
         }

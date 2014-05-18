@@ -1,6 +1,7 @@
 package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
+import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
@@ -11,7 +12,75 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CorruptionDataHelper {
+
+    public static List<String> getCorruptionEffectsForPlayer(EntityPlayer entityPlayer) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        NBTTagList corrEffects = corruptionData.getTagList("CorruptionEffects", 8);
+        List<String> effects = new ArrayList<String>();
+        if (corrEffects != null && corrEffects.tagCount() > 0) {
+            for (int i = 0; i < corrEffects.tagCount(); i++) {
+                effects.add(corrEffects.getStringTagAt(i));
+            }
+        }
+        return effects;
+    }
+
+    public static boolean hasCorruptionEffectsForPlayer(EntityPlayer entityPlayer, String name) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        NBTTagList corrEffects = corruptionData.getTagList("CorruptionEffects", 8);
+        if (corrEffects != null && corrEffects.tagCount() > 0) {
+            for (int i = 0; i < corrEffects.tagCount(); i++) {
+                if (name.equals(corrEffects.getStringTagAt(i))) return true;
+            }
+        }
+        return false;
+    }
+
+    public static void addCorruptionEffectForPlayer(EntityPlayer entityPlayer, String name) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        NBTTagList corrEffects = corruptionData.getTagList("CorruptionEffects", 8);
+        corrEffects.appendTag(new NBTTagString(name));
+        corruptionData.setTag("CorruptionEffects", corrEffects);
+
+        //Check if we need to unlock data about corruption
+        if (!hasPageDataUnlocked(CorruptionRegistry.corruptionHashMap.get(name).getPageDataName(), entityPlayer)) {
+            unlockPageData(CorruptionRegistry.corruptionHashMap.get(name).getPageDataName(), entityPlayer);
+        }
+
+        FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(entityPlayer.getCommandSenderName(), name, true, false);
+        Corruption.eventChannel.sendToAll(packet);
+    }
+
+    public static void removeCorruptionEffectForPlayer(EntityPlayer entityPlayer, String name) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        NBTTagList corrEffects = corruptionData.getTagList("CorruptionEffects", 8);
+        if (corrEffects != null && corrEffects.tagCount() > 0) {
+            NBTTagList copy = (NBTTagList) corrEffects.copy();
+            for (int i = 0; i < copy.tagCount(); i++) {
+                if (name.equals(copy.getStringTagAt(i))) {
+                    corrEffects.removeTag(i);
+                    break;
+                }
+            }
+        }
+        corruptionData.setTag("CorruptionEffects", corrEffects);
+
+        FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(entityPlayer.getCommandSenderName(), name, false, false);
+        Corruption.eventChannel.sendToAll(packet);
+    }
+
+    public static void removeAllCorruptionEffectsForPlayer(EntityPlayer entityPlayer) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        corruptionData.setTag("CorruptionEffects", new NBTTagList());
+
+        FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(entityPlayer.getCommandSenderName(), "", false, true);
+        Corruption.eventChannel.sendToAll(packet);
+    }
+
 
     public static NBTTagCompound getDiaryDataForPlayer(EntityPlayer entityPlayer) {
         NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);

@@ -63,9 +63,28 @@ public class PacketEventHandler {
             String playerName = ByteBufUtils.readUTF8String(payload);
             String corrName = ByteBufUtils.readUTF8String(payload);
             boolean shouldAdd = payload.readBoolean();
+            boolean allEffects = payload.readBoolean();
 
-            if (shouldAdd) CorruptionRegistry.addCorruptionEffect(playerName, corrName);
-            else CorruptionRegistry.removeCorruptionEffectFromPlayer(playerName, corrName);
+            if (shouldAdd) {
+                if (allEffects) {
+                    for (String name : CorruptionRegistry.corruptionHashMap.keySet()) {
+                        CorruptionRegistry.addCorruptionEffect(playerName, name);
+                    }
+                }
+                else {
+                    CorruptionRegistry.addCorruptionEffect(playerName, corrName);
+                }
+            }
+            else {
+                if (allEffects) {
+                    for (String name : CorruptionRegistry.corruptionHashMap.keySet()) {
+                        CorruptionRegistry.removeCorruptionEffect(playerName, name);
+                    }
+                }
+                else {
+                    CorruptionRegistry.removeCorruptionEffect(playerName, corrName);
+                }
+            }
         }
         else if (packetID == Packet.DIARYENTRIES.getID()) {
             NBTTagCompound nbtTagCompound = ByteBufUtils.readTag(payload);
@@ -83,13 +102,14 @@ public class PacketEventHandler {
         return new FMLProxyPacket(byteBuf, "corruption");
     }
 
-    public static FMLProxyPacket getCorruptionEffectPacket(String playerName, String corrEffect, boolean shouldAdd) {
+    public static FMLProxyPacket getCorruptionEffectPacket(String playerName, String corrEffect, boolean shouldAdd, boolean allEffects) {
         ByteBuf byteBuf = Unpooled.buffer();
 
         byteBuf.writeInt(Packet.CORRUPTIONEFFECT.getID());
         ByteBufUtils.writeUTF8String(byteBuf, playerName);
         ByteBufUtils.writeUTF8String(byteBuf, corrEffect);
         byteBuf.writeBoolean(shouldAdd);
+        byteBuf.writeBoolean(allEffects);
 
         return new FMLProxyPacket(byteBuf, "corruption");
     }

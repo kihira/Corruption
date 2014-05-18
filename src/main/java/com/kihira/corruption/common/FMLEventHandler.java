@@ -1,6 +1,7 @@
 package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
+import com.kihira.corruption.common.corruption.AbstractCorruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -11,7 +12,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,30 +33,33 @@ public class FMLEventHandler {
                         //24 hours
                         if (e.player.worldObj.rand.nextInt(CORRUPTION_MAX) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
                             String corrName = CorruptionRegistry.getRandomCorruptionEffect(e.player);
-                            CorruptionRegistry.addCorruptionEffect(e.player, corrName);
-                        }
-                    }
-                    if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
-                        Collection<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
-                        List<String> toRemove = new ArrayList<String>();
-                        for (String corrName : corruptionNames) {
-                            if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
-                                if (!CorruptionRegistry.corruptionHashMap.get(corrName).shouldContinue(e.player, FMLCommonHandler.instance().getEffectiveSide())) {
-                                    toRemove.add(corrName);
-                                }
+                            if (!CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.player, corrName)) {
+                                CorruptionDataHelper.addCorruptionEffectForPlayer(e.player, corrName);
                             }
                         }
-                        //To prevent CME's
-                        if (!toRemove.isEmpty()) {
-                            for (String corrName : toRemove) {
-                                CorruptionRegistry.removeCorruptionEffectFromPlayer(e.player.getCommandSenderName(), corrName);
+                    }
+                    List<String> corrEffects = CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player);
+                    if (!corrEffects.isEmpty()) {
+                        for (String corrEffect : corrEffects) {
+                            AbstractCorruption corruption = CorruptionRegistry.corruptionHashMap.get(corrEffect);
+                            if (corruption != null) {
+                                if (corruption.shouldContinue(e.player, FMLCommonHandler.instance().getEffectiveSide())) {
+                                    corruption.onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());
+                                }
+                                else {
+                                    corruption.finish(e.player.getCommandSenderName(), FMLCommonHandler.instance().getEffectiveSide());
+                                    CorruptionDataHelper.removeCorruptionEffectForPlayer(e.player, corrEffect);
+                                }
+                            }
+                            else {
+                                CorruptionDataHelper.removeCorruptionEffectForPlayer(e.player, corrEffect);
                             }
                         }
                     }
                     //AfraidOfTheDark
                     if (e.player.worldObj.getTotalWorldTime() % 200 == 0 && e.player.worldObj.getBlockLightValue((int) e.player.posX, (int) e.player.posY, (int) e.player.posZ) <= 8) {
                         if (CorruptionDataHelper.getCorruptionForPlayer(e.player) > 3000 && e.player.worldObj.rand.nextInt(CORRUPTION_MAX) < CorruptionDataHelper.getCorruptionForPlayer(e.player)) {
-                            CorruptionRegistry.addCorruptionEffect(e.player, "afraidOfTheDark");
+                            CorruptionDataHelper.addCorruptionEffectForPlayer(e.player, "afraidOfTheDark");
                         }
                     }
 
@@ -66,17 +69,18 @@ public class FMLEventHandler {
                     CorruptionDataHelper.decreaseCorruptionForPlayer(e.player, 300);
                 }
             }
-            //Common
-            if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
-                Collection<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
-                for (String corrName : corruptionNames) {
-                    if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
-                        CorruptionRegistry.corruptionHashMap.get(corrName).onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());
+            //Client
+            else if (e.player.worldObj.isRemote) {
+                //Do corruption client side
+                if (CorruptionRegistry.currentCorruptionClient.containsKey(e.player.getCommandSenderName())) {
+                    Collection<String> corruptionNames = CorruptionRegistry.currentCorruptionClient.get(e.player.getCommandSenderName());
+                    for (String corrName : corruptionNames) {
+                        if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
+                            CorruptionRegistry.corruptionHashMap.get(corrName).onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());
+                        }
                     }
                 }
-            }
-            //Client
-            if (e.player.worldObj.isRemote) {
+                //Footprint
                 if (CorruptionDataHelper.canBeCorrupted(e.player) && e.player.worldObj.rand.nextInt(1800) < CorruptionDataHelper.getCorruptionForPlayer(e.player) && e.player.ticksExisted % 2 == 0) {
                     Corruption.proxy.spawnFootprint(e.player);
                 }
