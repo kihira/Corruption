@@ -73,7 +73,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    //TODO fix
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
         oldCorr = oldCorr / 30;
         newCorr = newCorr / 30;

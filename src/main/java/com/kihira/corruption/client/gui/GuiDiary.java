@@ -158,4 +158,9 @@ public class GuiDiary extends GuiScreen {
 
         super.drawScreen(par1, par2, par3);
     }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return true;
+    }
 }
