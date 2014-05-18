@@ -66,7 +66,7 @@ public class PageData {
     }
 
     public static void registerPageData() {
-        pageMap.put("contents", new PageData("contents").setPageContents(0, "page.welcome.0", "page.welcome.0.title").setSubTitle("page.welcome.0.subtitle"));
+        pageMap.put("contents", new PageData("contents").setPageContents(0, "page.welcome.0", "page.welcome.0.title").setSubTitle("page.welcome.0.subtitle").setPageContents(1, "page.welcome.1", "page.welcome.1.title"));
         pageMap.put("colourBlind", new PageData("colourblind").setPageContents(0, "page.colourblind.0", "page.colourblind.0.title").setTabName("page.colourblind.0.tab").setSubTitle("page.colourblind.0.subtitle"));
         pageMap.put("afraidOfTheDark", new PageData("afraidOfTheDark").setPageContents(0, "page.afraidOfTheDark.0", "page.afraidOfTheDark.0.title").setTabName("page.afraidOfTheDark.0.tab").setSubTitle("page.afraidOfTheDark.0.subtitle"));
         pageMap.put("blockTeleport", new PageData("blockTeleport").setPageContents(0, "page.blockTeleport.0", "page.blockTeleport.0.title").setTabName("page.blockTeleport.0.tab").setSubTitle("page.blockTeleport.0.subtitle"));

@@ -61,8 +61,8 @@ public class GuiDiary extends GuiScreen {
         //Contents Tab Button
         this.buttonList.add(this.buttonContents = new GuiButtonTab(50, this.width / 2 + 69, 14, "Contents"));
         //Page Buttons
-        this.buttonList.add(this.buttonNextPage = new GuiButtonPage(51, this.width / 2 + 120, 154, true));
-        this.buttonList.add(this.buttonPreviousPage = new GuiButtonPage(52, this.width / 2 + 38, 154, false));
+        this.buttonList.add(this.buttonNextPage = new GuiButtonPage(51, this.width / 2 + 25, 154, true));
+        this.buttonList.add(this.buttonPreviousPage = new GuiButtonPage(52, this.width / 2 - 58, 154, false));
         //Corruption Pages
         int yOffset = 15;
         int id = 0;
@@ -117,6 +117,18 @@ public class GuiDiary extends GuiScreen {
             //contents
             if (button.id == 50) {
                 this.loadPageData("contents");
+            }
+            //Next page
+            else if (button.id == 51) {
+                if (this.currPage < this.currentPageData.getTotalPages() - 1) {
+                    this.currPage++;
+                }
+            }
+            //Pref
+            else if (button.id == 52) {
+                if (this.currPage > 0) {
+                    this.currPage--;
+                }
             }
             //Page
             else if (button.id < this.pageData.size()) {
