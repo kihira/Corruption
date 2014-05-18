@@ -80,7 +80,7 @@ public class ClientProxy extends CommonProxy {
         BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
         BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
 
-        if (bufferedImage != null) {
+        if (bufferedImage != null && oldSkin != null) {
             for (int i = newCorr; i <= oldCorr; i++) {
                 Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
                 int x = rand.nextInt(bufferedImage.getWidth());
@@ -210,8 +210,18 @@ public class ClientProxy extends CommonProxy {
     private BufferedImage getOriginalPlayerSkin(AbstractClientPlayer entityPlayer) {
         File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
         BufferedImage bufferedImage = null;
+        ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
+
         try {
-            bufferedImage = ImageIO.read(file);
+            if (file.exists()) {
+                bufferedImage = ImageIO.read(file);
+            }
+            //Load skin from Mojang servers
+            else {
+                ObfuscationReflectionHelper.setPrivateValue(ThreadDownloadImageData.class, imageData, null, "imageThread", "field_110561_e", "bpj.h");
+                imageData.setBufferedImage(null);
+                imageData.loadTexture(Minecraft.getMinecraft().getResourceManager());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

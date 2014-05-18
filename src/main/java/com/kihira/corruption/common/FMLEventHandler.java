@@ -12,8 +12,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class FMLEventHandler {
 
@@ -37,7 +37,7 @@ public class FMLEventHandler {
                         }
                     }
                     if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
-                        Set<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
+                        Collection<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
                         List<String> toRemove = new ArrayList<String>();
                         for (String corrName : corruptionNames) {
                             if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
@@ -68,7 +68,7 @@ public class FMLEventHandler {
             }
             //Common
             if (CorruptionRegistry.currentCorruption.containsKey(e.player.getCommandSenderName())) {
-                Set<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
+                Collection<String> corruptionNames = CorruptionRegistry.currentCorruption.get(e.player.getCommandSenderName());
                 for (String corrName : corruptionNames) {
                     if (CorruptionRegistry.corruptionHashMap.containsKey(corrName)) {
                         CorruptionRegistry.corruptionHashMap.get(corrName).onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());

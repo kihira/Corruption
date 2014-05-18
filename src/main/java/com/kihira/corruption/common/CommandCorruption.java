@@ -62,6 +62,12 @@ public class CommandCorruption extends CommandBase {
                 EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 notifyAdmins(commandSender, String.valueOf(CorruptionDataHelper.getCorruptionForPlayer(player)));
             }
+            else if (args.length >= 2 && args[0].equals("clear")) {
+                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
+
+                CorruptionRegistry.removeCorruptionEffectFromPlayer(player.getCommandSenderName(), args[2]);
+                notifyAdmins(commandSender, "Cleared corruption!");
+            }
         }
         else throw new CommandException("Not enough args!");
     }

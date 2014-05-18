@@ -1,6 +1,8 @@
 package com.kihira.corruption.common.corruption;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.CorruptionDataHelper;
 import com.kihira.corruption.common.network.PacketEventHandler;
@@ -18,7 +20,7 @@ public class CorruptionRegistry {
 
     public static final List<String> randomCorruptionList = new ArrayList<String>();
     public static final HashMap<String, AbstractCorruption> corruptionHashMap = new HashMap<String, AbstractCorruption>();
-    public static final HashMultimap<String, String> currentCorruption = HashMultimap.create(); //Player Name, Corruption Name
+    public static final Multimap<String, String> currentCorruption = Multimaps.synchronizedMultimap(HashMultimap.<String, String>create()); //Player Name, Corruption Name
     private static final Random rand = new Random();
 
     /**
