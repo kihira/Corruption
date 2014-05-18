@@ -95,6 +95,12 @@ public class FMLEventHandler {
         if (Corruption.corrSpeed == 10) e.player.addChatComponentMessage(new ChatComponentText("[Corruption] Please note that this server is running at ModJam speed (10x faster then normal!) so you can see the full effects of the mod. You can change this in your config"));
 
         Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(e.player), (EntityPlayerMP) e.player);
+        List<String> corrEffects = CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player);
+        if (!corrEffects.isEmpty()) {
+            for (String corr : corrEffects) {
+                Corruption.eventChannel.sendTo(PacketEventHandler.getCorruptionEffectPacket(e.player.getCommandSenderName(), corr, true, false), (EntityPlayerMP) e.player);
+            }
+        }
     }
 
 }

@@ -94,10 +94,8 @@ public class EventHandler {
                     for (File skinFile : skinFiles) {
                         String playerName = skinFile.getName().substring(0, skinFile.getName().length() - 4);
                         Corruption.proxy.uncorruptPlayerSkin(playerName);
-                        skinFile.delete();
                     }
                 }
-                skinBackupFolder.delete();
             }
             Corruption.proxy.disableGrayscaleShader();
             //Purge corruption list
