@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
@@ -23,15 +24,15 @@ public class EventHandler {
     //Main corruption event
     public void onLivingDeath(LivingDeathEvent e) {
         if (!e.entityLiving.worldObj.isRemote) {
-            if (e.entityLiving instanceof EntityDragon) {
-                Corruption.isCorruptionActiveGlobal = false;
+            if (Corruption.disableCorrOnDragonDeath && (e.entity instanceof EntityDragon || e.entity instanceof EntityDragonPart)) {
+                Corruption.setDiableCorruption();
                 for (Object obj : FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList) {
                     EntityPlayer player = (EntityPlayer) obj;
                     CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
                 }
-                FMLCommonHandler.instance().getMinecraftServerInstance().addChatMessage(new ChatComponentText("The dragon has been killed! This text needs to be rewritten to be fancier!"));
+                FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText("The great dragon has been defeated, lifting the evil corruption from the world"));
             }
-            else if (e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
+            else if (Corruption.disableCorrOnWitherDeath && e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) e.source.getEntity();
                 //Check if they can be corrupted (false if they've already killed it before)
                 if (CorruptionDataHelper.canBeCorrupted(player)) {

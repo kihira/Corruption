@@ -60,6 +60,7 @@ public class Corruption {
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
 
     public static final String CATEGORY_CORRUPTION = "corruption";
+    public static Configuration config;
 
     public static boolean disableCorrOnDragonDeath;
     public static boolean disableCorrOnWitherDeath;
@@ -89,7 +90,7 @@ public class Corruption {
     }
 
     private void loadGeneralConfig(File file) {
-        Configuration config = new Configuration(file);
+        config = new Configuration(file);
         Property prop;
 
         config.load();
@@ -122,7 +123,18 @@ public class Corruption {
         prop.comment = "How often in ticks to apply corruption. ModJam speed is 20, normal speed is 200";
         corrSpeed = prop.getInt();
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Disable Corruption", false);
+        prop.comment = "DO NOT CHANGE THIS >=(";
+        isCorruptionActiveGlobal = prop.getBoolean(false);
+
         if (config.hasChanged()) config.save();
+    }
+
+    public static void setDiableCorruption() {
+        Property prop = config.get(Configuration.CATEGORY_GENERAL, "Disable Corruption", false);
+        prop.set(true);
+        config.save();
+        isCorruptionActiveGlobal = false;
     }
 
     private void registerCorruptionEffects() {
