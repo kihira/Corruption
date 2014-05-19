@@ -119,7 +119,7 @@ public class Corruption {
         prop = config.get(Configuration.CATEGORY_GENERAL, "Disable corruption on wither death", false);
         prop.comment = "If a player kills a wither, corruption is disabled for THAT PLAYER ONLY";
         disableCorrOnWitherDeath = prop.getBoolean(false);
-        prop = config.get(Configuration.CATEGORY_GENERAL, "Corruptioned removed on death", 0);
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption removed on death", 0);
         prop.comment = "If a player dies, this amount of corruption will be removed (set to 0 to disable)";
         corrRemovedOnDeath = prop.getInt();
         prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption Speed", 20);
