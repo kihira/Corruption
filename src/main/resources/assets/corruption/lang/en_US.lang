@@ -47,3 +47,15 @@ item.fleshChest.name=Flesh Chestplate
 item.fleshLegs.name=Flesh Leggings
 item.fleshBoots.name=Flesh Boots
 itemGroup.corruption=Corruption
+command.corruption.usage=/corruption <set|effect|disable|enable|get|clear>
+command.corruption.usage.set=/corruption set [+|-][corruption] [player]
+command.corruption.usage.effect/corruption effect <corruption> [player]
+command.corruption.success.set=%s has set corruption for %s to %s
+command.corruption.success.effect=%s has applied the effect %s to %s
+command.corruption.success.disable=%s has disabled corruption for %s
+command.corruption.usage.disable=/corruption disable [player]
+command.corruption.success.enabled=%s has enabled corruption for %s
+command.corruption.usage.enable=/corruption enable [player]
+command.corruption.get.usage=/corruption get [player]
+command.corruption.success.clear=%s cleared corruption effects for %s
+command.corruption.usage.clear=/corruption clear [player]

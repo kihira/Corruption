@@ -1,11 +1,13 @@
 package com.kihira.corruption.common;
 
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
+
+import java.util.List;
 
 public class CommandCorruption extends CommandBase {
 
@@ -16,57 +18,108 @@ public class CommandCorruption extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender commandSender) {
-        return "Pie!";
+        return "command.corruption.usage";
     }
 
     @Override
     public void processCommand(ICommandSender commandSender, String[] args) {
-        if (args != null ) {
-            if (args.length >= 2 && args[0].equals("set")) {
-                int corr;
-                EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(args.length >= 3 ? args[2] : commandSender.getCommandSenderName());
+        if (args != null && args.length > 0) {
+            if (args[0].equals("set")) {
+                if (args.length >= 2 ) {
+                    int corr;
+                    EntityPlayer player = getPlayer(commandSender, args.length >= 3 ? args[2] : commandSender.getCommandSenderName());
+                    if (player != null) {
+                        if (args[1].startsWith("+")) {
+                            corr = parseInt(commandSender, args[1].substring(1)) + CorruptionDataHelper.getCorruptionForPlayer(player);
+                        }
+                        else if (args[1].startsWith("-")) {
+                            corr = parseInt(commandSender, args[1].substring(1)) - CorruptionDataHelper.getCorruptionForPlayer(player);
+                        }
+                        else {
+                            corr = parseInt(commandSender, args[1]);
+                        }
+                        CorruptionDataHelper.setCorruptionForPlayer(player, corr);
+                        notifyAdmins(commandSender, "command.corruption.success.set", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
+                    }
+                    else throw new CommandException("command.corruption.usage.set");
+                }
+                else throw new CommandException("command.corruption.usage.set");
+            }
+            else if (args[0].equals("effect")) {
+                if (args.length >= 2) {
+                    EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[2] : commandSender.getCommandSenderName());
+                    if (CorruptionRegistry.corruptionHashMap.containsKey(args[1]) && player != null) {
+                        CorruptionDataHelper.addCorruptionEffectForPlayer(player, args[1]);
+                        notifyAdmins(commandSender, "command.corruption.success.effect", commandSender.getCommandSenderName(), args[1], player.getCommandSenderName());
+                    }
+                    else throw new CommandException("command.corruption.usage.effect");
+                }
+                else throw new CommandException("command.corruption.usage.effect");
+            }
+            else if (args[0].equals("disable")) {
+                EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 if (player != null) {
-                    if (args[1].startsWith("+")) {
-                        corr = Integer.valueOf(args[1].substring(1)) + CorruptionDataHelper.getCorruptionForPlayer(player);
-                    }
-                    else if (args[1].startsWith("-")) {
-                        corr = Integer.valueOf(args[1].substring(1)) - CorruptionDataHelper.getCorruptionForPlayer(player);
-                    }
-                    else {
-                        corr = Integer.valueOf(args[1]);
-                    }
-                    CorruptionDataHelper.setCorruptionForPlayer(player, corr);
-                    notifyAdmins(commandSender, "%s has set corruption for %s to %s", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
+                    CorruptionDataHelper.setCanBeCorrupted(player, false);
+                    notifyAdmins(commandSender, "command.corruption.success.disable", commandSender.getCommandSenderName(), player.getCommandSenderName());
                 }
+                else throw new CommandException("command.corruption.usage.disable");
             }
-            else if (args.length >= 2 && args[0].equals("effect")) {
-                if (CorruptionRegistry.corruptionHashMap.containsKey(args[1])) {
-                    EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(commandSender.getCommandSenderName());
-                    CorruptionDataHelper.addCorruptionEffectForPlayer(player, args[1]);
-                    notifyAdmins(commandSender, "Effect applied!");
+            else if (args[0].equals("enable")) {
+                EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
+                if (player != null) {
+                    CorruptionDataHelper.setCanBeCorrupted(player, true);
+                    notifyAdmins(commandSender, "command.corruption.success.enable", commandSender.getCommandSenderName(), player.getCommandSenderName());
                 }
+                else throw new CommandException("command.corruption.usage.enable");
             }
-            else if (args.length >= 1 && args[0].equals("disable")) {
-                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
-                CorruptionDataHelper.setCanBeCorrupted(player, false);
-                notifyAdmins(commandSender, "Corruption disabled!");
+            else if (args[0].equals("get")) {
+                EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
+                if (player != null) {
+                    notifyAdmins(commandSender, String.valueOf(CorruptionDataHelper.getCorruptionForPlayer(player)));
+                }
+                else throw new CommandException("command.corruption.get.usage");
             }
-            else if (args.length >= 1 && args[0].equals("enable")) {
-                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
-                CorruptionDataHelper.setCanBeCorrupted(player, true);
-                notifyAdmins(commandSender, "Corruption enabled!");
+            else if (args[0].equals("clear")) {
+                EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
+                if (player != null) {
+                    CorruptionDataHelper.removeCorruptionEffectForPlayer(player, args[2]);
+                    notifyAdmins(commandSender, "command.corruption.success.clear", commandSender.getCommandSenderName(), player.getCommandSenderName());
+                }
+                else throw new CommandException("command.corruption.usage.clear");
             }
-            else if (args.length >= 1 && args[0].equals("get")) {
-                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
-                notifyAdmins(commandSender, String.valueOf(CorruptionDataHelper.getCorruptionForPlayer(player)));
-            }
-            else if (args.length >= 2 && args[0].equals("clear")) {
-                EntityPlayer player = commandSender.getEntityWorld().getPlayerEntityByName(args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
+            else throw new CommandException("command.corruption.usage");
+        }
+        else throw new CommandException("command.corruption.usage");
+    }
 
-                CorruptionDataHelper.removeCorruptionEffectForPlayer(player, args[2]);
-                notifyAdmins(commandSender, "Cleared corruption!");
+    @Override
+    public List addTabCompletionOptions(ICommandSender commandSender, String[] args) {
+        if (args.length == 1) return getListOfStringsMatchingLastWord(args, "set", "effect", "disable", "enable", "get", "clear");
+        else if (args.length >= 2) {
+            if (args[0].equals("set") && args.length == 3) {
+                return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+            }
+            else if (args[0].equals("effect")) {
+                if (args.length == 2) {
+                    return getListOfStringsFromIterableMatchingLastWord(args, CorruptionRegistry.corruptionHashMap.keySet());
+                }
+                else if (args.length == 3) {
+                    return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+                }
+            }
+            else if (args[0].equals("disable")) {
+                return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+            }
+            else if (args[0].equals("enable")) {
+                return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+            }
+            else if (args[0].equals("get")) {
+                return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+            }
+            else if (args[0].equals("clear")) {
+                return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
             }
         }
-        else throw new CommandException("Not enough args!");
+        return null;
     }
 }
