@@ -82,7 +82,7 @@ public class CommandCorruption extends CommandBase {
             else if (args[0].equals("clear")) {
                 EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 if (player != null) {
-                    CorruptionDataHelper.removeCorruptionEffectForPlayer(player, args[2]);
+                    CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
                     notifyAdmins(commandSender, "command.corruption.success.clear", commandSender.getCommandSenderName(), player.getCommandSenderName());
                 }
                 else throw new CommandException("command.corruption.usage.clear");

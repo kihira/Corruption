@@ -36,6 +36,27 @@ public class ClientProxy extends CommonProxy {
     private final ResourceLocation shader = new ResourceLocation("corruption", "grayscale.json");
     private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
 
+    //TODO add in a way to check if player skin has refreshed (such as updating to custom skin thanks to slow skin servers)
+    private BufferedImage getBufferedImageSkin(AbstractClientPlayer entityPlayer, ThreadDownloadImageData imageData) {
+        BufferedImage bufferedImage = null;
+        if (imageData.isTextureUploaded()) {
+            bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
+        }
+        else {
+            try {
+                bufferedImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(entityPlayer.getLocationCape()).getInputStream());
+            } catch (IOException e) {
+                try {
+                    bufferedImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(AbstractClientPlayer.locationStevePng).getInputStream());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+
+        imageData.setBufferedImage(bufferedImage);
+        return bufferedImage;
+    }
 
     @Override
     public void registerRenderers() {
@@ -45,11 +66,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer, imageData);
 
         //Backup old skin
-        if (oldCorr == 0) {
-            this.backupPlayerSkin(entityPlayer); //TODO better way to detect when a backup is needed
+//        if (oldCorr == 0) {
+//            this.backupPlayerSkin(entityPlayer); //TODO better way to detect when a backup is needed
+//        }
+
+        if (!this.hasBackup(entityPlayer)) {
+            this.backupPlayerSkin(entityPlayer);
         }
 
         if (bufferedImage != null) {
@@ -61,14 +86,15 @@ public class ClientProxy extends CommonProxy {
                 //Eyes
                 if (y == 12 && (x == 9 || x == 10 || x == 13 || x == 14 || x == 41 || x == 42 || x == 45 || x == 46)) {
                     color = new Color(204, 0, 250);
-                }
-                else {
+                } else {
                     color = new Color(bufferedImage.getRGB(x, y)).darker();
                 }
                 bufferedImage.setRGB(x, y, color.getRGB());
             }
+            //imageData.setBufferedImage(bufferedImage);
             TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
         }
+        else System.out.println("Noooo");
     }
 
     @Override
@@ -76,7 +102,7 @@ public class ClientProxy extends CommonProxy {
         oldCorr = oldCorr / 30;
         newCorr = newCorr / 30;
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer, imageData);
         BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
 
         if (bufferedImage != null && oldSkin != null) {
@@ -120,8 +146,12 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer, imageData);
         Random rand = new Random();
+
+        if (!this.hasBackup(entityPlayer)) {
+            this.backupPlayerSkin(entityPlayer);
+        }
 
         if (bufferedImage != null) {
             try {
@@ -185,10 +215,14 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    public boolean hasBackup(AbstractClientPlayer player) {
+        return new File("skinbackup" + File.separator + player.getCommandSenderName() + ".png").exists();
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void backupPlayerSkin(AbstractClientPlayer entityPlayer) {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
-        BufferedImage bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer, imageData);
 
         File file = new File("skinbackup");
         file.mkdir();
