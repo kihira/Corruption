@@ -9,13 +9,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-public class StoneSkinCorruption extends AbstractCorruption {
+public class StoneSkinCorruption implements ICorruptionEffect {
 
     private final Multiset<String> playerCount = ConcurrentHashMultiset.create();
-
-    public StoneSkinCorruption() {
-        super("stoneSkin");
-    }
 
     @Override
     public void init(String player, Side side) {

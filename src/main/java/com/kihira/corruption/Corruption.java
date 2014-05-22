@@ -143,29 +143,29 @@ public class Corruption {
     private void registerCorruptionEffects() {
 
         if (isEnabledWaterAllergyCorr) {
-            new WaterAllergyCorruption();
+            CorruptionRegistry.registerCorruptionEffect("waterAllergy", new WaterAllergyCorruption());
             CorruptionRegistry.registerRandomCorruptionEffect("waterAllergy");
         }
         if (isEnabledStoneSkinCorr) {
-            new StoneSkinCorruption();
+            CorruptionRegistry.registerCorruptionEffect("stoneSkin", new StoneSkinCorruption());
             CorruptionRegistry.registerRandomCorruptionEffect("stoneSkin");
         }
         if (isEnabledColourBlindCorr) {
-            new ColourBlindCorruption();
+            CorruptionRegistry.registerCorruptionEffect("colourBlind", new ColourBlindCorruption());
             CorruptionRegistry.registerRandomCorruptionEffect("colourBlind");
         }
         if (isEnabledGluttonyCorr) {
-            new GluttonyCorruption();
+            CorruptionRegistry.registerCorruptionEffect("gluttony", new GluttonyCorruption());
             CorruptionRegistry.registerRandomCorruptionEffect("gluttony");
         }
         if (isEnabledAfraidOfTheDarkCorr) {
-            new AfraidOfTheDarkCorruption();
+            CorruptionRegistry.registerCorruptionEffect("afraidOfTheDark", new AfraidOfTheDarkCorruption());
         }
         if (isEnabledBlockTeleportCorr) {
-            new BlockTeleportCorruption();
+            CorruptionRegistry.registerCorruptionEffect("blockTeleport", new BlockTeleportCorruption());
         }
         if (isEnabledBloodLossCorr) {
-            new BloodLossCorruption();
+            CorruptionRegistry.registerCorruptionEffect("bloodLoss", new BloodLossCorruption());
         }
     }
 

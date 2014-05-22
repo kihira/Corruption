@@ -8,13 +8,9 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 
-public class GluttonyCorruption extends AbstractCorruption {
+public class GluttonyCorruption implements ICorruptionEffect {
 
     private final Multiset<String> playerCount = HashMultiset.create();
-
-    public GluttonyCorruption() {
-        super("gluttony");
-    }
 
     @Override
     public void init(String player, Side side) {

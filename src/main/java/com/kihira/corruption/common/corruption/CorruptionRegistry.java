@@ -17,7 +17,7 @@ import java.util.Random;
 public class CorruptionRegistry {
 
     public static final List<String> randomCorruptionList = new ArrayList<String>();
-    public static final HashMap<String, AbstractCorruption> corruptionHashMap = new HashMap<String, AbstractCorruption>();
+    public static final HashMap<String, ICorruptionEffect> corruptionHashMap = new HashMap<String, ICorruptionEffect>();
     public static final Multimap<String, String> currentCorruptionClient = Multimaps.synchronizedMultimap(HashMultimap.<String, String>create()); //Player Name, Corruption Name
     private static final Random rand = new Random();
 
@@ -32,6 +32,13 @@ public class CorruptionRegistry {
             randomCorruptionList.add(corrName);
         }
         else throw new IllegalArgumentException("The corruption effect " + corrName + " has been registered!");
+    }
+
+    public static void registerCorruptionEffect(String corrName, ICorruptionEffect corruptionEffect) {
+        if (!corruptionHashMap.containsKey(corrName)) {
+            corruptionHashMap.put(corrName, corruptionEffect);
+        }
+        else throw new IllegalArgumentException("A corruption has already been registered with the name " + corrName);
     }
 
     //Only directly called on clients (other then from this class)

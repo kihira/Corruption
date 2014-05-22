@@ -4,11 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 
-public class AfraidOfTheDarkCorruption extends AbstractCorruption {
-
-    public AfraidOfTheDarkCorruption() {
-        super("afraidOfTheDark");
-    }
+public class AfraidOfTheDarkCorruption implements ICorruptionEffect {
 
     @Override
     public void init(String player, Side side) {

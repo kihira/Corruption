@@ -6,13 +6,9 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class ColourBlindCorruption extends AbstractCorruption {
+public class ColourBlindCorruption implements ICorruptionEffect {
 
     private final HashMultiset<String> playerCount = HashMultiset.create();
-
-    public ColourBlindCorruption() {
-        super("colourBlind");
-    }
 
     @Override
     public void init(String player, Side side) {

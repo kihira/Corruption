@@ -5,13 +5,9 @@ import com.kihira.corruption.common.CorruptionDataHelper;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class BlockTeleportCorruption extends AbstractCorruption {
+public class BlockTeleportCorruption implements ICorruptionEffect {
 
     private final HashMultiset<String> blocksBroken = HashMultiset.create();
-
-    public BlockTeleportCorruption() {
-        super("blockTeleport");
-    }
 
     @Override
     public void init(String player, Side side) {

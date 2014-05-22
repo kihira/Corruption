@@ -6,11 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-public class BloodLossCorruption extends AbstractCorruption {
-
-    public BloodLossCorruption() {
-        super("bloodLoss");
-    }
+public class BloodLossCorruption implements ICorruptionEffect {
 
     @Override
     public void init(String player, Side side) {

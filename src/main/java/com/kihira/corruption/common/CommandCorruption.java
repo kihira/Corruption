@@ -47,7 +47,7 @@ public class CommandCorruption extends CommandBase {
             }
             else if (args[0].equals("effect")) {
                 if (args.length >= 2) {
-                    EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[2] : commandSender.getCommandSenderName());
+                    EntityPlayer player = getPlayer(commandSender, args.length >= 3 ? args[2] : commandSender.getCommandSenderName());
                     if (CorruptionRegistry.corruptionHashMap.containsKey(args[1]) && player != null) {
                         CorruptionDataHelper.addCorruptionEffectForPlayer(player, args[1]);
                         notifyAdmins(commandSender, "command.corruption.success.effect", commandSender.getCommandSenderName(), args[1], player.getCommandSenderName());

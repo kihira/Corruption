@@ -4,15 +4,13 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemPotion;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 
-public class WaterAllergyCorruption extends AbstractCorruption {
+public class WaterAllergyCorruption implements ICorruptionEffect {
 
     private final Multiset<String> playerCount = HashMultiset.create();
-
-    public WaterAllergyCorruption() {
-        super("waterAllergy");
-    }
 
     @Override
     public void init(String player, Side side) {
@@ -27,7 +25,7 @@ public class WaterAllergyCorruption extends AbstractCorruption {
             if (player.isInWater() || (player.worldObj.isRaining() && player.worldObj.canBlockSeeTheSky((int) player.posX, (int) player.posY, (int) player.posZ)) && player.worldObj.getTotalWorldTime() % 10 == 0) {
                 player.attackEntityFrom(DamageSource.drown, 1);
             }
-            if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemPotion && && player.worldObj.getTotalWorldTime() % 10 == 0){
+            if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemPotion && player.worldObj.getTotalWorldTime() % 10 == 0){
                 player.dropOneItem(true);
                 player.attackEntityFrom(DamageSource.drown, 1);
                 player.addChatComponentMessage(new ChatComponentText("The condensation from the bottle burns your hands, causing you to drop it."));
