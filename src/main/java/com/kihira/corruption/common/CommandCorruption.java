@@ -90,6 +90,17 @@ public class CommandCorruption extends CommandBase {
                 }
                 else throw new CommandException("command.corruption.usage.clear");
             }
+            else if (args[0].equals("reset")) {
+                EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
+                if (player != null) {
+                    CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
+                    CorruptionDataHelper.setDoneIntroduction(player, false);
+                    CorruptionDataHelper.setCanBeCorrupted(player, true);
+                    CorruptionDataHelper.setCorruptionForPlayer(player, 0);
+                    notifyAdmins(commandSender, "command.corruption.success.reset", commandSender.getCommandSenderName(), player.getCommandSenderName());
+                }
+                else throw new CommandException("command.corruption.usage.reset");
+            }
             else throw new CommandException("command.corruption.usage");
         }
         else throw new CommandException("command.corruption.usage");
@@ -97,7 +108,7 @@ public class CommandCorruption extends CommandBase {
 
     @Override
     public List addTabCompletionOptions(ICommandSender commandSender, String[] args) {
-        if (args.length == 1) return getListOfStringsMatchingLastWord(args, "set", "effect", "disable", "enable", "get", "clear");
+        if (args.length == 1) return getListOfStringsMatchingLastWord(args, "set", "effect", "disable", "enable", "get", "clear", "reset");
         else if (args.length >= 2) {
             if (args[0].equals("set") && args.length == 3) {
                 return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());

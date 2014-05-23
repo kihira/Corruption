@@ -17,6 +17,16 @@ import java.util.List;
 
 public class CorruptionDataHelper {
 
+    public static void setDoneIntroduction(EntityPlayer entityPlayer, boolean bool) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        corruptionData.setBoolean("WelcomeMessageComplete", bool);
+    }
+
+    public static boolean needIntroduction(EntityPlayer entityPlayer) {
+        NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
+        return !corruptionData.getBoolean("WelcomeMessageComplete");
+    }
+
     public static List<String> getCorruptionEffectsForPlayer(EntityPlayer entityPlayer) {
         NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
         NBTTagList corrEffects = corruptionData.getTagList("CorruptionEffects", 8);
