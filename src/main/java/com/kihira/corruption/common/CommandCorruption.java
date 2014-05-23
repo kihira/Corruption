@@ -29,12 +29,15 @@ public class CommandCorruption extends CommandBase {
                     int corr;
                     EntityPlayer player = getPlayer(commandSender, args.length >= 3 ? args[2] : commandSender.getCommandSenderName());
                     if (player != null) {
+                        //Increase
                         if (args[1].startsWith("+")) {
                             corr = parseInt(commandSender, args[1].substring(1)) + CorruptionDataHelper.getCorruptionForPlayer(player);
                         }
+                        //Decrease
                         else if (args[1].startsWith("-")) {
                             corr = parseInt(commandSender, args[1].substring(1)) - CorruptionDataHelper.getCorruptionForPlayer(player);
                         }
+                        //Set
                         else {
                             corr = parseInt(commandSender, args[1]);
                         }

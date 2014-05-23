@@ -25,7 +25,7 @@ public class CorruptionRegistry {
      * Register a corruption that can be applied randomly to the player regardless of current corruption level
      * If you wish to apply context sensitive corruption then you need to do the checks yourself and apply
      * it to the player
-     * @param corrName
+     * @param corrName The unique name of the corruption
      */
     public static void registerRandomCorruptionEffect(String corrName) {
         if (!randomCorruptionList.contains(corrName)) {
@@ -34,6 +34,11 @@ public class CorruptionRegistry {
         else throw new IllegalArgumentException("The corruption effect " + corrName + " has been registered!");
     }
 
+    /**
+     * Register a corruption so it can be used in game
+     * @param corrName A unique name for the corruption
+     * @param corruptionEffect The instance of the corruption effect
+     */
     public static void registerCorruptionEffect(String corrName, ICorruptionEffect corruptionEffect) {
         if (!corruptionHashMap.containsKey(corrName)) {
             corruptionHashMap.put(corrName, corruptionEffect);

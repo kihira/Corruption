@@ -1,7 +1,7 @@
 package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
-import com.kihira.corruption.common.corruption.AbstractCorruption;
+import com.kihira.corruption.common.corruption.ICorruptionEffect;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -43,7 +43,7 @@ public class FMLEventHandler {
                     List<String> corrEffects = CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player);
                     if (!corrEffects.isEmpty()) {
                         for (String corrEffect : corrEffects) {
-                            AbstractCorruption corruption = CorruptionRegistry.corruptionHashMap.get(corrEffect);
+                            ICorruptionEffect corruption = CorruptionRegistry.corruptionHashMap.get(corrEffect);
                             if (corruption != null) {
                                 if (corruption.shouldContinue(e.player, FMLCommonHandler.instance().getEffectiveSide())) {
                                     corruption.onUpdate(e.player, FMLCommonHandler.instance().getEffectiveSide());
