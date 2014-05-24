@@ -10,7 +10,7 @@ public class EntityFXBlood extends EntityFX {
     private boolean shouldAlwaysFall;
 
     public EntityFXBlood(EntityPlayer player) {
-        super(player.worldObj, player.posX + 0.1F + (player.getRNG().nextFloat() / 10F), player.boundingBox.minY + 0.5F + player.getRNG().nextFloat(), player.posZ + 0.1F + (player.getRNG().nextFloat() / 10F));
+        super(player.worldObj, player.posX - 0.2F + (player.getRNG().nextFloat() / 2F), player.boundingBox.minY + 0.5F + player.getRNG().nextFloat(), player.posZ - 0.2F + (player.getRNG().nextFloat() / 2F));
         this.particleRed = MathHelper.randomFloatClamp(player.getRNG(), 0.3F, 0.8F);
         this.particleBlue = this.particleGreen = 0.1F;
         this.setSize(0.01F, 0.01F);
