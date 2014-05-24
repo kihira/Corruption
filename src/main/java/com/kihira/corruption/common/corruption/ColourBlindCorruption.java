@@ -5,6 +5,7 @@ import com.kihira.corruption.Corruption;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
 
 public class ColourBlindCorruption implements ICorruptionEffect {
 
@@ -39,7 +40,7 @@ public class ColourBlindCorruption implements ICorruptionEffect {
 
     @Override
     public boolean shouldContinue(EntityPlayer player, Side side) {
-        return this.playerCount.count(player.getCommandSenderName()) < 1000;
+        return !player.isPotionActive(Potion.nightVision) || this.playerCount.count(player.getCommandSenderName()) < 1000;
     }
 
     @Override
@@ -49,6 +50,6 @@ public class ColourBlindCorruption implements ICorruptionEffect {
 
     @Override
     public boolean canApply(EntityPlayer player) {
-        return true;
+        return !player.isPotionActive(Potion.nightVision);
     }
 }

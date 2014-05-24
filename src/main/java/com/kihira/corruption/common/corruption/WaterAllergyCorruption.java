@@ -5,6 +5,7 @@ import com.google.common.collect.Multiset;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemPotion;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.DamageSource;
@@ -47,7 +48,7 @@ public class WaterAllergyCorruption implements ICorruptionEffect {
 
     @Override
     public boolean shouldContinue(EntityPlayer player, Side side) {
-        return this.playerCount.count(player.getCommandSenderName()) < 1000;
+        return !player.isPotionActive(Potion.waterBreathing) || this.playerCount.count(player.getCommandSenderName()) < 1000;
     }
 
     @Override
@@ -57,6 +58,6 @@ public class WaterAllergyCorruption implements ICorruptionEffect {
 
     @Override
     public boolean canApply(EntityPlayer player) {
-        return true;
+        return !player.isPotionActive(Potion.waterBreathing);
     }
 }
