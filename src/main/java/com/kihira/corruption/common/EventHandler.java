@@ -11,6 +11,8 @@ import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -30,7 +32,7 @@ public class EventHandler {
                     EntityPlayer player = (EntityPlayer) obj;
                     CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
                 }
-                FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText("The great dragon has been defeated, lifting the evil corruption from the world"));
+                FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText("chat.corruption.end.dragon").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.DARK_RED).setItalic(true)));
             }
             else if (Corruption.disableCorrOnWitherDeath && e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) e.source.getEntity();
@@ -39,7 +41,7 @@ public class EventHandler {
                     CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
                     CorruptionDataHelper.setCanBeCorrupted(player, false);
                     CorruptionDataHelper.setCorruptionForPlayer(player, 0);
-                    player.addChatComponentMessage(new ChatComponentText("As the wither screams out its last breath, you feel a weight lifted from your entire body and soul"));
+                    player.addChatComponentMessage(new ChatComponentText("chat.corruption.end.wither").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.DARK_RED).setItalic(true)));
                 }
             }
             else if (e.entityLiving instanceof EntityPlayer) {
