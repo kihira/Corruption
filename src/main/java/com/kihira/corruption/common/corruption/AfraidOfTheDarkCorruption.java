@@ -24,7 +24,7 @@ public class AfraidOfTheDarkCorruption implements ICorruptionEffect {
                         sound = "creeper.primed";
                         break;
                     case (2):
-                        sound = "fireworks.blast";
+                        sound = "mob.spider.say";
                         break;
                     case (3):
                         sound = "mob.endermen.scream";

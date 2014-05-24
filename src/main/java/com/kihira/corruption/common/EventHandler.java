@@ -54,23 +54,26 @@ public class EventHandler {
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent e) {
         //BlockTeleportCorruption
-        if (CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.getPlayer(), "blockTeleport") && !e.block.hasTileEntity(e.blockMetadata)) {
-            //Look a few times for a valid block location
-            int x, y, z;
-            for (int i = 0; i < 5; i++) {
-                x = e.world.rand.nextInt(2 * 8) - 8;
-                y = e.world.rand.nextInt(2 * 3) - 3;
-                z = e.world.rand.nextInt(2 * 8) - 8;
-                if (e.world.isAirBlock(x, y, z)) {
-                    e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
-                    e.setCanceled(true);
-                    e.world.setBlockToAir(e.x, e.y, e.z);
-                    break;
+        if (!e.world.isRemote) {
+            if (CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.getPlayer(), "blockTeleport") && !e.block.hasTileEntity(e.blockMetadata)) {
+                //Look a few times for a valid block location
+                int x, y, z;
+                for (int i = 0; i < 5; i++) {
+                    x = e.world.rand.nextInt(2 * 8) - 8;
+                    y = e.world.rand.nextInt(2 * 3) - 3;
+                    z = e.world.rand.nextInt(2 * 8) - 8;
+                    if (e.world.isAirBlock(x, y, z)) {
+                        e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
+                        e.setCanceled(true);
+                        e.world.setBlockToAir(e.x, e.y, e.z);
+                        Corruption.blockTeleportCorruption.blocksBroken.add(e.getPlayer().getCommandSenderName());
+                        break;
+                    }
                 }
             }
-        }
-        else if (CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer()) > 6000 && e.getPlayer().worldObj.rand.nextInt(FMLEventHandler.CORRUPTION_MAX + 6000) < CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer())) {
-            CorruptionDataHelper.addCorruptionEffectForPlayer(e.getPlayer(), "blockTeleport");
+            else if (CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer()) > 6000 && e.getPlayer().worldObj.rand.nextInt(FMLEventHandler.CORRUPTION_MAX + 6000) < CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer())) {
+                CorruptionDataHelper.addCorruptionEffectForPlayer(e.getPlayer(), "blockTeleport");
+            }
         }
     }
 
