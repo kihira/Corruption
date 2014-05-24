@@ -4,10 +4,14 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.kihira.corruption.Corruption;
+import com.kihira.corruption.common.item.ItemDiary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +57,23 @@ public class CorruptionRegistry {
             currentCorruptionClient.put(playerName, corrName);
             Corruption.logger.info("Applying " + corrName + " from " + playerName);
             corruptionHashMap.get(corrName).init(playerName, FMLCommonHandler.instance().getEffectiveSide());
+
+            //Add new information tag to diary
+            if (playerName.equals(Minecraft.getMinecraft().thePlayer.getCommandSenderName())) {
+                EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
+                for (int i = 0; i < entityPlayer.inventory.getSizeInventory(); i++) {
+                    ItemStack itemStack = entityPlayer.inventory.getStackInSlot(i);
+                    if (itemStack != null && itemStack.getItem() instanceof ItemDiary) {
+                        NBTTagCompound tagCompound;
+                        if (!itemStack.hasTagCompound()) tagCompound = new NBTTagCompound();
+                        else tagCompound = itemStack.getTagCompound();
+                        tagCompound.setBoolean("NewInformation", true);
+                        itemStack.setTagCompound(tagCompound);
+                        //entityPlayer.inventory.setInventorySlotContents(i, itemStack);
+                        break;
+                    }
+                }
+            }
         }
     }
 

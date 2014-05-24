@@ -31,6 +31,9 @@ public class ItemDiary extends ItemBook {
         if (!player.worldObj.isRemote) {
             Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(player), (EntityPlayerMP) player);
         }
+        if (itemStack.hasTagCompound()) {
+            itemStack.getTagCompound().setBoolean("NewInformation", false);
+        }
         player.openGui(Corruption.instance, 0, world, 0, 0, 0);
         return itemStack;
     }
@@ -56,9 +59,25 @@ public class ItemDiary extends ItemBook {
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("unchecked")
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean par4) {
-        if (itemStack.hasTagCompound() && itemStack.getTagCompound().getBoolean("CheatBook")) {
-            list.add("Cheat Book");
-            list.add("Unlocks all information");
+        if (itemStack.hasTagCompound()) {
+            if (itemStack.getTagCompound().getBoolean("CheatBook")) {
+                list.add("Cheat Book");
+                list.add("Unlocks all information");
+            }
+            else if (itemStack.getTagCompound().getBoolean("NewInformation")) {
+                list.add("New information available");
+            }
         }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasEffect(ItemStack itemStack, int pass) {
+        if (pass == 0) {
+            if (itemStack.hasTagCompound() && (itemStack.getTagCompound().getBoolean("CheatBook") || itemStack.getTagCompound().getBoolean("NewInformation"))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

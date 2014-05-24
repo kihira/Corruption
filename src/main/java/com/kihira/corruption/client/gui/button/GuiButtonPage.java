@@ -1,10 +1,13 @@
 package com.kihira.corruption.client.gui.button;
 
 import com.kihira.corruption.client.gui.GuiDiary;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class GuiButtonPage extends GuiButton {
 
     private final boolean hasNextPage;
