@@ -15,9 +15,7 @@ public class BlockTeleportCorruption implements ICorruptionEffect {
     }
 
     @Override
-    public void onUpdate(EntityPlayer player, Side side) {
-
-    }
+    public void onUpdate(EntityPlayer player, Side side) {}
 
     @Override
     public void finish(String player, Side side) {
@@ -26,7 +24,7 @@ public class BlockTeleportCorruption implements ICorruptionEffect {
 
     @Override
     public boolean shouldContinue(EntityPlayer player, Side side) {
-        return this.blocksBroken.count(player.getCommandSenderName()) > CorruptionDataHelper.getCorruptionForPlayer(player) / 400;
+        return !(this.blocksBroken.count(player.getCommandSenderName()) > Math.floor(CorruptionDataHelper.getCorruptionForPlayer(player) / 400));
     }
 
     @Override
