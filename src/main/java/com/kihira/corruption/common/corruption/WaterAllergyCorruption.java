@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ChatComponentText;
@@ -30,7 +31,7 @@ public class WaterAllergyCorruption implements ICorruptionEffect {
                     player.attackEntityFrom(DamageSource.drown, 1);
                     this.playerCount.add(player.getCommandSenderName(), 10);
                 }
-                if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemPotion){
+                if (player.getCurrentEquippedItem() != null && (player.getCurrentEquippedItem().getItem() instanceof ItemPotion || player.getCurrentEquippedItem().getItem() == Items.water_bucket)) {
                     player.dropOneItem(true);
                     player.attackEntityFrom(DamageSource.drown, 1);
                     this.playerCount.add(player.getCommandSenderName(), 10);

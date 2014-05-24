@@ -52,6 +52,6 @@ public class BloodLossCorruption implements ICorruptionEffect {
 
     @Override
     public boolean canApply(EntityPlayer player) {
-        return true;
+        return player.getHealth() <= 6;
     }
 }
