@@ -65,20 +65,10 @@ public class EventHandler {
     public void onBlockBreak(BlockEvent.BreakEvent e) {
         //BlockTeleportCorruption
         if (!e.world.isRemote) {
-            if (CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.getPlayer(), "blockTeleport") && !e.block.hasTileEntity(e.blockMetadata)) {
-                //Look a few times for a valid block location
-                int x, y, z;
-                for (int i = 0; i < 10; i++) {
-                    x = (int) (e.getPlayer().posX + e.world.rand.nextInt(2 * 8) - 8);
-                    y = (int) (e.getPlayer().posY + e.world.rand.nextInt(2 * 3) - 3);
-                    z = (int) (e.getPlayer().posZ + e.world.rand.nextInt(2 * 8) - 8);
-                    if (e.world.isAirBlock(x, y, z)) {
-                        e.world.setBlock(x, y, z, e.block, e.blockMetadata, 2);
-                        e.setCanceled(true);
-                        e.world.setBlockToAir(e.x, e.y, e.z);
-                        Corruption.blockTeleportCorruption.blocksBroken.add(e.getPlayer().getCommandSenderName());
-                        break;
-                    }
+            if (CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.getPlayer(), "blockTeleport")) {
+                if (this.teleportBlockRandomly(e.x, e.y, e.z, e.world, e.getPlayer())) {
+                    //e.setCanceled(true);
+                    Corruption.blockTeleportCorruption.blocksBroken.add(e.getPlayer().getCommandSenderName());
                 }
             }
             else if (CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer()) > 6000 && e.getPlayer().worldObj.rand.nextInt(FMLEventHandler.CORRUPTION_MAX + 6000) < CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer())) {
@@ -90,55 +80,11 @@ public class EventHandler {
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (CorruptionDataHelper.hasCorruptionEffectsForPlayer(e.entityPlayer, "blockTeleport") && e.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && e.entityPlayer.worldObj.getBlock(e.x, e.y, e.z) instanceof BlockContainer) {
-            World world = e.entityPlayer.worldObj;
-            //Teleporting chests!
-            //Look a few times for a valid block location
-            int x, y, z;
-            for (int i = 0; i < 5; i++) {
-                x = (int) (e.entityPlayer.posX + world.rand.nextInt(2 * 8) - 8);
-                y = (int) (e.entityPlayer.posY + world.rand.nextInt(2 * 3) - 3);
-                z = (int) (e.entityPlayer.posZ + world.rand.nextInt(2 * 8) - 8);
-                if (y > 0 && world.isAirBlock(x, y, z)) {
-                    Block block = world.getBlock(e.x, e.y, e.z);
-                    int meta = world.getBlockMetadata(e.x, e.y, e.z);
-                    NBTTagCompound tagCompound = new NBTTagCompound();
-
-                    if (world.setBlock(x, y, z, block, meta, 3)) {
-                        TileEntity tileEntity = world.getTileEntity(e.x, e.y, e.z);
-                        if (tileEntity != null) {
-                            tileEntity.writeToNBT(tagCompound);
-                            tileEntity.invalidate();
-
-                            world.setTileEntity(x, y, z, ((ITileEntityProvider) block).createNewTileEntity(world, meta));
-                            tileEntity = world.getTileEntity(x, y, z);
-
-                            if (tileEntity != null) {
-                                NBTTagCompound nbttagcompound = new NBTTagCompound();
-                                tileEntity.writeToNBT(nbttagcompound);
-                                Iterator iterator = tagCompound.func_150296_c().iterator();
-
-                                while (iterator.hasNext()) {
-                                    String s = (String)iterator.next();
-                                    NBTBase nbtbase = tagCompound.getTag(s);
-
-                                    if (!s.equals("x") && !s.equals("y") && !s.equals("z")) {
-                                        nbttagcompound.setTag(s, nbtbase.copy());
-                                    }
-                                }
-
-                                tileEntity.readFromNBT(nbttagcompound);
-                                tileEntity.markDirty();
-                            }
-                        }
-
-                        e.setResult(Event.Result.DENY);
-                        e.entityPlayer.worldObj.func_147480_a(e.x, e.y, e.z, false);
-                        Corruption.blockTeleportCorruption.blocksBroken.add(e.entityPlayer.getCommandSenderName());
-                        break;
-                    }
-                }
+            if (this.teleportBlockRandomly(e.x, e.y, e.z, e.entityPlayer.worldObj, e.entityPlayer)) {
+                e.setResult(Event.Result.DENY);
+                Corruption.blockTeleportCorruption.blocksBroken.add(e.entityPlayer.getCommandSenderName());
             }
-        }
+         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -181,5 +127,51 @@ public class EventHandler {
             Corruption.colourBlindCorruption.playerCount.clear();
             Corruption.stoneSkinCorruption.playerCount.clear();
         }
+    }
+
+    private boolean teleportBlockRandomly(int sourceX, int sourceY, int sourceZ, World world, EntityPlayer entityPlayer) {
+        int x, y, z;
+        for (int i = 0; i < 5; i++) {
+            x = (int) (entityPlayer.posX + world.rand.nextInt(2 * 8) - 8);
+            y = (int) (entityPlayer.posY + world.rand.nextInt(2 * 3) - 3);
+            z = (int) (entityPlayer.posZ + world.rand.nextInt(2 * 8) - 8);
+            if (y > 0 && world.isAirBlock(x, y, z)) {
+                Block block = world.getBlock(sourceX, sourceY, sourceZ);
+                int meta = world.getBlockMetadata(sourceX, sourceY, sourceZ);
+                NBTTagCompound tagCompound = new NBTTagCompound();
+
+                if (world.setBlock(x, y, z, block, meta, 3)) {
+                    TileEntity tileEntity = world.getTileEntity(sourceX, sourceY, sourceZ);
+                    if (tileEntity != null) {
+                        tileEntity.writeToNBT(tagCompound);
+                        tileEntity.invalidate();
+
+                        world.setTileEntity(x, y, z, ((ITileEntityProvider) block).createNewTileEntity(world, meta));
+                        tileEntity = world.getTileEntity(x, y, z);
+
+                        if (tileEntity != null) {
+                            NBTTagCompound nbttagcompound = new NBTTagCompound();
+                            tileEntity.writeToNBT(nbttagcompound);
+                            Iterator iterator = tagCompound.func_150296_c().iterator();
+
+                            while (iterator.hasNext()) {
+                                String s = (String)iterator.next();
+                                NBTBase nbtbase = tagCompound.getTag(s);
+
+                                if (!s.equals("x") && !s.equals("y") && !s.equals("z")) {
+                                    nbttagcompound.setTag(s, nbtbase.copy());
+                                }
+                            }
+
+                            tileEntity.readFromNBT(nbttagcompound);
+                            tileEntity.markDirty();
+                        }
+                    }
+                    world.func_147480_a(sourceX, sourceY, sourceZ, false);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
