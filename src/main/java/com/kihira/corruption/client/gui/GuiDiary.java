@@ -7,6 +7,7 @@ import com.kihira.corruption.client.diary.PageData;
 import com.kihira.corruption.client.gui.button.GuiButtonPage;
 import com.kihira.corruption.client.gui.button.GuiButtonTab;
 import com.kihira.corruption.common.CorruptionDataHelper;
+import com.kihira.corruption.common.corruption.CorruptionRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -59,7 +60,7 @@ public class GuiDiary extends GuiScreen {
         this.loadDiaryData();
 
         //Contents Tab Button
-        this.buttonList.add(this.buttonContents = new GuiButtonTab(50, this.width / 2 + 69, 14, "Contents"));
+        this.buttonList.add(this.buttonContents = new GuiButtonTab(50, this.width / 2 + 69, 14, "Contents", null));
         //Page Buttons
         this.buttonList.add(this.buttonNextPage = new GuiButtonPage(51, this.width / 2 + 25, 154, true));
         this.buttonList.add(this.buttonPreviousPage = new GuiButtonPage(52, this.width / 2 - 58, 154, false));
@@ -69,7 +70,9 @@ public class GuiDiary extends GuiScreen {
         for (Map.Entry<String, PageData> page : this.pageData.entrySet()) {
             if (!page.getKey().equals("contents") && page.getValue() != null) {
                 this.buttonPageMapping.put(id, page.getKey());
-                this.buttonPageTabs.add(id, new GuiButtonTab(id, this.width / 2 + 69, 14 + yOffset, page.getValue().getTabName()));
+                //yay for weird systems. Assumes page identifier is same as corurption
+                if (CorruptionRegistry.corruptionHashMap.containsKey(page.getKey())) this.buttonPageTabs.add(id, new GuiButtonTab(id, this.width / 2 + 69, 14 + yOffset, page.getValue().getTabName(), page.getKey()));
+                else this.buttonPageTabs.add(id, new GuiButtonTab(id, this.width / 2 + 69, 14 + yOffset, page.getValue().getTabName(), null));
                 this.buttonList.add(this.buttonPageTabs.get(id));
                 id++;
                 yOffset += 15;
