@@ -10,7 +10,7 @@ import net.minecraft.util.DamageSource;
 
 public class WaterAllergyCorruption implements ICorruptionEffect {
 
-    private final Multiset<String> playerCount = HashMultiset.create();
+    public final Multiset<String> playerCount = HashMultiset.create();
 
     @Override
     public void init(String player, Side side) {

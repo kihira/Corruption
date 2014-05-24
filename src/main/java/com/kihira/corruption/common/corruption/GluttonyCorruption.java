@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 
 public class GluttonyCorruption implements ICorruptionEffect {
 
-    private final Multiset<String> playerCount = HashMultiset.create();
+    public final Multiset<String> playerCount = HashMultiset.create();
 
     @Override
     public void init(String player, Side side) {

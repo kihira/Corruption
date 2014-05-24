@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class BlockTeleportCorruption implements ICorruptionEffect {
 
-    private final HashMultiset<String> blocksBroken = HashMultiset.create();
+    public final HashMultiset<String> blocksBroken = HashMultiset.create();
 
     @Override
     public void init(String player, Side side) {

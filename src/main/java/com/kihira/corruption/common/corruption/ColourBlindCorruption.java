@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class ColourBlindCorruption implements ICorruptionEffect {
 
-    private final HashMultiset<String> playerCount = HashMultiset.create();
+    public final HashMultiset<String> playerCount = HashMultiset.create();
 
     @Override
     public void init(String player, Side side) {

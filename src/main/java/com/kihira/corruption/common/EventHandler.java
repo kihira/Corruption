@@ -103,5 +103,14 @@ public class EventHandler {
             //Purge corruption list
             CorruptionRegistry.currentCorruptionClient.clear();
         }
+        //Server
+        else {
+            //Reset certain corruption
+            Corruption.blockTeleportCorruption.blocksBroken.clear();
+            Corruption.waterAllergyCorruption.playerCount.clear();
+            Corruption.gluttonyCorruption.playerCount.clear();
+            Corruption.colourBlindCorruption.playerCount.clear();
+            Corruption.stoneSkinCorruption.playerCount.clear();
+        }
     }
 }

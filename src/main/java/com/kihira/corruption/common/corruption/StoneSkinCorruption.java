@@ -11,7 +11,7 @@ import net.minecraft.potion.PotionEffect;
 
 public class StoneSkinCorruption implements ICorruptionEffect {
 
-    private final Multiset<String> playerCount = ConcurrentHashMultiset.create();
+    public final Multiset<String> playerCount = ConcurrentHashMultiset.create();
 
     @Override
     public void init(String player, Side side) {

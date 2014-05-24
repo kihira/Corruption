@@ -59,6 +59,12 @@ public class Corruption {
     public static final Item itemFleshArmourLegs = new ItemFleshArmor(2).setUnlocalizedName("fleshLegs").setTextureName("corruption:flesh_leggings");
     public static final Item itemFleshArmourBoots = new ItemFleshArmor(3).setUnlocalizedName("fleshBoots").setTextureName("corruption:flesh_boots");
 
+    public static ColourBlindCorruption colourBlindCorruption;
+    public static GluttonyCorruption gluttonyCorruption;
+    public static StoneSkinCorruption stoneSkinCorruption;
+    public static WaterAllergyCorruption waterAllergyCorruption;
+    public static BlockTeleportCorruption blockTeleportCorruption;
+
     public static final Logger logger = LogManager.getLogger("Corruption");
     public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
 
@@ -122,7 +128,7 @@ public class Corruption {
         prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption removed on death", 0);
         prop.comment = "If a player dies, this amount of corruption will be removed (set to 0 to disable)";
         corrRemovedOnDeath = prop.getInt();
-        prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption Speed", 20);
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Corruption Speed", 200);
         prop.comment = "How often in ticks to apply corruption. ModJam speed is 20, normal speed is 200";
         corrSpeed = prop.getInt();
 
@@ -143,26 +149,31 @@ public class Corruption {
     private void registerCorruptionEffects() {
 
         if (isEnabledWaterAllergyCorr) {
-            CorruptionRegistry.registerCorruptionEffect("waterAllergy", new WaterAllergyCorruption());
+            waterAllergyCorruption = new WaterAllergyCorruption();
+            CorruptionRegistry.registerCorruptionEffect("waterAllergy", waterAllergyCorruption);
             CorruptionRegistry.registerRandomCorruptionEffect("waterAllergy");
         }
         if (isEnabledStoneSkinCorr) {
-            CorruptionRegistry.registerCorruptionEffect("stoneSkin", new StoneSkinCorruption());
+            stoneSkinCorruption = new StoneSkinCorruption();
+            CorruptionRegistry.registerCorruptionEffect("stoneSkin", stoneSkinCorruption);
             CorruptionRegistry.registerRandomCorruptionEffect("stoneSkin");
         }
         if (isEnabledColourBlindCorr) {
-            CorruptionRegistry.registerCorruptionEffect("colourBlind", new ColourBlindCorruption());
+            colourBlindCorruption = new ColourBlindCorruption();
+            CorruptionRegistry.registerCorruptionEffect("colourBlind", colourBlindCorruption);
             CorruptionRegistry.registerRandomCorruptionEffect("colourBlind");
         }
         if (isEnabledGluttonyCorr) {
-            CorruptionRegistry.registerCorruptionEffect("gluttony", new GluttonyCorruption());
+            gluttonyCorruption = new GluttonyCorruption();
+            CorruptionRegistry.registerCorruptionEffect("gluttony", gluttonyCorruption);
             CorruptionRegistry.registerRandomCorruptionEffect("gluttony");
         }
         if (isEnabledAfraidOfTheDarkCorr) {
             CorruptionRegistry.registerCorruptionEffect("afraidOfTheDark", new AfraidOfTheDarkCorruption());
         }
         if (isEnabledBlockTeleportCorr) {
-            CorruptionRegistry.registerCorruptionEffect("blockTeleport", new BlockTeleportCorruption());
+            blockTeleportCorruption = new BlockTeleportCorruption();
+            CorruptionRegistry.registerCorruptionEffect("blockTeleport", blockTeleportCorruption);
         }
         if (isEnabledBloodLossCorr) {
             CorruptionRegistry.registerCorruptionEffect("bloodLoss", new BloodLossCorruption());

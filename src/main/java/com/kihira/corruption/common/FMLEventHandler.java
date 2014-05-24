@@ -131,4 +131,14 @@ public class FMLEventHandler {
         }
     }
 
+    @SubscribeEvent
+    public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent e) {
+        //Reset certain corruption
+        Corruption.blockTeleportCorruption.blocksBroken.setCount(e.player.getCommandSenderName(), 0);
+        Corruption.waterAllergyCorruption.playerCount.setCount(e.player.getCommandSenderName(), 0);
+        Corruption.gluttonyCorruption.playerCount.setCount(e.player.getCommandSenderName(), 0);
+        Corruption.colourBlindCorruption.playerCount.setCount(e.player.getCommandSenderName(), 0);
+        Corruption.stoneSkinCorruption.playerCount.setCount(e.player.getCommandSenderName(), 0);
+    }
+
 }
