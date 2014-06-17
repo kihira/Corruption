@@ -20,12 +20,14 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -39,18 +41,23 @@ public class ClientProxy extends CommonProxy {
     //TODO add in a way to check if player skin has refreshed (such as updating to custom skin thanks to slow skin servers)
     private BufferedImage getBufferedImageSkin(AbstractClientPlayer entityPlayer, ThreadDownloadImageData imageData) {
         BufferedImage bufferedImage = null;
+        InputStream inputStream = null;
         if (imageData.isTextureUploaded()) {
             bufferedImage = ObfuscationReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage", "field_110560_d", "bpj.g");
         }
         else {
             try {
-                bufferedImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(entityPlayer.getLocationCape()).getInputStream());
+                inputStream = Minecraft.getMinecraft().getResourceManager().getResource(entityPlayer.getLocationCape()).getInputStream();
+                bufferedImage = ImageIO.read(inputStream);
             } catch (IOException e) {
                 try {
-                    bufferedImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(AbstractClientPlayer.locationStevePng).getInputStream());
+                    inputStream = Minecraft.getMinecraft().getResourceManager().getResource(AbstractClientPlayer.locationStevePng).getInputStream();
+                    bufferedImage = ImageIO.read(inputStream);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+            } finally {
+                IOUtils.closeQuietly(inputStream);
             }
         }
 
@@ -148,6 +155,7 @@ public class ClientProxy extends CommonProxy {
         ThreadDownloadImageData imageData = entityPlayer.getTextureSkin();
         BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer, imageData);
         Random rand = new Random();
+        InputStream inputStream = null;
 
         if (!this.hasBackup(entityPlayer)) {
             this.backupPlayerSkin(entityPlayer);
@@ -155,7 +163,8 @@ public class ClientProxy extends CommonProxy {
 
         if (bufferedImage != null) {
             try {
-                BufferedImage stoneSkin = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(this.stoneSkinTexture).getInputStream());
+                inputStream = Minecraft.getMinecraft().getResourceManager().getResource(this.stoneSkinTexture).getInputStream();
+                BufferedImage stoneSkin = ImageIO.read(inputStream);
                 for (int i = 0; i < amount; i++) {
                     int x = rand.nextInt(bufferedImage.getWidth());
                     int y = rand.nextInt(bufferedImage.getHeight());
@@ -164,6 +173,8 @@ public class ClientProxy extends CommonProxy {
                 TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                IOUtils.closeQuietly(inputStream);
             }
         }
     }
