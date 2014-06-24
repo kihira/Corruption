@@ -52,7 +52,8 @@ public class EventHandler {
                     CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
                 }
                 FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText("chat.corruption.end.dragon").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.DARK_RED).setItalic(true)));
-            } else if (Corruption.disableCorrOnWitherDeath && e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
+            }
+            else if (Corruption.disableCorrOnWitherDeath && e.entityLiving instanceof EntityWither && e.source.getEntity() instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) e.source.getEntity();
                 //Check if they can be corrupted (false if they've already killed it before)
                 if (CorruptionDataHelper.canBeCorrupted(player)) {
@@ -61,7 +62,8 @@ public class EventHandler {
                     CorruptionDataHelper.setCorruptionForPlayer(player, 0);
                     player.addChatComponentMessage(new ChatComponentText("chat.corruption.end.wither").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.DARK_RED).setItalic(true)));
                 }
-            } else if (e.entityLiving instanceof EntityPlayer) {
+            }
+            else if (e.entityLiving instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) e.entityLiving;
                 CorruptionDataHelper.decreaseCorruptionForPlayer(player, Corruption.corrRemovedOnDeath);
             }
@@ -77,7 +79,8 @@ public class EventHandler {
                     //e.setCanceled(true);
                     Corruption.blockTeleportCorruption.blocksBroken.add(e.getPlayer().getCommandSenderName());
                 }
-            } else if (CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer()) > 6000 && e.getPlayer().worldObj.rand.nextInt(FMLEventHandler.CORRUPTION_MAX + 6000) < CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer())) {
+            }
+            else if (CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer()) > 6000 && e.getPlayer().worldObj.rand.nextInt(FMLEventHandler.CORRUPTION_MAX + 6000) < CorruptionDataHelper.getCorruptionForPlayer(e.getPlayer())) {
                 CorruptionDataHelper.addCorruptionEffectForPlayer(e.getPlayer(), "blockTeleport");
             }
         }
