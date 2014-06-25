@@ -41,6 +41,7 @@ public class Corruption {
     public static Corruption instance;
 
     public static boolean isCorruptionActiveGlobal = true;
+    public static boolean isDebugMode;
 
     public static boolean isEnabledBlockTeleportCorr;
     public static boolean isEnabledStoneSkinCorr;
@@ -135,6 +136,10 @@ public class Corruption {
         prop = config.get(Configuration.CATEGORY_GENERAL, "Disable Corruption", false);
         prop.comment = "DO NOT CHANGE THIS >=(";
         isCorruptionActiveGlobal = !prop.getBoolean(false);
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "Debug Mode", false);
+        prop.comment = "Debug mode is used to display player's corruption above their heads could be useful for development";
+        isDebugMode = prop.getBoolean(false);
 
         if (config.hasChanged()) config.save();
     }
