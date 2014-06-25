@@ -10,6 +10,13 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.boss.EntityWither;
@@ -21,11 +28,13 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.util.Iterator;
@@ -84,7 +93,7 @@ public class EventHandler {
                 e.setResult(Event.Result.DENY);
                 Corruption.blockTeleportCorruption.blocksBroken.add(e.entityPlayer.getCommandSenderName());
             }
-         }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -129,6 +138,74 @@ public class EventHandler {
         }
     }
 
+    @SubscribeEvent
+    public void onRenderLiving(RenderLivingEvent.Specials.Pre e) {
+        if (e.entity instanceof EntityPlayer) {
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+                if(Corruption.isDebugMode) {
+                    boolean drawPlate = Minecraft.isGuiEnabled() && e.entity != RenderManager.instance.livingPlayer && !e.entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer) && e.entity.riddenByEntity == null;
+
+                    if (drawPlate) {
+                        drawPlate(e.entity, "Corruption: " + CorruptionDataHelper.getCorruptionForPlayer((EntityPlayer) e.entity), e.x, e.y, e.z, 0.75F);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Sourced from @RenderLivingEntity with some changes to make it easier to understand
+     *
+     * @param entity
+     * @param text
+     * @param x
+     * @param y
+     * @param z
+     * @param offset
+     */
+    public void drawPlate(EntityLivingBase entity, String text, double x, double y, double z, float offset){
+        double d3 = entity.getDistanceSqToEntity(RenderManager.instance.livingPlayer);
+
+        if (d3 <= (double)(64 * 64))
+        {
+            FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
+            float f = 1.6F;
+            float f1 = 0.016666668F * f;
+            GL11.glPushMatrix();
+            GL11.glTranslatef((float)x + 0.0F, (float)y + entity.height + offset, (float)z);
+            GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(-RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
+            GL11.glScalef(-f1, -f1, f1);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDepthMask(false);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glEnable(GL11.GL_BLEND);
+            OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+            Tessellator tessellator = Tessellator.instance;
+            byte b0 = 0;
+
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            tessellator.startDrawingQuads();
+            int j = fontrenderer.getStringWidth(text) / 2;
+            tessellator.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
+            tessellator.addVertex((double)(-j - 1), (double)(-1 + b0), 0.0D);
+            tessellator.addVertex((double)(-j - 1), (double)(8 + b0), 0.0D);
+            tessellator.addVertex((double)(j + 1), (double)(8 + b0), 0.0D);
+            tessellator.addVertex((double)(j + 1), (double)(-1 + b0), 0.0D);
+            tessellator.draw();
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            fontrenderer.drawString(text, -fontrenderer.getStringWidth(text) / 2, b0, 553648127);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(true);
+            fontrenderer.drawString(text, -fontrenderer.getStringWidth(text) / 2, b0, -1);
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GL11.glPopMatrix();
+        }
+    }
+
     private boolean teleportBlockRandomly(int sourceX, int sourceY, int sourceZ, World world, EntityPlayer entityPlayer) {
         int x, y, z;
         for (int i = 0; i < 5; i++) {
@@ -155,7 +232,7 @@ public class EventHandler {
                             Iterator iterator = tagCompound.func_150296_c().iterator();
 
                             while (iterator.hasNext()) {
-                                String s = (String)iterator.next();
+                                String s = (String) iterator.next();
                                 NBTBase nbtbase = tagCompound.getTag(s);
 
                                 if (!s.equals("x") && !s.equals("y") && !s.equals("z")) {
