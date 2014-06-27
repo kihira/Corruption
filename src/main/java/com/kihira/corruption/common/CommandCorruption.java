@@ -42,7 +42,7 @@ public class CommandCorruption extends CommandBase {
                             corr = parseInt(commandSender, args[1]);
                         }
                         CorruptionDataHelper.setCorruptionForPlayer(player, corr);
-                        notifyAdmins(commandSender, "command.corruption.success.set", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
+                        func_152373_a(commandSender, this, "command.corruption.success.set", commandSender.getCommandSenderName(), player.getCommandSenderName(), corr);
                     }
                     else throw new CommandException("command.corruption.usage.set");
                 }
@@ -53,7 +53,7 @@ public class CommandCorruption extends CommandBase {
                     EntityPlayer player = getPlayer(commandSender, args.length >= 3 ? args[2] : commandSender.getCommandSenderName());
                     if (CorruptionRegistry.corruptionHashMap.containsKey(args[1]) && player != null) {
                         CorruptionDataHelper.addCorruptionEffectForPlayer(player, args[1]);
-                        notifyAdmins(commandSender, "command.corruption.success.effect", commandSender.getCommandSenderName(), args[1], player.getCommandSenderName());
+                        func_152373_a(commandSender, this, "command.corruption.success.effect", commandSender.getCommandSenderName(), args[1], player.getCommandSenderName());
                     }
                     else throw new CommandException("command.corruption.usage.effect");
                 }
@@ -63,7 +63,7 @@ public class CommandCorruption extends CommandBase {
                 EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 if (player != null) {
                     CorruptionDataHelper.setCanBeCorrupted(player, false);
-                    notifyAdmins(commandSender, "command.corruption.success.disable", commandSender.getCommandSenderName(), player.getCommandSenderName());
+                    func_152373_a(commandSender, this, "command.corruption.success.disable", commandSender.getCommandSenderName(), player.getCommandSenderName());
                 }
                 else throw new CommandException("command.corruption.usage.disable");
             }
@@ -71,14 +71,14 @@ public class CommandCorruption extends CommandBase {
                 EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 if (player != null) {
                     CorruptionDataHelper.setCanBeCorrupted(player, true);
-                    notifyAdmins(commandSender, "command.corruption.success.enable", commandSender.getCommandSenderName(), player.getCommandSenderName());
+                    func_152373_a(commandSender, this, "command.corruption.success.enable", commandSender.getCommandSenderName(), player.getCommandSenderName());
                 }
                 else throw new CommandException("command.corruption.usage.enable");
             }
             else if (args[0].equals("get")) {
                 EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 if (player != null) {
-                    notifyAdmins(commandSender, String.valueOf(CorruptionDataHelper.getCorruptionForPlayer(player)));
+                    func_152373_a(commandSender, this, String.valueOf(CorruptionDataHelper.getCorruptionForPlayer(player)));
                 }
                 else throw new CommandException("command.corruption.get.usage");
             }
@@ -86,7 +86,7 @@ public class CommandCorruption extends CommandBase {
                 EntityPlayer player = getPlayer(commandSender, args.length >= 2 ? args[1] : commandSender.getCommandSenderName());
                 if (player != null) {
                     CorruptionDataHelper.removeAllCorruptionEffectsForPlayer(player);
-                    notifyAdmins(commandSender, "command.corruption.success.clear", commandSender.getCommandSenderName(), player.getCommandSenderName());
+                    func_152373_a(commandSender, this, "command.corruption.success.clear", commandSender.getCommandSenderName(), player.getCommandSenderName());
                 }
                 else throw new CommandException("command.corruption.usage.clear");
             }
@@ -97,7 +97,7 @@ public class CommandCorruption extends CommandBase {
                     CorruptionDataHelper.setDoneIntroduction(player, false);
                     CorruptionDataHelper.setCanBeCorrupted(player, true);
                     CorruptionDataHelper.setCorruptionForPlayer(player, 0);
-                    notifyAdmins(commandSender, "command.corruption.success.reset", commandSender.getCommandSenderName(), player.getCommandSenderName());
+                    func_152373_a(commandSender, this, "command.corruption.success.reset", commandSender.getCommandSenderName(), player.getCommandSenderName());
                 }
                 else throw new CommandException("command.corruption.usage.reset");
             }

@@ -9,7 +9,7 @@ public class CommonProxy {
 
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {}
 
-    public void uncorruptPlayerSkin(String playerName) {}
+    public void uncorruptPlayerSkin(AbstractClientPlayer entityPlayer) {}
 
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {}
 
@@ -17,7 +17,7 @@ public class CommonProxy {
 
     public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {}
 
-    public void unstonifyPlayerSkin(String playerName) {}
+    public void unstonifyPlayerSkin(AbstractClientPlayer entityPlayer) {}
 
     public void enableGrayscaleShader() {}
 

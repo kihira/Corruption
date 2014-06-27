@@ -44,7 +44,7 @@ public class StoneSkinCorruption implements ICorruptionEffect {
         this.playerCount.setCount(player, 0);
 
         if (side == Side.CLIENT) {
-            Corruption.proxy.unstonifyPlayerSkin(player);
+            //TODO Corruption.proxy.unstonifyPlayerSkin(player);
         }
     }
 

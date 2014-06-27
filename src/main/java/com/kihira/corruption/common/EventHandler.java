@@ -15,7 +15,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
@@ -117,7 +116,7 @@ public class EventHandler {
                 if (skinFiles != null) {
                     for (File skinFile : skinFiles) {
                         String playerName = skinFile.getName().substring(0, skinFile.getName().length() - 4);
-                        Corruption.proxy.uncorruptPlayerSkin(playerName);
+                        //TODO Corruption.proxy.uncorruptPlayerSkin(playerName);
                         skinFile.delete();
                     }
                 }

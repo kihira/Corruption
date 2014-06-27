@@ -51,7 +51,7 @@ public class PacketEventHandler {
                 }
 
                 if (newCorr == 0) {
-                    Corruption.proxy.uncorruptPlayerSkin(player.getCommandSenderName());
+                    Corruption.proxy.uncorruptPlayerSkin((AbstractClientPlayer) player);
                 }
                 else {
                     Corruption.proxy.corruptPlayerSkin((AbstractClientPlayer) player, oldCorr, newCorr);
