@@ -5,16 +5,15 @@ import com.kihira.corruption.client.EntityFootstep;
 import com.kihira.corruption.client.particle.EntityFXBlood;
 import com.kihira.corruption.client.render.EntityFootstepRenderer;
 import com.kihira.corruption.common.CorruptionDataHelper;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,9 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-import java.util.WeakHashMap;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -39,54 +36,16 @@ public class ClientProxy extends CommonProxy {
     private final ResourceLocation shader = new ResourceLocation("corruption", "grayscale.json");
     private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
 
-    //TODO This holds the corrupted image of the players skin so we don't constantly reload it from minecrafts cache (which is vanilla)
-    private final WeakHashMap<ResourceLocation, BufferedImage> playerSkinCurrent = new WeakHashMap<ResourceLocation, BufferedImage>();
-
     //TODO add in a way to check if player skin has refreshed (such as updating to custom skin thanks to slow skin servers)
-    private BufferedImage getBufferedImageSkin(ResourceLocation playerSkin) {
-        BufferedImage bufferedImage = null;
-        InputStream inputStream = null;
-
-        if (this.playerSkinCurrent.containsKey(playerSkin)) {
-            return this.playerSkinCurrent.get(playerSkin);
-        } else {
-            try {
-                inputStream = Minecraft.getMinecraft().getResourceManager().getResource(playerSkin).getInputStream();
-                bufferedImage = ImageIO.read(inputStream);
-                playerSkinCurrent.put(playerSkin, bufferedImage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (inputStream != null) try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return bufferedImage;
-        }
+    private BufferedImage getBufferedImageSkin(AbstractClientPlayer player) {
+        ThreadDownloadImageData imageData = AbstractClientPlayer.getDownloadImageSkin(player.getLocationSkin(), player.getCommandSenderName());
+        return ReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage");
     }
 
-    private ResourceLocation getPlayerSkinResourceLocation(GameProfile gameProfile) {
-        ResourceLocation resourceLocation = AbstractClientPlayer.locationStevePng;
-        if (gameProfile != null) {
-            Minecraft minecraft = Minecraft.getMinecraft();
-            Map map = minecraft.func_152342_ad().func_152788_a(gameProfile);
-
-            if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-                resourceLocation = minecraft.func_152342_ad().func_152792_a((MinecraftProfileTexture)map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
-            }
-        }
-        return resourceLocation;
-    }
-
-    private void uploadPlayerSkin(ResourceLocation resourceLocation, BufferedImage bufferedImage) {
-        //Get the texture ID for the skin and upload it ourselves
-        ITextureObject itextureobject = Minecraft.getMinecraft().getTextureManager().getTexture(resourceLocation);
-        if (itextureobject != null) {
-            this.playerSkinCurrent.put(resourceLocation, bufferedImage);
-            TextureUtil.uploadTextureImage(itextureobject.getGlTextureId(), bufferedImage);
-        }
+    private void uploadPlayerSkin(AbstractClientPlayer player, BufferedImage bufferedImage) {
+        ThreadDownloadImageData imageData = AbstractClientPlayer.getDownloadImageSkin(player.getLocationSkin(), player.getCommandSenderName());
+        imageData.setBufferedImage(bufferedImage);
+        TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
     }
 
     @Override
@@ -96,8 +55,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
-        ResourceLocation playerSkin = this.getPlayerSkinResourceLocation(entityPlayer.getGameProfile());
-        BufferedImage bufferedImage = this.getBufferedImageSkin(playerSkin);
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
 
         if (!this.hasBackup(entityPlayer)) {
             this.backupPlayerSkin(entityPlayer);
@@ -117,7 +75,7 @@ public class ClientProxy extends CommonProxy {
                 }
                 bufferedImage.setRGB(x, y, color.getRGB());
             }
-            this.uploadPlayerSkin(playerSkin, bufferedImage);
+            this.uploadPlayerSkin(entityPlayer, bufferedImage);
         }
         else System.out.println("Noooo");
     }
@@ -126,8 +84,7 @@ public class ClientProxy extends CommonProxy {
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
         oldCorr = oldCorr / 30;
         newCorr = newCorr / 30;
-        ResourceLocation playerSkin = this.getPlayerSkinResourceLocation(entityPlayer.getGameProfile());
-        BufferedImage bufferedImage = this.getBufferedImageSkin(playerSkin);
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
         BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
 
         if (bufferedImage != null && oldSkin != null) {
@@ -138,17 +95,16 @@ public class ClientProxy extends CommonProxy {
                 bufferedImage.setRGB(x, y, oldSkin.getRGB(x, y));
             }
         }
-        this.uploadPlayerSkin(playerSkin, bufferedImage);
+        this.uploadPlayerSkin(entityPlayer, bufferedImage);
     }
 
     @Override
     public void uncorruptPlayerSkin(AbstractClientPlayer entityPlayer) {
-        ResourceLocation playerSkin = this.getPlayerSkinResourceLocation(entityPlayer.getGameProfile());
         BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
 
         //Load old skin
         if (oldSkin != null) {
-            this.uploadPlayerSkin(playerSkin, oldSkin);
+            this.uploadPlayerSkin(entityPlayer, oldSkin);
             System.out.println("Restored " + entityPlayer.getCommandSenderName() + " skin");
         }
     }
@@ -161,8 +117,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {
-        ResourceLocation playerSkin = this.getPlayerSkinResourceLocation(entityPlayer.getGameProfile());
-        BufferedImage bufferedImage = this.getBufferedImageSkin(playerSkin);
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
         Random rand = new Random();
         InputStream inputStream = null;
 
@@ -179,7 +134,7 @@ public class ClientProxy extends CommonProxy {
                     int y = rand.nextInt(bufferedImage.getHeight());
                     bufferedImage.setRGB(x, y, stoneSkin.getRGB(x, y));
                 }
-                this.uploadPlayerSkin(playerSkin, bufferedImage);
+                this.uploadPlayerSkin(entityPlayer, bufferedImage);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -243,8 +198,7 @@ public class ClientProxy extends CommonProxy {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void backupPlayerSkin(AbstractClientPlayer entityPlayer) {
-        ResourceLocation playerSkin = this.getPlayerSkinResourceLocation(entityPlayer.getGameProfile());
-        BufferedImage bufferedImage = this.getBufferedImageSkin(playerSkin);
+        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
 
         File file = new File("skinbackup");
         file.mkdir();
@@ -264,7 +218,6 @@ public class ClientProxy extends CommonProxy {
     private BufferedImage getOriginalPlayerSkin(AbstractClientPlayer entityPlayer) {
         File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
         BufferedImage bufferedImage = null;
-        ResourceLocation playerSkin = this.getPlayerSkinResourceLocation(entityPlayer.getGameProfile());
 
         try {
             if (file.exists()) {
@@ -272,7 +225,7 @@ public class ClientProxy extends CommonProxy {
             }
             //Load skin from Mojang servers
             else {
-                Minecraft.getMinecraft().getTextureManager().getTexture(playerSkin).loadTexture(Minecraft.getMinecraft().getResourceManager());
+                //Minecraft.getMinecraft().getTextureManager().getTexture(entityPlayer.).loadTexture(Minecraft.getMinecraft().getResourceManager());
             }
         } catch (IOException e) {
             e.printStackTrace();
