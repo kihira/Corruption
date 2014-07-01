@@ -38,8 +38,24 @@ public class ClientProxy extends CommonProxy {
 
     //TODO add in a way to check if player skin has refreshed (such as updating to custom skin thanks to slow skin servers)
     private BufferedImage getBufferedImageSkin(AbstractClientPlayer player) {
-        ThreadDownloadImageData imageData = AbstractClientPlayer.getDownloadImageSkin(player.getLocationSkin(), player.getCommandSenderName());
-        return ReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage");
+        BufferedImage bufferedImage = null;
+        InputStream inputStream = null;
+        //If player has a skin set
+        if (player.func_152123_o()) {
+            ThreadDownloadImageData imageData = AbstractClientPlayer.getDownloadImageSkin(player.getLocationSkin(), player.getCommandSenderName());
+            bufferedImage = ReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage");
+        }
+        else {
+            try {
+                inputStream = Minecraft.getMinecraft().getResourceManager().getResource(AbstractClientPlayer.locationStevePng).getInputStream();
+                bufferedImage = ImageIO.read(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                IOUtils.closeQuietly(inputStream);
+            }
+        }
+        return bufferedImage;
     }
 
     private void uploadPlayerSkin(AbstractClientPlayer player, BufferedImage bufferedImage) {
