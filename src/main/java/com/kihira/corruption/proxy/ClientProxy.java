@@ -6,15 +6,15 @@ import com.kihira.corruption.client.particle.EntityFXBlood;
 import com.kihira.corruption.client.render.EntityFootstepRenderer;
 import com.kihira.corruption.common.CorruptionDataHelper;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kihira.foxlib.client.TextureHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -36,32 +36,9 @@ public class ClientProxy extends CommonProxy {
     private final ResourceLocation shader = new ResourceLocation("corruption", "grayscale.json");
     private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
 
-    //TODO add in a way to check if player skin has refreshed (such as updating to custom skin thanks to slow skin servers)
-    private BufferedImage getBufferedImageSkin(AbstractClientPlayer player) {
-        BufferedImage bufferedImage = null;
-        InputStream inputStream = null;
-        //If player has a skin set
-        if (player.func_152123_o()) {
-            ThreadDownloadImageData imageData = AbstractClientPlayer.getDownloadImageSkin(player.getLocationSkin(), player.getCommandSenderName());
-            bufferedImage = ReflectionHelper.getPrivateValue(ThreadDownloadImageData.class, imageData, "bufferedImage");
-        }
-        else {
-            try {
-                inputStream = Minecraft.getMinecraft().getResourceManager().getResource(AbstractClientPlayer.locationStevePng).getInputStream();
-                bufferedImage = ImageIO.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                IOUtils.closeQuietly(inputStream);
-            }
-        }
-        return bufferedImage;
-    }
-
     private void uploadPlayerSkin(AbstractClientPlayer player, BufferedImage bufferedImage) {
         ThreadDownloadImageData imageData = AbstractClientPlayer.getDownloadImageSkin(player.getLocationSkin(), player.getCommandSenderName());
-        imageData.setBufferedImage(bufferedImage);
-        TextureUtil.uploadTextureImage(imageData.getGlTextureId(), bufferedImage);
+        TextureHelper.uploadTexture(imageData, bufferedImage);
     }
 
     @Override
@@ -71,7 +48,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
-        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
+        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
 
         if (!this.hasBackup(entityPlayer)) {
             this.backupPlayerSkin(entityPlayer);
@@ -100,7 +77,7 @@ public class ClientProxy extends CommonProxy {
     public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
         oldCorr = oldCorr / 30;
         newCorr = newCorr / 30;
-        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
+        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
         BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
 
         if (bufferedImage != null && oldSkin != null) {
@@ -116,13 +93,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void uncorruptPlayerSkin(AbstractClientPlayer entityPlayer) {
-        BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
-
-        //Load old skin
-        if (oldSkin != null) {
-            this.uploadPlayerSkin(entityPlayer, oldSkin);
-            System.out.println("Restored " + entityPlayer.getCommandSenderName() + " skin");
-        }
+        TextureHelper.restoreOriginalTexture(entityPlayer.getLocationSkin());
     }
 
     @Override
@@ -133,7 +104,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {
-        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
+        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
         Random rand = new Random();
         InputStream inputStream = null;
 
@@ -214,7 +185,7 @@ public class ClientProxy extends CommonProxy {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void backupPlayerSkin(AbstractClientPlayer entityPlayer) {
-        BufferedImage bufferedImage = this.getBufferedImageSkin(entityPlayer);
+        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
 
         File file = new File("skinbackup");
         file.mkdir();

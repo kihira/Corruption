@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
@@ -138,15 +139,14 @@ public class EventHandler {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void onRenderLiving(RenderLivingEvent.Specials.Pre e) {
         if (e.entity instanceof EntityPlayer) {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-                if(Corruption.isDebugMode) {
-                    boolean drawPlate = Minecraft.isGuiEnabled() && e.entity != RenderManager.instance.livingPlayer && !e.entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer) && e.entity.riddenByEntity == null;
+            if(Corruption.isDebugMode) {
+                boolean drawPlate = Minecraft.isGuiEnabled() && e.entity != RenderManager.instance.livingPlayer && !e.entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer) && e.entity.riddenByEntity == null;
 
-                    if (drawPlate) {
-                        drawPlate(e.entity, "Corruption: " + CorruptionDataHelper.getCorruptionForPlayer((EntityPlayer) e.entity), e.x, e.y, e.z, 0.75F);
-                    }
+                if (drawPlate) {
+                    drawPlate(e.entity, "Corruption: " + CorruptionDataHelper.getCorruptionForPlayer((EntityPlayer) e.entity), e.x, e.y, e.z, 0.75F);
                 }
             }
         }
