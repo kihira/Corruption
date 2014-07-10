@@ -63,14 +63,15 @@ public class ClientProxy extends CommonProxy {
                 //Eyes
                 if (y == 12 && (x == 9 || x == 10 || x == 13 || x == 14 || x == 41 || x == 42 || x == 45 || x == 46)) {
                     color = new Color(204, 0, 250);
-                } else {
+                }
+                else {
                     color = new Color(bufferedImage.getRGB(x, y)).darker();
                 }
                 bufferedImage.setRGB(x, y, color.getRGB());
             }
             this.uploadPlayerSkin(entityPlayer, bufferedImage);
         }
-        else System.out.println("Noooo");
+        else System.out.println("Buffered image is null.");
     }
 
     @Override
