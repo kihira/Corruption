@@ -22,7 +22,7 @@ group= "com.kihira.corruption" // http://maven.apache.org/guides/mini/guide-nami
 archivesBaseName = "corruption"
 
 minecraft {
-    version = "1.7.10-10.13.0.1152"
+    version = "1.7.10-10.13.0.1170"
     assetDir = "eclipse/assets"
 }
 
