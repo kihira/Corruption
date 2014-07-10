@@ -13,11 +13,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
@@ -37,8 +41,15 @@ public class ClientProxy extends CommonProxy {
     private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
 
     private void uploadPlayerSkin(AbstractClientPlayer player, BufferedImage bufferedImage) {
-        ThreadDownloadImageData imageData = AbstractClientPlayer.getDownloadImageSkin(player.getLocationSkin(), player.getCommandSenderName());
-        TextureHelper.uploadTexture(imageData, bufferedImage);
+        TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
+        ITextureObject textureObject = texturemanager.getTexture(player.getLocationSkin());
+
+        if (textureObject == null) {
+            textureObject = new ThreadDownloadImageData((File) null, String.format("http://skins.minecraft.net/MinecraftSkins/%s.png", new Object[]{StringUtils.stripControlCodes(player.getCommandSenderName())}), AbstractClientPlayer.locationStevePng, new ImageBufferDownload());
+            texturemanager.loadTexture(player.getLocationSkin(), (ITextureObject) textureObject);
+        }
+
+        TextureHelper.uploadTexture(textureObject, bufferedImage);
     }
 
     @Override
