@@ -10,6 +10,9 @@ import com.kihira.corruption.common.block.BlockEnderCake;
 import com.kihira.corruption.common.corruption.*;
 import com.kihira.corruption.common.item.ItemDiary;
 import com.kihira.corruption.common.item.ItemFleshArmor;
+import com.kihira.corruption.common.network.CorruptionEffectMessage;
+import com.kihira.corruption.common.network.CorruptionMessage;
+import com.kihira.corruption.common.network.DiaryEntriesMessage;
 import com.kihira.corruption.common.network.PacketEventHandler;
 import com.kihira.corruption.proxy.CommonProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -19,7 +22,9 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -84,6 +89,7 @@ public class Corruption {
         registerBlocks();
         registerItems();
         registerRecipes();
+        registerNetworking();
 
         FMLCommonHandler.instance().bus().register(new FMLEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler());
@@ -204,5 +210,12 @@ public class Corruption {
         GameRegistry.addRecipe(new ItemStack(itemFleshArmourLegs, 1), "FFF", "FLF", "F F", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
         GameRegistry.addRecipe(new ItemStack(itemFleshArmourBoots, 1), "   ", "F F", "FLF", 'F', Items.rotten_flesh, 'L', Items.leather_helmet);
         GameRegistry.addRecipe(new ItemStack(itemDiary, 1), "BL ", "P  ", "   ", 'B', Items.book, 'L', Items.leather, 'P', Items.paper);
+    }
+
+    private void registerNetworking() {
+        networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("Corruption");
+        networkWrapper.registerMessage(CorruptionMessage.Handler.class, CorruptionMessage.class, 0, Side.CLIENT);
+        networkWrapper.registerMessage(CorruptionEffectMessage.Handler.class, CorruptionEffectMessage.class, 0, Side.CLIENT);
+        networkWrapper.registerMessage(DiaryEntriesMessage.Handler.class, DiaryEntriesMessage.class, 0, Side.CLIENT);
     }
 }

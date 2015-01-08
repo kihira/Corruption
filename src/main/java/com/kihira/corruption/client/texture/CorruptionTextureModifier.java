@@ -6,9 +6,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-/**
- * Created by DarkEvilMac on 1/7/2015.
- */
 public class CorruptionTextureModifier implements ISkinModifier {
 
     @Override
