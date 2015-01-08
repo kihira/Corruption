@@ -134,19 +134,19 @@ public class EventHandler {
         }
     }
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void onRenderLiving(RenderLivingEvent.Specials.Pre e) {
-        if (e.entity instanceof EntityPlayer) {
-            if (Corruption.isDebugMode) {
-                boolean drawPlate = Minecraft.isGuiEnabled() && e.entity != RenderManager.instance.livingPlayer && !e.entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer) && e.entity.riddenByEntity == null;
-                if (drawPlate) {
-                    String drawString = "Corruption: " + CorruptionDataHelper.getCorruptionForPlayer((EntityPlayer) e.entity);
-                    RenderHelper.drawMultiLineMessageFacingPlayer(e.x, e.y + ((EntityPlayer) e.entity).height + 0.75, e.z, 0.02F, new String[]{drawString}, 0xFFFFFF, true, true);
-                }
-            }
-        }
-    }
+    //@SubscribeEvent
+    //@SideOnly(Side.CLIENT)
+    //public void onRenderLiving(RenderLivingEvent.Specials.Pre e) {
+    //    if (e.entity instanceof EntityPlayer) {
+    //        if (Corruption.isDebugMode) {
+    //            boolean drawPlate = Minecraft.isGuiEnabled() && e.entity != RenderManager.instance.livingPlayer && !e.entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer) && e.entity.riddenByEntity == null;
+    //            if (drawPlate) {
+    //                String drawString = "Corruption: " + CorruptionDataHelper.getCorruptionForPlayer((EntityPlayer) e.entity);
+    //                RenderHelper.drawMultiLineMessageFacingPlayer(e.x, e.y + ((EntityPlayer) e.entity).height + 0.75, e.z, 0.02F, new String[]{drawString}, 0xFFFFFF, true, true);
+    //            }
+    //        }
+    //    }
+    //}
 
     private boolean teleportBlockRandomly(int sourceX, int sourceY, int sourceZ, World world, EntityPlayer entityPlayer) {
         int x, y, z;

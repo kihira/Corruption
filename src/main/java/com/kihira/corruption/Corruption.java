@@ -11,16 +11,14 @@ import com.kihira.corruption.common.corruption.*;
 import com.kihira.corruption.common.item.ItemDiary;
 import com.kihira.corruption.common.item.ItemFleshArmor;
 import com.kihira.corruption.common.network.CorruptionEffectMessage;
-import com.kihira.corruption.common.network.CorruptionMessage;
+import com.kihira.corruption.common.network.CorruptionUpdateMessage;
 import com.kihira.corruption.common.network.DiaryEntriesMessage;
-import com.kihira.corruption.common.network.PacketEventHandler;
 import com.kihira.corruption.proxy.CommonProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -39,15 +37,22 @@ import java.io.File;
 @Mod(name = "Corruption", modid = "corruption")
 public class Corruption {
 
+    public static final CreativeTabCorruption creativeTab = new CreativeTabCorruption();
+    public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
+    public static final ItemDiary itemDiary = new ItemDiary();
+    public static final Item itemFleshArmourHelmet = new ItemFleshArmor(0).setUnlocalizedName("fleshHelmet").setTextureName("corruption:flesh_helmet");
+    public static final Item itemFleshArmourChest = new ItemFleshArmor(1).setUnlocalizedName("fleshChest").setTextureName("corruption:flesh_chestplate");
+    public static final Item itemFleshArmourLegs = new ItemFleshArmor(2).setUnlocalizedName("fleshLegs").setTextureName("corruption:flesh_leggings");
+    public static final Item itemFleshArmourBoots = new ItemFleshArmor(3).setUnlocalizedName("fleshBoots").setTextureName("corruption:flesh_boots");
+    public static final Logger logger = LogManager.getLogger("Corruption");
+    public static final String CATEGORY_CORRUPTION = "corruption";
     @SidedProxy(clientSide = "com.kihira.corruption.proxy.ClientProxy", serverSide = "com.kihira.corruption.proxy.CommonProxy")
     public static CommonProxy proxy;
-
     @Mod.Instance
     public static Corruption instance;
-
+    public static SimpleNetworkWrapper networkWrapper;
     public static boolean isCorruptionActiveGlobal = true;
     public static boolean isDebugMode;
-
     public static boolean isEnabledBlockTeleportCorr;
     public static boolean isEnabledStoneSkinCorr;
     public static boolean isEnabledWaterAllergyCorr;
@@ -55,32 +60,24 @@ public class Corruption {
     public static boolean isEnabledAfraidOfTheDarkCorr;
     public static boolean isEnabledBloodLossCorr;
     public static boolean isEnabledGluttonyCorr;
-
-    public static final CreativeTabCorruption creativeTab = new CreativeTabCorruption();
-
-    public static final BlockEnderCake blockEnderCake = new BlockEnderCake();
-    public static final ItemDiary itemDiary = new ItemDiary();
-    public static final Item itemFleshArmourHelmet = new ItemFleshArmor(0).setUnlocalizedName("fleshHelmet").setTextureName("corruption:flesh_helmet");
-    public static final Item itemFleshArmourChest = new ItemFleshArmor(1).setUnlocalizedName("fleshChest").setTextureName("corruption:flesh_chestplate");
-    public static final Item itemFleshArmourLegs = new ItemFleshArmor(2).setUnlocalizedName("fleshLegs").setTextureName("corruption:flesh_leggings");
-    public static final Item itemFleshArmourBoots = new ItemFleshArmor(3).setUnlocalizedName("fleshBoots").setTextureName("corruption:flesh_boots");
-
     public static ColourBlindCorruption colourBlindCorruption;
     public static GluttonyCorruption gluttonyCorruption;
     public static StoneSkinCorruption stoneSkinCorruption;
     public static WaterAllergyCorruption waterAllergyCorruption;
     public static BlockTeleportCorruption blockTeleportCorruption;
-
-    public static final Logger logger = LogManager.getLogger("Corruption");
-    public static final FMLEventChannel eventChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel("corruption");
-
-    public static final String CATEGORY_CORRUPTION = "corruption";
     public static Configuration config;
 
     public static boolean disableCorrOnDragonDeath;
     public static boolean disableCorrOnWitherDeath;
     public static int corrRemovedOnDeath;
     public static int corrSpeed;
+
+    public static void setDiableCorruption() {
+        Property prop = config.get(Configuration.CATEGORY_GENERAL, "Disable Corruption", false);
+        prop.set(true);
+        config.save();
+        isCorruptionActiveGlobal = false;
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
@@ -95,7 +92,6 @@ public class Corruption {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-        eventChannel.register(new PacketEventHandler());
         proxy.registerRenderers();
         PageData.registerPageData();
     }
@@ -148,13 +144,6 @@ public class Corruption {
         isDebugMode = prop.getBoolean(false);
 
         if (config.hasChanged()) config.save();
-    }
-
-    public static void setDiableCorruption() {
-        Property prop = config.get(Configuration.CATEGORY_GENERAL, "Disable Corruption", false);
-        prop.set(true);
-        config.save();
-        isCorruptionActiveGlobal = false;
     }
 
     private void registerCorruptionEffects() {
@@ -214,7 +203,7 @@ public class Corruption {
 
     private void registerNetworking() {
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("Corruption");
-        networkWrapper.registerMessage(CorruptionMessage.Handler.class, CorruptionMessage.class, 0, Side.CLIENT);
+        networkWrapper.registerMessage(CorruptionUpdateMessage.Handler.class, CorruptionUpdateMessage.class, 0, Side.CLIENT);
         networkWrapper.registerMessage(CorruptionEffectMessage.Handler.class, CorruptionEffectMessage.class, 0, Side.CLIENT);
         networkWrapper.registerMessage(DiaryEntriesMessage.Handler.class, DiaryEntriesMessage.class, 0, Side.CLIENT);
     }

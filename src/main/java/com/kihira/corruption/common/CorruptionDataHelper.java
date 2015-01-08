@@ -2,9 +2,10 @@ package com.kihira.corruption.common;
 
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
-import com.kihira.corruption.common.network.PacketEventHandler;
+import com.kihira.corruption.common.network.CorruptionEffectMessage;
+import com.kihira.corruption.common.network.CorruptionUpdateMessage;
+import com.kihira.corruption.common.network.DiaryEntriesMessage;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -61,8 +62,7 @@ public class CorruptionDataHelper {
             unlockPageData(CorruptionRegistry.corruptionHashMap.get(name).getPageDataName(), entityPlayer);
         }
 
-        FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(entityPlayer.getCommandSenderName(), name, true, false);
-        Corruption.eventChannel.sendToAll(packet);
+        Corruption.networkWrapper.sendToAll(new CorruptionEffectMessage(entityPlayer.getCommandSenderName(), name, true, false));
     }
 
     public static void removeCorruptionEffectForPlayer(EntityPlayer entityPlayer, String name) {
@@ -79,16 +79,14 @@ public class CorruptionDataHelper {
         }
         corruptionData.setTag("CorruptionEffects", corrEffects);
 
-        FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(entityPlayer.getCommandSenderName(), name, false, false);
-        Corruption.eventChannel.sendToAll(packet);
+        Corruption.networkWrapper.sendToAll(new CorruptionEffectMessage(entityPlayer.getCommandSenderName(), name, false, false));
     }
 
     public static void removeAllCorruptionEffectsForPlayer(EntityPlayer entityPlayer) {
         NBTTagCompound corruptionData = getCorruptionDataForPlayer(entityPlayer);
         corruptionData.setTag("CorruptionEffects", new NBTTagList());
 
-        FMLProxyPacket packet = PacketEventHandler.getCorruptionEffectPacket(entityPlayer.getCommandSenderName(), "", false, true);
-        Corruption.eventChannel.sendToAll(packet);
+        Corruption.networkWrapper.sendToAll(new CorruptionEffectMessage(entityPlayer.getCommandSenderName(), "", false, true));
     }
 
 
@@ -127,7 +125,7 @@ public class CorruptionDataHelper {
             diaryData.setTag("PageData", pageData);
 
             if (Side.SERVER == FMLCommonHandler.instance().getEffectiveSide()) {
-                Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(entityPlayer), (EntityPlayerMP) entityPlayer);
+                Corruption.networkWrapper.sendTo(new DiaryEntriesMessage(entityPlayer), (EntityPlayerMP) entityPlayer);
             }
         }
     }
@@ -140,7 +138,7 @@ public class CorruptionDataHelper {
             diaryData.setTag("PageData", pageData);
 
             if (Side.SERVER == FMLCommonHandler.instance().getEffectiveSide()) {
-                Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(entityPlayer), (EntityPlayerMP) entityPlayer);
+                Corruption.networkWrapper.sendTo(new DiaryEntriesMessage(entityPlayer), (EntityPlayerMP) entityPlayer);
             }
         }
     }
@@ -169,8 +167,7 @@ public class CorruptionDataHelper {
         corruptionData.setInteger("corruptionLevel", newCorruption);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            FMLProxyPacket packet = PacketEventHandler.getCorruptionUpdatePacket(entityPlayer.getCommandSenderName(), newCorruption);
-            Corruption.eventChannel.sendToDimension(packet, entityPlayer.worldObj.provider.dimensionId);
+            Corruption.networkWrapper.sendToDimension(new CorruptionUpdateMessage(entityPlayer.getCommandSenderName(), newCorruption), entityPlayer.worldObj.provider.dimensionId);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.kihira.corruption.common.item;
 
 import com.kihira.corruption.Corruption;
-import com.kihira.corruption.common.network.PacketEventHandler;
+import com.kihira.corruption.common.network.DiaryEntriesMessage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
@@ -29,7 +29,7 @@ public class ItemDiary extends ItemBook {
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
         if (!player.worldObj.isRemote) {
-            Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(player), (EntityPlayerMP) player);
+            Corruption.networkWrapper.sendTo(new DiaryEntriesMessage(player), (EntityPlayerMP) player);
         }
         if (itemStack.hasTagCompound()) {
             itemStack.getTagCompound().setBoolean("NewInformation", false);

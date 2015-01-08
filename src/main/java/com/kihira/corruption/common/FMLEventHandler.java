@@ -5,7 +5,8 @@ import com.google.common.collect.Multiset;
 import com.kihira.corruption.Corruption;
 import com.kihira.corruption.common.corruption.ICorruptionEffect;
 import com.kihira.corruption.common.corruption.CorruptionRegistry;
-import com.kihira.corruption.common.network.PacketEventHandler;
+import com.kihira.corruption.common.network.CorruptionEffectMessage;
+import com.kihira.corruption.common.network.DiaryEntriesMessage;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -122,11 +123,11 @@ public class FMLEventHandler {
             }
         }
 
-        Corruption.eventChannel.sendTo(PacketEventHandler.getDiaryDataPacket(e.player), (EntityPlayerMP) e.player);
+        Corruption.networkWrapper.sendTo(new DiaryEntriesMessage(e.player), (EntityPlayerMP) e.player);
         List<String> corrEffects = CorruptionDataHelper.getCorruptionEffectsForPlayer(e.player);
         if (!corrEffects.isEmpty()) {
             for (String corr : corrEffects) {
-                Corruption.eventChannel.sendTo(PacketEventHandler.getCorruptionEffectPacket(e.player.getCommandSenderName(), corr, true, false), (EntityPlayerMP) e.player);
+                Corruption.networkWrapper.sendTo(new CorruptionEffectMessage(e.player.getCommandSenderName(), corr, true, false), (EntityPlayerMP) e.player);
             }
         }
     }
