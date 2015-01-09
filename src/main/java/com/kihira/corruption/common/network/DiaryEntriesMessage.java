@@ -24,12 +24,17 @@ public class DiaryEntriesMessage implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {
-        tagCompound = new NBTTagCompound();
-        tagCompound = ByteBufUtils.readTag(byteBuf);
+        boolean isNull = byteBuf.readBoolean();
+        if (!isNull)
+            tagCompound = ByteBufUtils.readTag(byteBuf);
+        else
+            tagCompound = null;
     }
 
     @Override
     public void toBytes(ByteBuf byteBuf) {
+        byteBuf.writeBoolean(tagCompound == null);
+
         ByteBufUtils.writeTag(byteBuf, tagCompound);
     }
 
@@ -37,7 +42,8 @@ public class DiaryEntriesMessage implements IMessage {
 
         @Override
         public IMessage onMessage(DiaryEntriesMessage message, MessageContext ctx) {
-            CorruptionDataHelper.setPageData(message.tagCompound.getTagList("PageData", 8), Minecraft.getMinecraft().thePlayer);
+            if (message.tagCompound != null)
+                CorruptionDataHelper.setPageData(message.tagCompound.getTagList("PageData", 8), Minecraft.getMinecraft().thePlayer);
 
             return null;
         }

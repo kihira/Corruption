@@ -204,7 +204,7 @@ public class Corruption {
     private void registerNetworking() {
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("Corruption");
         networkWrapper.registerMessage(CorruptionUpdateMessage.Handler.class, CorruptionUpdateMessage.class, 0, Side.CLIENT);
-        networkWrapper.registerMessage(CorruptionEffectMessage.Handler.class, CorruptionEffectMessage.class, 0, Side.CLIENT);
-        networkWrapper.registerMessage(DiaryEntriesMessage.Handler.class, DiaryEntriesMessage.class, 0, Side.CLIENT);
+        networkWrapper.registerMessage(CorruptionEffectMessage.Handler.class, CorruptionEffectMessage.class, 1, Side.CLIENT);
+        networkWrapper.registerMessage(DiaryEntriesMessage.Handler.class, DiaryEntriesMessage.class, 2, Side.CLIENT);
     }
 }
