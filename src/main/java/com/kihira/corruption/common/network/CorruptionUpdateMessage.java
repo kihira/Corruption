@@ -1,7 +1,9 @@
 package com.kihira.corruption.common.network;
 
 import com.kihira.corruption.Corruption;
+import com.kihira.corruption.client.texture.CorruptionSkinModifier;
 import com.kihira.corruption.common.CorruptionDataHelper;
+import com.kihira.corruption.proxy.ClientProxy;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -45,14 +47,16 @@ public class CorruptionUpdateMessage implements IMessage {
                 int newCorr = message.newCorruption;
                 int oldCorr = CorruptionDataHelper.getCorruptionForPlayer(player);
 
+                ClientProxy clientProxy = (ClientProxy) Corruption.proxy;
+
                 if (newCorr < oldCorr) {
-                    Corruption.proxy.uncorruptPlayerSkinPartially((AbstractClientPlayer) player, oldCorr, newCorr);
+                    clientProxy.skinHelper.unapplySkinModifierToPlayer((AbstractClientPlayer) player, new CorruptionSkinModifier(), 0, oldCorr, newCorr);
                 }
 
                 if (newCorr == 0) {
-                    Corruption.proxy.uncorruptPlayerSkin((AbstractClientPlayer) player);
+                    clientProxy.skinHelper.restoreDefaultPlayerSkin((AbstractClientPlayer) player);
                 } else {
-                    Corruption.proxy.corruptPlayerSkin((AbstractClientPlayer) player, oldCorr, newCorr);
+                    clientProxy.skinHelper.applySkinModifierToPlayer((AbstractClientPlayer) player, new CorruptionSkinModifier(), 0, oldCorr, newCorr);
                 }
                 CorruptionDataHelper.setCorruptionForPlayer(player, newCorr);
             }

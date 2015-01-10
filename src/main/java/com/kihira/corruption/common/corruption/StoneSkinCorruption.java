@@ -3,7 +3,10 @@ package com.kihira.corruption.common.corruption;
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Multiset;
 import com.kihira.corruption.Corruption;
+import com.kihira.corruption.client.texture.StoneSkinModifier;
+import com.kihira.corruption.proxy.ClientProxy;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
@@ -31,9 +34,12 @@ public class StoneSkinCorruption implements ICorruptionEffect {
                     player.worldObj.playSoundAtEntity(player, "step.stone", 0.8F, 0.25F + player.getRNG().nextFloat());
                 }
             }
-        }
-        else if (side == Side.CLIENT) {
-            if (this.playerCount.count(player.getCommandSenderName()) < 100) Corruption.proxy.stonifyPlayerSkin((AbstractClientPlayer) player, this.playerCount.count(player.getCommandSenderName()));
+        } else if (side == Side.CLIENT) {
+            ClientProxy clientProxy = (ClientProxy) Corruption.proxy;
+            StoneSkinModifier skinModifier = new StoneSkinModifier();
+
+            clientProxy.skinHelper.applySkinModifierToPlayer((AbstractClientPlayer) player, skinModifier,
+                    this.playerCount.count(player.getCommandSenderName()), 0, 0);
         }
 
         this.playerCount.add(player.getCommandSenderName());
@@ -42,9 +48,10 @@ public class StoneSkinCorruption implements ICorruptionEffect {
     @Override
     public void finish(String player, Side side) {
         this.playerCount.setCount(player, 0);
+        System.out.println("Finish Stone Skin");
 
         if (side == Side.CLIENT) {
-            //TODO Corruption.proxy.unstonifyPlayerSkin(player);
+            ((ClientProxy) Corruption.proxy).skinHelper.restoreDefaultPlayerSkin((AbstractClientPlayer) Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player));
         }
     }
 

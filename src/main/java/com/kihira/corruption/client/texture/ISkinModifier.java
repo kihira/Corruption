@@ -17,6 +17,14 @@ public interface ISkinModifier {
      * @param imageTexture The current texture
      * @param cleanImage   The texture before the modifier was applied
      */
-    BufferedImage Apply(AbstractClientPlayer player, BufferedImage imageTexture, BufferedImage cleanImage, int oldCorr, int newCorr);
+    BufferedImage Apply(AbstractClientPlayer player, BufferedImage imageTexture, BufferedImage cleanImage, int percentComplete, int oldCorr, int newCorr);
+
+    /**
+     * Called each tick to remove the modifier slowly.
+     *
+     * @param imageTexture The current texture
+     * @param cleanImage   The texture before the modifier was applied
+     */
+    BufferedImage UnApply(AbstractClientPlayer player, BufferedImage imageTexture, BufferedImage cleanImage, int percentComplete, int oldCorr, int newCorr);
 
 }

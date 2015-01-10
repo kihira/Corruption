@@ -4,6 +4,7 @@ import com.kihira.corruption.Corruption;
 import com.kihira.corruption.client.EntityFootstep;
 import com.kihira.corruption.client.particle.EntityFXBlood;
 import com.kihira.corruption.client.render.EntityFootstepRenderer;
+import com.kihira.corruption.client.texture.SkinHelper;
 import com.kihira.corruption.common.CorruptionDataHelper;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -39,104 +40,11 @@ public class ClientProxy extends CommonProxy {
     private final ResourceLocation stoneSkinTexture = new ResourceLocation("corruption", "stoneskin.png");
     private final ResourceLocation shader = new ResourceLocation("corruption", "grayscale.json");
     private final HashMap<EntityPlayer, EntityFootstep> footsteps = new HashMap<EntityPlayer, EntityFootstep>();
-
-    private void uploadPlayerSkin(AbstractClientPlayer player, BufferedImage bufferedImage) {
-        TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
-        ITextureObject textureObject = texturemanager.getTexture(player.getLocationSkin());
-
-        if (textureObject == null) {
-            textureObject = new ThreadDownloadImageData((File) null, String.format("http://skins.minecraft.net/MinecraftSkins/%s.png", new Object[]{StringUtils.stripControlCodes(player.getCommandSenderName())}), AbstractClientPlayer.locationStevePng, new ImageBufferDownload());
-            texturemanager.loadTexture(player.getLocationSkin(), (ITextureObject) textureObject);
-        }
-
-        TextureHelper.uploadTexture(textureObject, bufferedImage);
-    }
+    public SkinHelper skinHelper = new SkinHelper();
 
     @Override
     public void registerRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(EntityFootstep.class, new EntityFootstepRenderer());
-    }
-
-    @Override
-    public void corruptPlayerSkin(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
-        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
-
-        if (!this.hasBackup(entityPlayer))
-            this.backupPlayerSkin(entityPlayer);
-
-        if (bufferedImage != null) {
-            for (int i = oldCorr; i <= newCorr; i++) {
-                Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
-                int x = rand.nextInt(bufferedImage.getWidth());
-                int y = rand.nextInt(bufferedImage.getHeight());
-                Color color;
-                //Eyes
-                if (y == 12 && (x == 9 || x == 10 || x == 13 || x == 14 || x == 41 || x == 42 || x == 45 || x == 46)) {
-                    color = new Color(204, 0, 250);
-                } else {
-                    color = new Color(bufferedImage.getRGB(x, y)).darker();
-                }
-                bufferedImage.setRGB(x, y, color.getRGB());
-            }
-            this.uploadPlayerSkin(entityPlayer, bufferedImage);
-        } else System.out.println("Buffered image is null.");
-    }
-
-    @Override
-    public void uncorruptPlayerSkinPartially(AbstractClientPlayer entityPlayer, int oldCorr, int newCorr) {
-        oldCorr = oldCorr / 30;
-        newCorr = newCorr / 30;
-        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
-        BufferedImage oldSkin = this.getOriginalPlayerSkin(entityPlayer);
-
-        if (bufferedImage != null && oldSkin != null) {
-            for (int i = newCorr; i <= oldCorr; i++) {
-                Random rand = new Random(entityPlayer.getCommandSenderName().hashCode() * i);
-                int x = rand.nextInt(bufferedImage.getWidth());
-                int y = rand.nextInt(bufferedImage.getHeight());
-                bufferedImage.setRGB(x, y, oldSkin.getRGB(x, y));
-            }
-        }
-        this.uploadPlayerSkin(entityPlayer, bufferedImage);
-    }
-
-    @Override
-    public void uncorruptPlayerSkin(AbstractClientPlayer entityPlayer) {
-        TextureHelper.restoreOriginalTexture(entityPlayer.getLocationSkin());
-    }
-
-    @Override
-    public void unstonifyPlayerSkin(AbstractClientPlayer entityPlayer) {
-        this.uncorruptPlayerSkin(entityPlayer);
-        this.corruptPlayerSkin(entityPlayer, 0, CorruptionDataHelper.getCorruptionForPlayer(entityPlayer));
-    }
-
-    @Override
-    public void stonifyPlayerSkin(AbstractClientPlayer entityPlayer, int amount) {
-        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
-        Random rand = new Random();
-        InputStream inputStream = null;
-
-        if (!this.hasBackup(entityPlayer)) {
-            this.backupPlayerSkin(entityPlayer);
-        }
-
-        if (bufferedImage != null) {
-            try {
-                inputStream = Minecraft.getMinecraft().getResourceManager().getResource(this.stoneSkinTexture).getInputStream();
-                BufferedImage stoneSkin = ImageIO.read(inputStream);
-                for (int i = 0; i < amount; i++) {
-                    int x = rand.nextInt(bufferedImage.getWidth());
-                    int y = rand.nextInt(bufferedImage.getHeight());
-                    bufferedImage.setRGB(x, y, stoneSkin.getRGB(x, y));
-                }
-                this.uploadPlayerSkin(entityPlayer, bufferedImage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                IOUtils.closeQuietly(inputStream);
-            }
-        }
     }
 
     @Override
@@ -185,47 +93,5 @@ public class ClientProxy extends CommonProxy {
             EntityFXBlood blood = new EntityFXBlood(player);
             Minecraft.getMinecraft().effectRenderer.addEffect(blood);
         }
-    }
-
-    // TODO: retire this backup system and just use resource location instead?
-    public boolean hasBackup(AbstractClientPlayer player) {
-        return new File("skinbackup" + File.separator + player.getCommandSenderName() + ".png").exists();
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void backupPlayerSkin(AbstractClientPlayer entityPlayer) {
-        BufferedImage bufferedImage = TextureHelper.getPlayerSkinAsBufferedImage((EntityPlayerSP) entityPlayer);
-
-        File file = new File("skinbackup");
-        file.mkdir();
-        File skinFile = new File(file, entityPlayer.getCommandSenderName() + ".png");
-        try {
-/*                if (skinFile.exists()) {
-                    //If corr is 0 and we already have a skin for this player, load this just incase
-                    bufferedImage = ImageIO.read(skinFile);
-                }*/
-            skinFile.createNewFile();
-            if (bufferedImage != null) ImageIO.write(bufferedImage, "PNG", skinFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private BufferedImage getOriginalPlayerSkin(AbstractClientPlayer entityPlayer) {
-        File file = new File("skinbackup" + File.separator + entityPlayer.getCommandSenderName() + ".png");
-        BufferedImage bufferedImage = null;
-
-        try {
-            if (file.exists()) {
-                bufferedImage = ImageIO.read(file);
-            }
-            //Load skin from Mojang servers
-            else {
-                //Minecraft.getMinecraft().getTextureManager().getTexture(entityPlayer.).loadTexture(Minecraft.getMinecraft().getResourceManager());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bufferedImage;
     }
 }
